@@ -841,20 +841,27 @@ section:not(.curtain):not(.centered-on-white) {
 .step.flyer {
   background: #fdfcf8;
   color: #33302a;
-  margin-bottom:15rem;
-  margin-top:15rem;
+  margin-bottom:10rem;
+  margin-top:10rem;
 }
 .step.flyer .step-line {
   background: #fdfcf8;
   color: #33302a;
   box-shadow: none;
-  margin-bottom:0;
+  margin: 0;
 }
 
 .step.flyer .step-line p{
   max-width: none;
   
 }
+
+.step.flyer h2{
+  margin: 0;
+  
+}
+
+
 
 .flyer {
   position: relative;        /* the legend positions itself against the flyer, not the page */

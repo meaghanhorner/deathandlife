@@ -6,7 +6,7 @@
 
 ##### Section Intro
 ## Commercial Space Available
-Caffe Reggio, at 119 MacDougal Street, served the first cappuccino in America 1927. Though the 1902 imported espresso machine that made that first cappuncino is now just a display piece, the cafe is still serving them 99 years later. It's still early in the morning and the street is quiet. Across the street, at 128 MacDougal, a metal gate covers the street-level windows. A sign advertises "Commercial Space Available". It has been vacant since at least April, according to Google's Streetview. 
+Caffe Reggio, at 119 MacDougal Street, served the first cappuccino in America 1927. Though the 1902 imported espresso machine that made that first cappuncino is now just a display piece, the cafe is still serving them 99 years later. It's still early in the morning and the street is quiet. Across the street, at 128 MacDougal, a metal gate covers the street-level windows. A sign advertises "Commercial Space Available". It has been vacant since at least April, according to Google's Street View. 
 <!-- svg: -->
 128 MacDougal is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half — six consecutive quarters. The problem is now big enough that in June 2026, the city comptroller's office issued a report, titled *Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City*. This follows a 2017 report by then-State Senator Brad Hoylman, titled *Bleaker on Bleecker*, focusing particularly on storefront vacancies in Greenwich Village and Chelsea. The citywide storefront vacancy rate, a modest 4 percent in 2017 and comparable to the nationwide 4.08 percent, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
 <!-- svg: -->
@@ -36,6 +36,8 @@ If storefronts are so important to a neighborhood, why do so many sit vacant in 
 
 ##### Four Conditions	
 
+## The Four Conditions
+
 ### 1: Short Blocks
 Most blocks must be short That is, streets and opportunities to turn corners must be frequent.
 
@@ -62,8 +64,6 @@ These must insure the presence of people who go outdoors on different schedules 
 >"Long blocks, in their nature, thwart the potential advantages that cities offer to incubation, experimentation, and many small or special enterprises, insofar as these depend upon drawing their customers or clients from among much larger cross-sections of passing public."(238)
 ##### Short Blocks
 <!-- svg: map-a-zoom-out -->
-We will start with the factor that has changed the least in 65 years: short blocks. 
-<!-- svg: -->
 Jacobs writes that short blocks give pedestrians frequent opportunities to turn corners, which means more possible routes any person can take to a given destination. A resident who goes to the same place regularly (whether it's their subway stop or favorite grocery store) will often take different routes to get there on different days, if the short blocks allow it, giving them more opportunities to see different parts of the neighborhood. 
 <!-- svg: map-a-zoom-in -->
 Long blocks do the opposite, funneling people onto a few streets and leaving the rest quiet.
@@ -73,6 +73,8 @@ In addition to providing more opportunities for pedestrians to turn corners, the
 >"visual interruptions, cutting off the indefinite distant view and at the same time visually heightening and celebrating intense street use by giving it a hint of enclosure and entity".
 <!-- svg: -->
 Short blocks can also help a pedestrian's feeling of safety. A person walking on a short block who gets a feeling of being unsafe, either because of a person or their physical surroundings, can find somewhere to turn within a couple hundred feet, whereas a person walking on a long avenue might have no choice but to turn in the opposite direction.
+<!-- svg: -->
+The verdict: With no major changes to the street grid since the 1960s, we can say yes, Greenwich Village still has short blocks.
 
 @verdict short-blocks yes
 
@@ -113,10 +115,16 @@ Da'Vinci Shoes closed in 2016, after the rent was raised from $6,000/month to ne
 
 Looking at old business records, I found many instances in the 1960s and 1970s when a business moved but stayed in Greenwich Village. Murray's Cheese started out at a different location than where it is now. Matt Umanov Guitars moved when the pizzeria John's of Bleecker Street expanded into his former location. Costos Exotic Garden, which was forced to move in 1969 to accommodate a Nathan's location, reopened a few blocks away. In fact, xx% of businesses that closed in one location reopened in another. Today, when businesses close, they reopen outside Greenwich Village - or don't reopen at all. Only xx% of businesses that closed at one location in 2015 or 2020 are still open in Greenwich Village today.   
 
+<!-- svg: -->
+The verdict: Mixed. Though Greenwich Village still has a mix of old and new buildings, the small range in rents between the cheapest and the most expensive means it only partially meets this condition. 
+
 @verdict old-new partial
 
 ##### Dense Concentration Header
 ## A Dense Concentration of People, Including Residents
+
+@condition density
+
 >"The district must have a sufficiently dense concentration of people, for whatever purpose they may be there. This includes people there because of residence."
 ##### A Dense Concentration of People, Including Residents
 <!-- svg: chart-h1-->
@@ -140,10 +148,17 @@ Why would one of New York's most desireable neighborhoods be shrinking?
 Not for lack of demand. People weren't moving out because they no longer wanted to live there. Instead, household size was shrinking, from 1.67 on average in 1970 to 1.5 today.  Households with at least 3 members went from 13.4% of the population in 1970 to just 11.4% in 2020.
 <!-- svg: chart-h1-->
 Though the shrinking households story doesn't map cleanly onto Jacobs's 100 dwellings per acre number, it points to a similar concern: Fewer residents means fewer people to support the variety of businesses that once lined the street. That problem is compounded by the rising rents we've already seen. A business can't sustain itself when it has both rising expenses and a decreasing number of customers. Add in online shopping, and it becomes very difficult for niche businesses to stay open.
+<!-- svg: -->
+The verdict: mixed. Greenwich Village is still denser than most of Manhattan, but less dense than it was in 1970.
+
+@verdict density partial
 
 ##### Mixed Uses Header
 
 ## Mixed Uses
+
+@condition mixed-use
+
 >"On successful city streets, people must appear at different times... If consumer enterprises lie idle for much of the day they may disappear. Or, to be more accurate, in most such cases they never appear in the first place. Stores, like parks, need users."(199) 
 ##### Mixed Uses
 <!-- svg: chart-j -->
@@ -161,6 +176,12 @@ In 2026, many storefronts sit vacant. Others are occupied by the types of chains
 
 <!-- svg: -->
 The contrast between the two eras show why Jacobs considered mixed primary uses essential. In the 1960s and 1970s, Greenwich Village's variety of uses drew residents out of their homes, kept workers in the neighborhood, and drew visitors from other neighborhoods. Today, vacant storefronts, chains, and a high rate of restaurant turnover suggest that the Village may no longer support the "unconscious cooperation" Jacobs described. Stores, like parks, need users, and the Village's changing streetscape suggests it may have lost some of the users it once had. 
+
+<!-- svg: -->
+The verdict: Mixed. While Greenwich Village has both residents, workers, and visitors, the mix of different businesses is far less than what it was.
+
+@verdict mixed-use partial
+
 <!-- svg: strip-plot-->
 
 ##### Conditions Scorecard
