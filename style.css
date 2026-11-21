@@ -1046,7 +1046,9 @@ img {
   position: relative;   /* so the legend can be positioned inside it */
 }
 
-
+#chart-i {
+  min-height: 200px;
+}
 
 #block-map-c {
   display:flex;

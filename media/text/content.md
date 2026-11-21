@@ -21,7 +21,7 @@ The text is not the artist’s own. It’s a quotation from Jane Jacobs's *The D
 
 Jacobs, who wrote about her beloved neighborhood in the late 1950s and early 1960s, recognized the importance of storefront businesses to the vitality of a neighborhood. 
 
->"The trust of a city street is formed over time from many, many little public sidewalk contacts. It grows out of people stopping by at the bar for a beer, getting advice from the grocer and giving advice to the newsstand man, comparing opinions with other customers at the bakery and nodding hello to the two boys drinking pop on the stoop; eying the girls while waiting to be called for dinner, admonishing the children, hearing about a job from the hardware man and borrowing a dollar from the druggist, admiring the new babies and sympathizing over the way a coat faded."(73)
+>"The trust of a city street is formed over time from many, many little public sidewalk contacts. It grows out of people stopping by at the bar for a beer, getting advice from the grocer and giving advice to the newsstand man, comparing opinions with other customers at the bakery and nodding hello to the two boys drinking pop on the stoop... admiring the new babies and sympathizing over the way a coat faded."(73)
 
 <!-- svg: -->
 Greenwich Village incubated the '60s folk music boom, the East Coast beat movement, and the Stonewall uprising. It was businesses like the Gaslight Cafe, Kettle of Fish, and the Oscar Wilde Memorial Bookshop that provided space and opportunity for these movements to take hold.
@@ -232,17 +232,27 @@ Other commenters see more than a neighborhood changing, they see the history of 
 
 **** need some extra chart and writing here --- would love to document the # of Greenwich Village businesses that have closed that specifically served the LGBTQ community ***
 
-##### Why It's Happening
-## Why It's Happening
+##### Option Value
 
-To understand why so many storefronts sit empty in high-rent districts like Greenwich Village, it helps to know a little about the concept that economists call option value. In economics, option value refers to the economic value a property owner generates by retaining the flexibility to make a decision later rather than committing immediately to a long-term asset lock.
+<!-- svg: -->
+So now we are back to the question we started with. Why do so many storefronts in Greenwich Village sit empty?
+To answer this question, it helps to know a little about the concept that economists call option value.
 
+<!-- svg: -->
+## What is Option Value? 
+In economics, option value refers to the economic value a property owner generates by retaining the flexibility to make a decision later rather than committing immediately to a long-term asset lock.
+
+<!-- svg: -->
 Imagine a landlord who suddenly has a vacant storefront for rent. It is the year 2008. They have potential tenants, who are willing to pay $130/square foot per year, comparable with rents in the past. However, this landlord knows that Marc Jacobs recently rented several storefronts just down the street for $600/square foot. By locking in a 10-year lease at $130/square foot, the landlord loses out on the possibility of getting $600/square foot for his storefront, a loss of many thousands of dollars over the next 10 years. You can easily imagine the landlord deciding not to rent the storefront out at $130, or $140, or $150 per square foot, instead choosing to wait for a tenant willing to pay more. 
 
+<!-- svg: -->
 When you imagine 10, 20 or 100 landlords all making the same calculation, suddenly it's easy to see how storefronts could sit empty for years on end.
 
+<!-- svg: -->
 In examining storefront vacancy in New York City, economists Erica Moszkowski and Daniel Stackman cite two sources of uncertainty which generate option value for landlords. The first, time series uncertainty, states that in a market where rents are often cyclical, landlords have an incentive to sign tenants as close to the top of the rent cycle as possible. The second, cross-sectional heterogeneity in tenant willingness to pay, also referred to as "match quality", states that there is substantial variation between what any two given tenants are willing to pay for a given space, creating an incentive for the landlord to wait for a higher-paying tenant rather than lease to a lower-paying one. (Moszkowski & Stackman, 2026)
 
+##### Timeline
+## Timeline
 After examining all these factors, we can put together a timeline and a hypothesis.
 
 Between 1961 and 2001, commercial rents on Bleecker Street and across Greenwich Village moved in tandem with commercial rents in Manhattan as a whole.
@@ -310,8 +320,8 @@ Follow progress on the New York City Small Business Rent Stabilization Act and l
 ##### Conclusion
 ## Conclusion
 
-When I embarked on this project I was ready to say that the gentrification and high-rent blight of Greenwich Village was something that Jacobs could never have predicted.Yet, in "The Death and Life of Great American Cities", she maps out the exact feedback loop currently playing out in the neighborhood. In a chapter called "The Self-Destruction of Diversity", Jacobs writes,
-"Whichever form the self-destruction takes, this, in broad strokes, is what happens: A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location's success, which is invariably based on flourishing and magnetic diversity, ardent competition for space in this locality develops. It is taken up in what amounts to the economic equivalent of a fad. The winners in the competition for space will represent only a narrow segment of the many uses that together created success...Thus, from this process, one or few dominating uses finally emerge triumphant. But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process... In time, a place that was once so successful and once the object of such ardent competition, wanes and becomes marginal."
+When I embarked on this project I assumed that the hyper-gentrification and high-rent blight of today's Greenwich Village was something that Jacobs could never have predicted.Yet, in "The Death and Life of Great American Cities", she maps out the exact feedback loop currently playing out in the neighborhood. In a chapter called "The Self-Destruction of Diversity", Jacobs writes,
+>"Whichever form the self-destruction takes, this, in broad strokes, is what happens: A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location's success, which is invariably based on flourishing and magnetic diversity, ardent competition for space in this locality develops. It is taken up in what amounts to the economic equivalent of a fad. The winners in the competition for space will represent only a narrow segment of the many uses that together created success...Thus, from this process, one or few dominating uses finally emerge triumphant. But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process... In time, a place that was once so successful and once the object of such ardent competition, wanes and becomes marginal."
 
 Decades later, the experiences of local business owners echo her warning. When Richard Geist closed Uncle Sam's Army/Navy Store on West 8th street after decades in business, he blamed reduced foot traffic rather than high rents. As chronicled by Jeremiah Moss on Vanishing New York: 
 >"Geist told me the closure is by choice, mostly, and that 8th Street just isn't 8th Street anymore... High rents wiped out the shoe businesses here, leaving a blighted ghost town about 10 years ago... Geist says there's no foot traffic. The street is dead." (https://vanishingnewyork.blogspot.com/2018/12/uncle-sams-armynavy.html). 
