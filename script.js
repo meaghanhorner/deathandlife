@@ -1,5 +1,10 @@
 gsap.registerPlugin(ScrollTrigger, Observer, ScrollToPlugin);
 
+//fix reload issue
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+ScrollTrigger.clearScrollMemory?.("manual");  
+window.scrollTo(0, 0);
+
 
 //conditions bar
 
@@ -136,7 +141,7 @@ function initConditionsBar() {
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
 }
 
-
+// this is the parser
 
 async function loadSections(mdPath) {
   const res = await fetch(mdPath);
@@ -193,12 +198,8 @@ async function renderSteps() {
 
 
 
-//
+// THIS IS THE MAIN SCROLLY ENGINE
 
-
-/* =========================================================
-   CONFIG
-   ========================================================= */
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 // text fades
@@ -273,6 +274,7 @@ function updateGraphic(id) {
 
   if (stage.dataset.current === id) return;
   stage.dataset.current = id;
+  updateCue(stage, id);   
 
   graphicKids(stage).forEach((g) => {
     if (g === panel) {
@@ -283,28 +285,51 @@ function updateGraphic(id) {
   });
 }
 
-function crossfadeOnly(stage, id) {
-  if (!id || stage.dataset.current === id) return;
-  const next = stage.querySelector("#" + CSS.escape(id));
-  const prev = stage.querySelector("#" + CSS.escape(stage.dataset.current));
-  if (!next) return;
+const CUE_GRAPHICS = 2;   // cue shows on this many graphics, counting from the first
 
-  if (prev) {
-    gsap.to(prev, { autoAlpha: 0, duration: FADE_OUT, ease: FADE_EASE, overwrite: true, y: 0 });
-  }
-  gsap.fromTo(
-    next,
-    { y: 0 },
-    { autoAlpha: 1, y: 0, duration: FADE_IN, ease: FADE_EASE, delay: 0.15, overwrite: true }
-  );
+function updateCue(stage, id = stage.dataset.current, instant = false) {
+  const cue = stage.querySelector(".scroll-cue");
+  if (!cue) return;
+
+  const target = id ? stage.querySelector("#" + CSS.escape(id)) : null;
+  const idx = graphicKids(stage).findIndex((c) => c === target || c.contains(target));
+  const show = !stage.closest(".photo_fade") && idx > -1 && idx < CUE_GRAPHICS;
+
+  if (instant) gsap.set(cue, { autoAlpha: show ? 1 : 0 });
+  else gsap.to(cue, { autoAlpha: show ? 1 : 0, duration: 0.4, ease: FADE_EASE, overwrite: true });
+}
+
+const panelOf = (stage, id) => {
+  const el = id ? stage.querySelector("#" + CSS.escape(id)) : null;
+  return el ? graphicKids(stage).find((c) => c === el || c.contains(el)) : null;
+};
+
+function crossfadeOnly(stage, rawId) {
+  const m = rawId && rawId.match(/^(.*)-zoom-(in|out)$/);
+  const id = m ? m[1] : rawId;
+  if (m && zoomHandlers[id]) zoomHandlers[id](m[2] === "in");
+
+  if (!id || stage.dataset.current === id) return;
+  const next = panelOf(stage, id);
+  if (!next) { console.warn("[graphic] no panel found for", id); return; }
+
+  graphicKids(stage).forEach((g) => {
+    if (g === next) {
+      gsap.fromTo(g, { y: 0 }, { autoAlpha: 1, y: 0, duration: FADE_IN, ease: FADE_EASE, delay: 0.15, overwrite: true });
+    } else {
+      gsap.to(g, { autoAlpha: 0, y: 0, duration: FADE_OUT, ease: FADE_EASE, overwrite: true });
+    }
+  });
 
   stage.dataset.current = id;
+  updateCue(stage, id);
 }
 
 // each step-line swaps its graphic as it crosses mid-screen (CSS sticky holds the stage; no pin)
 function initGraphicTriggers() {
   gsap.utils.toArray(".step-line").forEach((line) => {
     const go = () => {
+      console.log("[step]", line.dataset.svg, "stage.current =", line.closest(".centered-on-white, .narration-no-image")?.querySelector(".graphic-stage")?.dataset.current);
       const stage = line
         .closest(".centered-on-white, .narration-no-image")
         ?.querySelector(".graphic-stage");
@@ -598,6 +623,7 @@ function initChartH() {
    INIT
    ========================================================= */
 renderSteps().then(() => {
+  window.scrollTo(0,0);
   // each stage starts showing only its first graphic (cue stays visible)
   document.querySelectorAll(".graphic-stage").forEach((stage) => {
     const kids = graphicKids(stage);
@@ -621,6 +647,7 @@ renderSteps().then(() => {
   initGraphicGates();
 
   updateCurtainFades();
+  window.scrollTo(0,0);
   ScrollTrigger.refresh();
 });
 
@@ -1495,17 +1522,24 @@ Promise.all([
 
   // ---------- colors (edit keys to match your series names) ----------
     const colorByName = {
-    "Manhattan (NYT)":          "#4f8363",
-    "Manhattan":                "#4f8363",
+    "Manhattan (NYT)":          "#52889b",
     "Greenwich Village":        "#b25a3f",
-    "Bleecker Street":          "#b8801a",
-    "Bleecker":                 "#b8801a",
-    "Manhattan (REBNY)":        "#4f8363",
-    "Bleecker Street (REBNY)":  "#b8801a",
+    "Manhattan (REBNY)":        "#52889b",
+    "Bleecker (NYT)": "#8a9a4f",
+    "Bleecker (REBNY)": "#8a9a4f",
   };
+  
+  const legendLabelByName = {
+    "Manhattan (NYT)":          "Manhattan (New York Times)",
+    "Greenwich Village":        "Greenwich Village (New York Times)",
+    "Manhattan (REBNY)":        "Manhattan (REBNY)",
+    "Bleecker (NYT)":           "Bleecker Street (New York Times)",
+    "Bleecker (REBNY)":         "Bleecker Street (REBNY)",
+  };
+  const legendLabelOf = (name) => legendLabelByName[name] || name;
+
   const fallback = d3.scaleOrdinal(d3.schemeTableau10);
   const colorOf = (name) => colorByName[name] || fallback(name);
-
   
 
   // rows -> [{key, color, values}] sorted by year
@@ -1539,14 +1573,28 @@ Promise.all([
   const e1Domain = [d3.min(rows1, (d) => d.year), 2001];
   const view = { d0: e1Domain[0], d1: e1Domain[1] };   // what's currently on screen
 
-  
- 
-  
-
   // ---------- DOM ----------
   const instanceId = typeof inkNextId === "function" ? inkNextId("hdc-chart-e") : "hdc-chart-e";
   const root = d3.select("#chart-e");
-  root.html("").classed("hand-drawn-chart", true).attr("data-instance", instanceId);
+  root.html("")
+    .classed("hand-drawn-chart", true)
+    .attr("data-instance", instanceId)
+    .style("position", "relative");
+
+    const tooltip = root.append("div")
+    .attr("class", "hdc-tooltip")
+    .style("position", "absolute")
+    .style("pointer-events", "none")
+    .style("opacity", 0)
+    .style("padding", "6px 10px")
+    .style("font-family", "'Jost', sans-serif")
+    .style("font-size", "13px")
+    .style("line-height", "1.35")
+    .style("color", "#33302a")
+    .style("box-shadow", "0 2px 8px rgba(0,0,0,0.08)")
+    .style("z-index", "10");
+
+  const fmtRent = d3.format("$,.0f"); // e.g. $145 (change to "$,.2f" if you want cents)
 
 
   // legend: union of series; entries not in the current state are dimmed
@@ -1560,10 +1608,11 @@ Promise.all([
     .style("pointer-events", "none")
     .html((n) => {
       const c = colorOf(n);
+      const label = legendLabelOf(n);
       const bg = /rebny/i.test(n)
         ? c
         : `repeating-linear-gradient(90deg, ${c} 0 7px, transparent 7px 11px)`;
-      return `<span class="hdc-swatch" style="display:inline-block;width:34px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${bg}"></span>${n}`;
+      return `<span class="hdc-swatch" style="display:inline-block;width:34px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${bg}"></span>${label}`;
     });
 
   const svg = root.append("svg")
@@ -1582,11 +1631,39 @@ Promise.all([
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-     const clipId = instanceId + "-plotclip";
+  const clipId = instanceId + "-plotclip";
   defs.append("clipPath").attr("id", clipId)
     .append("rect")
     .attr("x", -6).attr("y", -6)
     .attr("width", innerWidth + 12).attr("height", innerHeight + 12);
+
+  // ---------- light overlays on left & right of 2001 (behind data lines) ----------
+  const overlayGroup = g.append("g")
+    .attr("class", "chart-e-2001-overlays")
+    .attr("clip-path", `url(#${clipId})`);
+
+  const rightBg = overlayGroup.append("rect")
+    .attr("y", 0)
+    .attr("height", innerHeight)
+    .attr("fill", "#eef0fc")   // change right tint color here
+    .style("opacity", 0);
+
+  const leftSource = overlayGroup.append("text")
+    .attr("y", innerHeight - 10)
+    .attr("text-anchor", "end")
+    .attr("font-family", "'Jost', sans-serif")
+    .attr("font-size", 14)
+    .attr("fill", "#33302a")
+    .style("opacity", 1)
+    .text("data source: The New York Times classified ads");
+    
+  const rightSource = overlayGroup.append("text")
+    .attr("y", innerHeight - 10)
+    .attr("font-family", "'Jost', sans-serif")
+    .attr("font-size", 14)
+    .attr("fill", "#33302a") 
+    .style("opacity", 0)
+    .text("data source: REBNY Retail Report, 2001-2026");
 
   const xAxisG = g.append("g").attr("class", "hdc-axis")
     .attr("transform", `translate(0,${innerHeight})`);
@@ -1603,11 +1680,11 @@ Promise.all([
 
   g.append("text")
     .attr("x", 0).attr("y", -14)
-    .attr("font-size", 11).attr("fill", "#33302a").attr("fill-opacity", 0.8)
-    .text("Annual rent per sq ft");
+    .attr("font-size", 16).attr("fill", "#33302a").attr("font-family", "'Jost', sans-serif")
+    .text("Average Annual rent per square foot, adjusted for inflation");
 
   // ---------- layers: one lines group + one points group per dataset ----------
-    function makeLayer(seriesList, cls, dashed = false) {
+  function makeLayer(seriesList, cls, dashed = false) {
     const lines = g.append("g").attr("class", `${cls}-lines`)
       .attr("clip-path", `url(#${clipId})`).style("opacity", 0);
     const pts = g.append("g").attr("class", `${cls}-pts`)
@@ -1620,7 +1697,8 @@ Promise.all([
       .attr("stroke", (d) => d.color)
       .attr("stroke-width", 3)
       .attr("stroke-linecap", dashed ? "butt" : "round")
-      .attr("stroke-dasharray", dashed ? "10 8" : null)
+      .attr("pathLength", dashed ? 1000 : null)
+      .attr("stroke-dasharray", dashed ? "12 9" : null)
       .attr("filter", dashed ? null : inkFilter);
 
     const groups = pts.selectAll("g")
@@ -1632,8 +1710,36 @@ Promise.all([
       d3.select(this).selectAll("circle")
         .data(s.values)
         .join("circle")
-        .attr("r", 4)
-        .attr("filter", inkFilter);
+        .attr("r", 4.5)
+        .attr("filter", inkFilter)
+        .style("cursor", "pointer")
+        .on("mouseenter", function (event, v) {
+          // Ignore hover if this layer is hidden in the current scrollytelling state
+          if (parseFloat(pts.style("opacity")) < 0.2) return;
+
+          d3.select(this).attr("r", 6.5);
+          const [mx, my] = d3.pointer(event, root.node());
+
+          tooltip
+            .style("opacity", 1)
+            .html(
+              `<div style="font-weight:600;color:${s.color};">${legendLabelOf(s.key)}</div>` +
+              `<div>${v.year}: <strong>${fmtRent(v.value)}</strong> / sq ft</div>`
+            )
+            .style("left", `${mx + 12}px`)
+            .style("top", `${my - 28}px`);
+        })
+        .on("mousemove", function (event) {
+          if (parseFloat(pts.style("opacity")) < 0.2) return;
+          const [mx, my] = d3.pointer(event, root.node());
+          tooltip
+            .style("left", `${mx + 12}px`)
+            .style("top", `${my - 28}px`);
+        })
+        .on("mouseleave", function () {
+          d3.select(this).attr("r", 4.5);
+          tooltip.style("opacity", 0);
+        });
     });
 
     function update() {
@@ -1648,18 +1754,15 @@ Promise.all([
     return { lines: lines.node(), pts: pts.node(), update };
   }
 
- 
-
-
   // draw order: faded NYT underneath, REBNY on top, e1 version separate
-    const L = {
+  const L = {
     nyt:      makeLayer(sNyt, "chart-e-nyt", true),
     rebnyMan: makeLayer(sRebnyMan, "chart-e-rebny-man"),
     rebnyBlk: makeLayer(sRebnyBlk, "chart-e-rebny-blk"),
     e1:       makeLayer(s1, "chart-e-e1", true),
   };
 
- // ---------- 2001 line + annotations (hidden until their state) ----------
+  // ---------- 2001 line + annotations (hidden until their state) ----------
   const refLine = g.append("line")
     .attr("x1", x(2001)).attr("x2", x(2001))
     .attr("y1", 0).attr("y2", innerHeight)
@@ -1679,26 +1782,56 @@ Promise.all([
     return t.node();
   }
 
-  // left of the 2001 line, near the top where the chart is empty
+    // ---- note placement: nudge these numbers ----
+  const NOTE_PAD = 10;         // gap to the right of the 2001 line
+  const NOTE_2001_LIFT = 110;   // px above the Manhattan (REBNY) line at 2001
+  const NOTE_BLK_DROP = 30;    // px below the Bleecker (REBNY) line at 2001
+  const NOTE_NYT_LIFT = 100;    // px above the NYT cluster
+
+  const valueAtOrAfter = (s, yr) =>
+    (s.values.find((v) => v.year >= yr) || s.values[s.values.length - 1]).value;
+  const nearestValue = (s, yr) =>
+    s.values.reduce((a, b) => (Math.abs(b.year - yr) < Math.abs(a.year - yr) ? b : a)).value;
+
+  // right of the 2001 line, above the Manhattan (REBNY) line
   const note2001 = makeNote(
     ["Manhattan rents as a whole kept climbing",
      "after 2001 at about the same pace",
      "as in the decades before."],
-    x(2001) - 10, 14, "end");
+    x(2001) + NOTE_PAD,
+    sRebnyMan.length ? y(valueAtOrAfter(sRebnyMan[0], 2001)) - NOTE_2001_LIFT : 114,
+    "start");
 
-  // beside the end of the REBNY Bleecker line
+  // right of the 2001 line, below the Bleecker (REBNY) line
   let noteBleecker = null;
   if (sRebnyBlk.length) {
-    const last = sRebnyBlk[0].values[sRebnyBlk[0].values.length - 1];
     noteBleecker = makeNote(
       ["Meanwhile, rents on", "Bleecker Street surged."],
-      x(last.year) - 12, y(last.value) - 8, "end");
+      x(2001) + NOTE_PAD,
+      y(valueAtOrAfter(sRebnyBlk[0], 2001)) + NOTE_BLK_DROP,
+      "start");
   }
 
+  // centered over the three NYT lines (midpoint of the pre-2001 span)
+  const midYear = (e1Domain[0] + 2001) / 2;
+  const noteNyt = makeNote(
+    ["Until 2001, rents in Manhattan, Greenwich Village",
+     "and on Bleecker Street tracked each other closely."],
+    x(midYear),
+    y(d3.max(s1, (s) => nearestValue(s, midYear))) - NOTE_NYT_LIFT,
+    "middle");
 
-  // opacities taken from v01 / v02 (lines, points)
-    const noteTargets = (a, b, c) => [
-    [refLine, a], [note2001, a], ...(noteBleecker ? [[noteBleecker, c]] : []),
+  const noteTargets = (a, b, c, d) => [
+    [refLine.node(), a],
+    [note2001, a],
+    [noteNyt, d],
+    ...(noteBleecker ? [[noteBleecker, c]] : []),
+  ];
+
+  const overlayTargets = (rightOp) => [
+    [rightBg.node(), rightOp],
+    [rightSource.node(), rightOp ? .8 : 0],
+    [leftSource.node(), 1],
   ];
 
   const states = {
@@ -1708,7 +1841,8 @@ Promise.all([
         [L.nyt.lines, 0], [L.nyt.pts, 0],
         [L.rebnyMan.lines, 0], [L.rebnyMan.pts, 0],
         [L.rebnyBlk.lines, 0], [L.rebnyBlk.pts, 0],
-        ...noteTargets(0, 0, 0),
+        ...noteTargets(0, 0, 0, 1),
+        ...overlayTargets(0),
       ],
       legend: new Set(s1.map((s) => s.key)),
     },
@@ -1718,7 +1852,8 @@ Promise.all([
         [L.nyt.lines, 0], [L.nyt.pts, 0],
         [L.rebnyMan.lines, 0.5], [L.rebnyMan.pts, 0.8],
         [L.rebnyBlk.lines, 0], [L.rebnyBlk.pts, 0],
-        ...noteTargets(1, 1, 0),
+        ...noteTargets(1, 1, 0, 1),
+        ...overlayTargets(0.3),
       ],
       legend: new Set(sRebnyMan.map((s) => s.key)),
     },
@@ -1728,7 +1863,8 @@ Promise.all([
         [L.nyt.lines, 0.15], [L.nyt.pts, 0.25],
         [L.rebnyMan.lines, 0.5], [L.rebnyMan.pts, 0.8],
         [L.rebnyBlk.lines, 0.5], [L.rebnyBlk.pts, 0.8],
-        ...noteTargets(1, 1, 1),
+        ...noteTargets(1, 1, 1, 1),
+        ...overlayTargets(0.3),
       ],
       legend: new Set([...sNyt, ...sRebny].map((s) => s.key)),
     },
@@ -1775,10 +1911,14 @@ Promise.all([
 
     st.targets.forEach(([el, op]) => {
       gsap.to(el, { opacity: op, duration: dur, ease: "power1.inOut", overwrite: true });
+      d3.select(el).style("pointer-events", op > 0.2 ? "auto" : "none");
     });
+    tooltip.style("opacity", 0);
 
     legendSpans.each(function (n) {
-      gsap.to(this, { opacity: st.legend.has(n) ? 1 : 0.3, duration: dur, overwrite: true });
+      const hidden = name === "e1" && /rebny/i.test(n);
+      const op = st.legend.has(n) ? 1 : hidden ? 0 : 0.3;
+      gsap.to(this, { opacity: op, duration: dur, overwrite: true });
     });
 
     swapText(subtitleEl, texts[name].subtitle, dur, instant);
@@ -1795,15 +1935,21 @@ Promise.all([
     x.domain([view.d0, view.d1]);
     drawAxis();
     Object.values(L).forEach((l) => l.update());
-    refLine.attr("x1", x(2001)).attr("x2", x(2001));
-    moveNote(note2001, x(2001) - 10);
-    if (noteBleecker) {
-      const last = sRebnyBlk[0].values[sRebnyBlk[0].values.length - 1];
-      moveNote(noteBleecker, x(last.year) - 12, y(last.value) - 8);
-    }
+
+    const raw2001 = x(2001);
+    const clamped2001 = Math.max(0, Math.min(innerWidth, raw2001));
+
+    rightBg.attr("x", clamped2001).attr("width", Math.max(0, innerWidth - clamped2001));
+
+    rightSource.attr("x", clamped2001 + 10);
+    leftSource.attr("x", clamped2001 - 10);
+
+    refLine.attr("x1", raw2001).attr("x2", raw2001);
+    moveNote(note2001, x(2001) + NOTE_PAD);
+    if (noteBleecker) moveNote(noteBleecker, x(2001) + NOTE_PAD);
+    moveNote(noteNyt, x(midYear));
   }
   render();   // draws the initial e1 view
-
 
   // hand the real function to the public handle and draw whatever was requested
   window.chartE.show = show;
@@ -2035,6 +2181,8 @@ fetch("data/metrics_comparison.json")
         value: (d) => +d.population,
         yLabel: "Residents",
         fmt: d3.format(",.0f"),
+        yMax: () => 1800000,
+        axisFmt: d3.format(".2~s"),   // 200k, 1.2M, 1.8M
         title: "Total Population, 1970 and 2020",
         subtitle: "Residents counted in the decennial census",
         source: "Source: U.S. Census Bureau via NHGIS. 1970 interpolated to 2010 tract boundaries."
@@ -2059,7 +2207,7 @@ fetch("data/metrics_comparison.json")
     };
 
     const areas = ["Manhattan", "Greenwich Village"];
-    const colors = { "Manhattan": "#2c3e50", "Greenwich Village": "#c0392b" };
+    const colors = { "Manhattan": "#52889b", "Greenwich Village": "#b25a3f" };
     const keys = { "Manhattan": "manhattan", "Greenwich Village": "gv" };
     const names = { manhattan: "Manhattan", gv: "Greenwich Village" };
 
@@ -2075,7 +2223,7 @@ fetch("data/metrics_comparison.json")
       return { key: keys[areaName], color: colors[areaName], vals };
     });
 
-    const width = 860, height = 860;
+    const width = 660, height = 660;
     const margin = { top: 44, right: 190, bottom: 56, left: 120 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -2083,6 +2231,27 @@ fetch("data/metrics_comparison.json")
     const instanceId = typeof inkNextId === "function" ? inkNextId("hdc-chart-h1") : "hdc-chart-h1";
     const root = d3.select("#chart-h1");
     root.html("").classed("hand-drawn-chart", true).attr("data-instance", instanceId);
+    root.style("position", "relative");
+    const tooltip = root.append("div")
+      .attr("class", "hdc-tooltip")
+      .style("position", "absolute")
+      .style("pointer-events", "none")
+      .style("opacity", 0)
+      .style("z-index", "10");
+
+    const placeTip = (event) => {
+      const [mx, my] = d3.pointer(event, root.node());
+      const rootW = root.node().clientWidth;
+      const flip = mx > rootW * 0.6;
+      tooltip
+        .style("left", flip ? "auto" : `${mx + 12}px`)
+        .style("right", flip ? `${rootW - mx + 12}px` : "auto")
+        .style("top", `${my - 28}px`);
+    };
+    const bindTip = (sel, html) => sel
+      .on("mouseenter", (event) => { tooltip.html(html).style("opacity", 1); placeTip(event); })
+      .on("mousemove", placeTip)
+      .on("mouseleave", () => tooltip.style("opacity", 0));
 
     root.append("div").attr("class", "hdc-legend")
       .selectAll("span")
@@ -2091,7 +2260,7 @@ fetch("data/metrics_comparison.json")
       .attr("class", "hdc-legend-btn")
       .style("cursor", "default")
       .style("pointer-events", "none")
-      .html((d) => `<span class="hdc-swatch" style="background:${d.color}"></span>${names[d.key]}`);
+      .html((d) => `<span class="hdc-swatch" style="display:inline-block;width:34px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${d.color}"></span>${names[d.key]}`);
 
     const svg = root.append("svg")
       .attr("class", "hdc-main")
@@ -2137,45 +2306,59 @@ fetch("data/metrics_comparison.json")
       // y axis title (what is being measured)
       layer.append("text")
         .attr("x", xL - margin.left + 6).attr("y", -22)
-        .attr("font-size", 12).attr("fill", "#33302a").attr("fill-opacity", 0.85)
+        .attr("font-size", 16).attr("fill", "#33302a").attr("fill-opacity", 1).attr("font-family", "'Jost', sans-serif")
         .text(st.yLabel);
 
-      // vertical guides + year labels (x axis)
-      [[xL, Y0], [xR, Y1]].forEach(([px, yr]) => {
-        layer.append("line")
-          .attr("x1", px).attr("x2", px).attr("y1", 0).attr("y2", innerHeight)
-          .attr("stroke", "#33302a").attr("stroke-opacity", 0.25);
-        layer.append("text")
-          .attr("x", px).attr("y", innerHeight + 24)
-          .attr("text-anchor", "middle").attr("font-size", 13).attr("fill", "#33302a")
-          .text(yr);
-      });
+      // solid left axis and solid bottom axis (ticks at the two census years)
+      layer.append("g")
+        .attr("class", "hdc-axis")
+        .call(d3.axisLeft(y).ticks(6).tickFormat(st.axisFmt || st.fmt))
+        .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
+
+      const xAxisScale = d3.scaleLinear().domain([Y0, Y1]).range([xL, xR]);
+      layer.append("g")
+        .attr("class", "hdc-axis")
+        .attr("transform", `translate(0,${y(0)})`)
+        .call(d3.axisBottom(xAxisScale).tickValues([Y0, Y1]).tickFormat(d3.format("d")))
+        .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
       layer.append("text")
         .attr("x", innerWidth / 2).attr("y", innerHeight + 46)
         .attr("text-anchor", "middle")
-        .attr("font-size", 12).attr("fill", "#33302a").attr("fill-opacity", 0.85)
+        .attr("font-size", 16).attr("fill", "#33302a").attr("fill-opacity", 1).attr("font-family", "'Jost', sans-serif")
         .text("Census year");
-
-      // baseline at zero
-      layer.append("line")
-        .attr("x1", xL).attr("x2", xR).attr("y1", y(0)).attr("y2", y(0))
-        .attr("stroke", "#33302a").attr("stroke-opacity", 0.2).attr("stroke-dasharray", "3 4");
-      layer.append("text")
-        .attr("x", xL - 10).attr("y", y(0) + 4).attr("text-anchor", "end")
-        .attr("font-size", 11).attr("fill", "#33302a").attr("fill-opacity", 0.6).text("0");
 
       const usable = seriesDefs.filter((s) => s.vals[name][0] != null && s.vals[name][1] != null);
 
-      // slopes + end dots
+       // slopes + end dots + hover targets
       usable.forEach((s, i) => {
         const [a, b] = s.vals[name];
+        const head = `<div style="font-weight:600;color:${s.color};">${names[s.key]}</div>`;
+        const unit = `<div style="opacity:.7;">${st.yLabel}</div>`;
+
         layer.append("path")
           .attr("fill", "none").attr("stroke", s.color)
           .attr("stroke-width", 3).attr("stroke-linecap", "round")
           .attr("filter", inkFilter).style("opacity", 0.9)
           .attr("d", inkPath([[xL, y(a)], [xR, y(b)]], s.key.length + i));
-        [[xL, a], [xR, b]].forEach(([px, v]) =>
-          layer.append("circle").attr("cx", px).attr("cy", y(v)).attr("r", 5).attr("fill", s.color));
+
+        // wide invisible line: shows both years and the change
+        bindTip(
+          layer.append("path")
+            .attr("d", `M${xL},${y(a)}L${xR},${y(b)}`)
+            .attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 16),
+          head +
+          `<div>${Y0}: <strong>${st.fmt(a)}</strong> ${st.yLabel}</div>` +
+          `<div>${Y1}: <strong>${st.fmt(b)}</strong> ${st.yLabel}</div>` +
+          `<div>Change: ${d3.format("+.0%")((b - a) / a)}</div>`
+        );
+
+        [[xL, a, Y0], [xR, b, Y1]].forEach(([px, v, yr]) => {
+          layer.append("circle").attr("cx", px).attr("cy", y(v)).attr("r", 5).attr("fill", s.color);
+          bindTip(
+            layer.append("circle").attr("cx", px).attr("cy", y(v)).attr("r", 12).attr("fill", "transparent"),
+            head + `<div>${yr}: <strong>${st.fmt(v)}</strong></div>` + unit
+          );
+        });
       });
 
       // direct labels
@@ -2184,11 +2367,11 @@ fetch("data/metrics_comparison.json")
 
       left.forEach((d) => layer.append("text")
         .attr("x", xL - 12).attr("y", d.y + 4).attr("text-anchor", "end")
-        .attr("font-size", 13).attr("font-weight", 600).attr("fill", d.color)
+        .attr("font-size", 16).attr("font-weight", 600).attr("fill", d.color).attr("font-family", "'Jost', sans-serif")
         .text(st.fmt(d.v)));
       right.forEach((d) => layer.append("text")
         .attr("x", xR + 12).attr("y", d.y + 4).attr("text-anchor", "start")
-        .attr("font-size", 13).attr("font-weight", 600).attr("fill", d.color)
+        .attr("font-size", 16).attr("font-weight", 600).attr("fill", d.color).attr("font-family", "'Jost', sans-serif")
         .text(`${st.fmt(d.v)}  ${names[d.key]}`));
 
       layers[name] = layer;
@@ -2199,10 +2382,12 @@ fetch("data/metrics_comparison.json")
     function show(name, instant) {
       if (!states[name]) { console.warn(`Chart H1: unknown state "${name}"`); return; }
       if (name === current && !instant) return;
+      
 
       const dur = instant ? 0 : 600;
       const prev = current;
       current = name;
+      tooltip.style("opacity", 0)
 
       if (prev && layers[prev]) {
         layers[prev]
@@ -2650,18 +2835,18 @@ chartH("#chart-h", "data/hh_size.json"); */
 // CHART J FOCUS CHARTS FOR SPECIFIC TYPES OF BUSINESSES 
 
 function createChartJ(dataPath = "data/focus_small_multiples.json") {
-  const metric    = "n";          // "n" = counts, "share" = share of surveyed entries
-  const sharedY   = true;         // same y-axis for every button (needs the small helper patch below)
-  const lineColor = "#E4572E";    // one color for every series
+  const metric    = "n";
+  const sharedY   = true;
+  const lineColor = "#E4572E";
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const fmt  = metric === "share" ? d3.format(".1%") : d3.format("d");
+  const mq   = window.matchMedia("(max-width: 600px)");
 
   return d3.json(dataPath).then(raw => {
-    // reshape the R export into the helper's data shape
     const series = raw.series.map(s => ({
       key:    slug(s.name),
       label:  s.name,
-      values: s.points.map(p => ({ x: p.year, y: p[metric] }))
+      values: s.points.map(p => ({ x: p.year, y: p[metric], n: p.n, N: p.N, share: p.share }))
     }));
     const globalMax = d3.max(series, s => d3.max(s.values, v => v.y));
 
@@ -2674,6 +2859,7 @@ function createChartJ(dataPath = "data/focus_small_multiples.json") {
       (metric === "share" ? "Share of surveyed entries" : "Number of businesses") +
       ` at the surveyed addresses. Surveyed entries per year: ${raw.entries_min}–${raw.entries_max}.`);
 
+    const pct = d3.format(".1%"), num = d3.format(",");
     let current = null;
 
     function setSeries(name) {
@@ -2685,10 +2871,14 @@ function createChartJ(dataPath = "data/focus_small_multiples.json") {
         container: plot.node(),
         categories: [{ key: s.key, label: s.label, color: lineColor }],
         data: [{ key: s.key, values: s.values }],
-        width: 860,
-        mainHeight: 380,
+        width: 860,     // smaller coordinate space on phones = larger text
+        mainHeight: 760,
         brush: false,
-        yMax: sharedY ? globalMax : null     // ignored unless you add the patch below
+        yMax: sharedY ? globalMax : null,
+        tooltip: (key, p) =>
+          `<strong>${s.label}, ${p.x}</strong><br>` +
+          `${p.n} ${p.n === 1 ? "business" : "businesses"} · ` +
+          `${pct(p.share)} of ${num(p.N)} surveyed entries`
       });
 
       const first = s.values[0], last = s.values[s.values.length - 1];
@@ -2703,6 +2893,11 @@ function createChartJ(dataPath = "data/focus_small_multiples.json") {
       .attr("type", "button").attr("class", "cj-btn")
       .text(d => d.label)
       .on("click", (event, d) => setSeries(d.key));
+
+    // redraw when the screen crosses the phone breakpoint
+    mq.addEventListener("change", () => {
+      if (current) { setSeries(current); if (window.ScrollTrigger) ScrollTrigger.refresh(); }
+    });
 
     window.chartJ = { setSeries, names: series.map(d => d.label) };
     setSeries(series[0].key);
@@ -2776,89 +2971,114 @@ function createChartK(data = null) {
     }
   ];
 
-  const accentColor = "#E4572E";
-  const mutedColor  = "#9AA0A6";
-  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const accentColor = "#b25a3f";
+  const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const fmtCurrency = d3.format("$,.0f");
-  const fmtK = d => `$${Math.round(d / 1000)}k`;
+  const fmtK = (d) => `$${Math.round(d / 1000)}k`;
+
+  // Deterministic pixel jitter (dx, dy) so overlapping baselines & vertical jumps separate cleanly
+  const jitterByKey = {
+    "second-childhood":       { dx: -4, dy:  4 }, // 2008, $7k -> nudged left & slightly down
+    "nusraty-afghan-imports": { dx:  4, dy: -4 }, // 2008, $7k -> nudged right & slightly up
+    "rocco-ristorante":       { dx: -4, dy:  2 }, // 2012, $8k -> nudged left
+    "arleen-bowman":          { dx:  4, dy: -2 }, // 2012, $2.5k -> nudged right
+    "cafe-angelique":         { dx:  0, dy:  0 }, // 2014, $16k -> isolated
+    "da-vinci-shoes":         { dx:  0, dy:  0 }, // 2016, $6k -> isolated
+  };
 
   const render = (raw) => {
-    const stores = raw.map(d => ({
-      ...d,
-      key: slug(d.name),
-      startYear: d.year - 5,
-      mult: (d.newRent / d.prevRent).toFixed(1)
-    }));
+    const stores = raw.map((d, i) => {
+      const key = slug(d.name);
+      const jit = jitterByKey[key] || { dx: ((i % 3) - 1) * 3, dy: ((i % 2) ? 2 : -2) };
+      return {
+        ...d,
+        key,
+        startYear: d.year - 5,
+        mult: (d.newRent / d.prevRent).toFixed(1),
+        dx: jit.dx,
+        dy: jit.dy,
+        seed: i + 1,
+      };
+    });
 
-    const root = d3.select("#chart-k").classed("chart-k", true).html("");
-    const buttons = root.append("div").attr("class", "ck-buttons")
-      .attr("role", "group").attr("aria-label", "Store case study");
+    const instanceId = typeof inkNextId === "function" ? inkNextId("hdc-chart-k") : "hdc-chart-k";
+    const root = d3.select("#chart-k")
+      .classed("chart-k", true)
+      .classed("hand-drawn-chart", true)
+      .attr("data-instance", instanceId)
+      .html("");
+
     const plot    = root.append("div").attr("class", "ck-plot");
     const readout = root.append("p").attr("class", "ck-readout").attr("aria-live", "polite");
-    root.append("p").attr("class", "ck-caption").text(
-      "Reported monthly commercial rents in nominal dollars (not adjusted for inflation). " +
-      "Horizontal lines fade in from 5 years prior to renewal; vertical jumps mark the proposed rent in the year each business closed or relocated. " +
-      "Sources: The New York Times and local press reports."
-    );
 
     const width = 860;
     const height = 700;
-    const margin = { top: 28, right: 175, bottom: 42, left: 64 };
+    const margin = { top: 28, right: 185, bottom: 42, left: 64 };
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
 
     const svg = plot.append("svg")
+      .attr("class", "hdc-main")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("width", "100%")
       .style("max-width", `${width}px`)
+      .style("height", "auto")
       .style("overflow", "visible");
 
     const defs = svg.append("defs");
+    const ink = typeof installInkFilters === "function" ? installInkFilters(defs, instanceId) : null;
+    const inkFilter = ink ? `url(#${ink.filterId})` : null;
+    const inkPath = (pts, seed) =>
+      typeof inkLinePath === "function" ? inkLinePath(pts, seed) : d3.line()(pts);
+
     const g = svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xMin = d3.min(stores, d => d.startYear); // 2003
-    const xMax = d3.max(stores, d => d.year);      // 2016
+    const xMin = d3.min(stores, (d) => d.startYear); // 2003
+    const xMax = d3.max(stores, (d) => d.year);      // 2016
     const yMax = 50000;
 
     const x = d3.scaleLinear().domain([xMin, xMax]).range([0, innerW]);
     const y = d3.scaleLinear().domain([0, yMax]).range([innerH, 0]);
 
     // Gridlines & Axes
-    g.append("g")
-      .attr("class", "ck-grid")
-      .call(d3.axisLeft(y).ticks(5).tickSize(-innerW).tickFormat(""))
-      .call(sel => sel.select(".domain").remove())
-      .call(sel => sel.selectAll("line")
-        .attr("stroke", "#E5E5E5")
-        .attr("stroke-dasharray", "2,2"));
 
     g.append("g")
-      .attr("class", "ck-axis ck-axis-x")
+      .attr("class", "ck-axis ck-axis-x hdc-axis")
       .attr("transform", `translate(0,${innerH})`)
       .call(d3.axisBottom(x).ticks(7).tickFormat(d3.format("d")))
-      .call(sel => sel.select(".domain").attr("stroke", "#666"));
+      .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
 
     g.append("g")
-      .attr("class", "ck-axis ck-axis-y")
+      .attr("class", "ck-axis ck-axis-y hdc-axis")
       .call(d3.axisLeft(y).ticks(5).tickFormat(fmtK))
-      .call(sel => sel.select(".domain").remove());
+      .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
 
     g.append("text")
       .attr("x", 0)
       .attr("y", -10)
-      .attr("fill", "#555")
-      .attr("font-size", "12px")
+      .attr("fill", "#33302a")
+      .attr("font-family", "'Jost', sans-serif")
+      .attr("font-size", "14px")
       .text("Monthly rent (nominal $)");
 
-    // Left-to-right fade gradients (userSpaceOnUse so horizontal lines render cleanly)
-    stores.forEach(d => {
+    // Helper for each store's jittered screen coordinates
+    const coords = (d) => ({
+      x0: x(d.startYear) + d.dx,
+      x1: x(d.year) + d.dx,
+      y0: y(d.prevRent) + d.dy,
+      y1: y(d.newRent) + d.dy,
+    });
+
+    // Left-to-right fade gradients matched to each store's jittered x span
+    stores.forEach((d) => {
+      const c = coords(d);
       const grad = defs.append("linearGradient")
-        .attr("id", `ck-fade-${d.key}`)
+        .attr("id", `${instanceId}-fade-${d.key}`)
         .attr("gradientUnits", "userSpaceOnUse")
-        .attr("x1", x(d.startYear))
+        .attr("x1", c.x0)
         .attr("y1", 0)
-        .attr("x2", x(d.year))
+        .attr("x2", c.x1)
         .attr("y2", 0);
 
       grad.append("stop")
@@ -2877,7 +3097,7 @@ function createChartK(data = null) {
         .attr("stop-opacity", 1);
     });
 
-    // Small vertical label nudges so overlapping 2008 / 2012 endpoints don't collide
+    // Small vertical label nudges so closely spaced endpoints don't collide
     const labelOffsets = {
       "nusraty-afghan-imports": -4,
       "cafe-angelique": -2,
@@ -2887,86 +3107,139 @@ function createChartK(data = null) {
       "second-childhood": 4
     };
 
-    const storeGroups = g.selectAll(".ck-series")
-      .data(stores, d => d.key)
+       const storeGroups = g.selectAll(".ck-series")
+      .data(stores, (d) => d.key)
       .join("g")
-      .attr("class", "ck-series")
-      .style("cursor", "pointer")
-      .on("click", (event, d) => {
-        setSeries(current === d.key ? "all" : d.key);
-      });
+      .attr("class", "ck-series");
 
-    // 1. Horizontal 5-year fading baseline
-    storeGroups.append("line")
+    // 1. Hand-drawn horizontal 5-year fading baseline
+    storeGroups.append("path")
       .attr("class", "ck-baseline")
-      .attr("x1", d => x(d.startYear))
-      .attr("x2", d => x(d.year))
-      .attr("y1", d => y(d.prevRent))
-      .attr("y2", d => y(d.prevRent))
-      .attr("stroke", d => `url(#ck-fade-${d.key})`)
-      .attr("stroke-width", 2.5)
-      .attr("stroke-linecap", "round");
+      .attr("d", (d) => {
+        const c = coords(d);
+        const midX = (c.x0 + c.x1) / 2;
+        return inkPath([[c.x0, c.y0], [midX, c.y0], [c.x1, c.y0]], d.seed);
+      })
+      .attr("fill", "none")
+      .attr("stroke", (d) => `url(#${instanceId}-fade-${d.key})`)
+      .attr("opacity", 0.6)
+      .attr("stroke-width", 2.8)
+      .attr("stroke-linecap", "round")
+      .attr("filter", inkFilter);
 
-    // 2. Vertical renewal jump
-    storeGroups.append("line")
+    // 2. Hand-drawn vertical renewal jump
+    storeGroups.append("path")
       .attr("class", "ck-cliff")
-      .attr("x1", d => x(d.year))
-      .attr("x2", d => x(d.year))
-      .attr("y1", d => y(d.prevRent))
-      .attr("y2", d => y(d.newRent))
+      .attr("d", (d) => {
+        const c = coords(d);
+        const midY = (c.y0 + c.y1) / 2;
+        return inkPath([[c.x1, c.y0], [c.x1, midY], [c.x1, c.y1]], d.seed + 10);
+      })
+      .attr("fill", "none")
       .attr("stroke", accentColor)
-      .attr("stroke-width", 2.5);
-
-    // 3. Anchor dot at renewal knee
-    storeGroups.append("circle")
-      .attr("class", "ck-knee")
-      .attr("cx", d => x(d.year))
-      .attr("cy", d => y(d.prevRent))
-      .attr("r", 3)
-      .attr("fill", "#fff")
-      .attr("stroke", accentColor)
-      .attr("stroke-width", 2);
+      .attr("opacity", 0.6)
+      .attr("stroke-width", 2.8)
+      .attr("stroke-linecap", "round")
+      .attr("filter", inkFilter);
 
     // 4. Top endpoint marker (filled = closed, hollow = moved)
     storeGroups.append("circle")
       .attr("class", "ck-peak")
-      .attr("cx", d => x(d.year))
-      .attr("cy", d => y(d.newRent))
+      .attr("cx", (d) => coords(d).x1)
+      .attr("cy", (d) => coords(d).y1)
       .attr("r", 4.5)
-      .attr("fill", d => d.outcome === "moved" ? "#fff" : accentColor)
+      .attr("fill", (d) => d.outcome === "moved" ? "#fff" : accentColor)
       .attr("stroke", accentColor)
-      .attr("stroke-width", 2.2);
+      .attr("stroke-width", 2.2)
+      .attr("filter", inkFilter);
 
     // 5. Direct end labels
     storeGroups.append("text")
       .attr("class", "ck-label")
-      .attr("x", d => x(d.year) + 8)
-      .attr("y", d => y(d.newRent) + (labelOffsets[d.key] || 0))
+      .attr("x", (d) => coords(d).x1 + 9)
+      .attr("y", (d) => coords(d).y1 + (labelOffsets[d.key] || 0))
       .attr("dominant-baseline", "middle")
+      .attr("font-family", "'Jost', sans-serif")
       .attr("font-size", "12px")
       .attr("font-weight", "600")
-      .attr("fill", "#222")
-      .text(d => `${d.name} (${d.year})`);
+      .attr("fill", "#33302a")
+      .text((d) => `${d.name} (${d.year})`);
 
-    // Subtle legend in top-left for closed vs. moved
+
+ // 6. Wide invisible hit areas so the thin lines are easy to hover
+    storeGroups.append("path")
+      .attr("class", "ck-hit")
+      .attr("d", (d) => {
+        const c = coords(d);
+        return `M${c.x0},${c.y0}L${c.x1},${c.y0}L${c.x1},${c.y1}`;
+      })
+      .attr("fill", "none")
+      .attr("stroke", "transparent")
+      .attr("stroke-width", 16)
+      .attr("pointer-events", "stroke");
+
+    // Tooltip
+    root.style("position", "relative");
+    const tooltip = root.append("div")
+      .attr("class", "hdc-tooltip")
+      .style("position", "absolute")
+      .style("pointer-events", "none")
+      .style("opacity", 0)
+      .style("z-index", "10");
+
+    const tipHtml = (d) => {
+      const approx = d.approx ? "~" : "";
+      const outcome = d.outcome === "moved" ? "Relocated" : "Closed at renewal";
+      return (
+        `<div style="font-weight:600;color:${accentColor};">${d.name}</div>` +
+        `<div>${d.detail}</div>` +
+        `<div>${d.year}: ${fmtCurrency(d.prevRent)} \u2192 ${approx}${fmtCurrency(d.newRent)} / month (${approx}${d.mult}\u00d7)</div>` +
+        `<div>${outcome}</div>` +
+        `<div style="opacity:.7;">${d.source}</div>`
+      );
+    };
+
+    const placeTip = (event) => {
+      const [mx, my] = d3.pointer(event, root.node());
+      const rootW = root.node().clientWidth;
+      const flip = mx > rootW * 0.6;   // flip to the left of the cursor near the right edge
+      tooltip
+        .style("left", flip ? "auto" : `${mx + 12}px`)
+        .style("right", flip ? `${rootW - mx + 12}px` : "auto")
+        .style("top", `${my - 28}px`);
+    };
+
+    storeGroups
+      .on("mouseenter", (event, d) => {
+        tooltip.html(tipHtml(d)).style("opacity", 1);
+        placeTip(event);
+      })
+      .on("mousemove", placeTip)
+      .on("mouseleave", () => tooltip.style("opacity", 0));
+
+       // Subtle legend in top-left for closed vs. moved (stacked)
     const legend = g.append("g")
       .attr("class", "ck-legend")
       .attr("transform", "translate(8, 6)");
 
     legend.append("circle")
       .attr("cx", 0).attr("cy", 0).attr("r", 4)
-      .attr("fill", accentColor);
+      .attr("fill", accentColor)
+      .attr("filter", inkFilter);
     legend.append("text")
       .attr("x", 9).attr("y", 0).attr("dominant-baseline", "middle")
-      .attr("font-size", "11px").attr("fill", "#555")
+      .attr("font-family", "'Jost', sans-serif")
+      .attr("font-size", "14px").attr("fill", "#33302a")
       .text("Closed at renewal");
 
     legend.append("circle")
-      .attr("cx", 118).attr("cy", 0).attr("r", 4)
-      .attr("fill", "#fff").attr("stroke", accentColor).attr("stroke-width", 2);
+      .attr("cx", 0).attr("cy", 18).attr("r", 4)
+      .attr("fill", "#fff").attr("stroke", accentColor).attr("stroke-width", 2)
+      .attr("filter", inkFilter);
     legend.append("text")
-      .attr("x", 127).attr("y", 0).attr("dominant-baseline", "middle")
-      .attr("font-size", "11px").attr("fill", "#555")
+      .attr("x", 9).attr("y", 18).attr("dominant-baseline", "middle")
+      .attr("font-family", "'Jost', sans-serif")
+      .attr("font-size", "14px").attr("fill", "#33302a")
       .text("Relocated (closed 2020)");
 
     let current = "all";
@@ -2974,51 +3247,24 @@ function createChartK(data = null) {
     function setSeries(name) {
       const targetKey = slug(String(name));
       const isAll = targetKey === "all";
-      const match = isAll ? null : stores.find(d => d.key === targetKey);
+      const match = isAll ? null : stores.find((d) => d.key === targetKey);
       if (!isAll && !match) return;
 
       current = isAll ? "all" : match.key;
 
       storeGroups
         .transition().duration(180)
-        .style("opacity", d => (isAll || d.key === current) ? 1 : 0.16);
+        .style("opacity", (d) => (isAll || d.key === current) ? 1 : 0.16);
 
-      storeGroups.filter(d => d.key === current).raise();
-
-      if (isAll) {
-        readout.text(
-          "All 6 cases: proposed renewal rents jumped 2.1× to 14× above prior lease rates (nominal dollars). Click a store to isolate."
-        );
-      } else {
-        const prefix = match.approx ? "nearly " : "";
-        const verb = match.outcome === "moved" ? "relocated in" : "closed in";
-        readout.text(
-          `${match.name} (${match.detail}): ${fmtCurrency(match.prevRent)}/mo → ${prefix}${fmtCurrency(match.newRent)}/mo (${match.mult}×) — ${verb} ${match.year}.`
-        );
-      }
-
-      buttons.selectAll("button")
-        .classed("is-active", d => d.key === current)
-        .attr("aria-pressed", d => d.key === current);
+      storeGroups.filter((d) => d.key === current).raise();
     }
 
-    const buttonItems = [{ key: "all", label: "All stores" }, ...stores.map(d => ({ key: d.key, label: d.name }))];
-
-    buttons.selectAll("button")
-      .data(buttonItems)
-      .join("button")
-      .attr("type", "button")
-      .attr("class", "ck-btn")
-      .text(d => d.label)
-      .on("click", (event, d) => setSeries(d.key));
-
-    window.chartK = { setSeries, names: stores.map(d => d.name) };
+    window.chartK = { setSeries, names: stores.map((d) => d.name) };
     setSeries("all");
     if (window.ScrollTrigger) ScrollTrigger.refresh();
     return window.chartK;
   };
 
-  // Accepts either a JSON path string (like createChartJ) or an inline array
   if (typeof data === "string") {
     return d3.json(data).then(render);
   }
@@ -3026,12 +3272,6 @@ function createChartK(data = null) {
 }
 
 // END CHART K
-
-
-// end CHART K individual store closures
-
-
-
 
 //END CHARTS
 

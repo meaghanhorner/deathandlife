@@ -23,9 +23,10 @@ Jacobs, who wrote about her beloved neighborhood in the late 1950s and early 196
 
 >"The trust of a city street is formed over time from many, many little public sidewalk contacts. It grows out of people stopping by at the bar for a beer, getting advice from the grocer and giving advice to the newsstand man, comparing opinions with other customers at the bakery and nodding hello to the two boys drinking pop on the stoop; eying the girls while waiting to be called for dinner, admonishing the children, hearing about a job from the hardware man and borrowing a dollar from the druggist, admiring the new babies and sympathizing over the way a coat faded."(73)
 
+<!-- svg: -->
+Greenwich Village incubated the '60s folk music boom, the East Coast beat movement, and the Stonewall uprising. It was businesses like the Gaslight Cafe, Kettle of Fish, and the Oscar Wilde Memorial Bookshop that provided space and opportunity for these movements to take hold.
 
 ##### Curtain Thesis
-Greenwich Village incubated the '60s folk music boom, the East Coast beat movement, and the Stonewall uprising. It was businesses like the Gaslight Cafe, Kettle of Fish, and the Oscar Wilde Memorial Bookshop that provided space and opportunity for these movements to take hold.
 
 If storefronts are so important to a neighborhood, why do so many sit vacant in Greenwich Village today? 
 
@@ -74,7 +75,8 @@ In addition to providing more opportunities for pedestrians to turn corners, the
 <!-- svg: -->
 Short blocks can also help a pedestrian's feeling of safety. A person walking on a short block who gets a feeling of being unsafe, either because of a person or their physical surroundings, can find somewhere to turn within a couple hundred feet, whereas a person walking on a long avenue might have no choice but to turn in the opposite direction.
 <!-- svg: -->
-The verdict: With no major changes to the street grid since the 1960s, we can say yes, Greenwich Village still has short blocks.
+#### THE VERDICT: YES
+With no major changes to the street grid since the 1960s, we can say yes, Greenwich Village still has short blocks.
 
 @verdict short-blocks yes
 
@@ -93,30 +95,38 @@ Following Dutch and English colonization of Lenape land, Greenwich Village grew 
 Roughly 40 percent of the buildings in Greenwich Village were built before 1861. Another 50 percent were built between 1861 and 1929. Only about 10 percent of Greenwich Village's buildings were built after 1929. This lends the neighborhood a wide range of architectural styles.
 When Jacobs writes about a mixture of old and new buildings, though, it isn’t only for the purpose of visual diversity. Primarily, she writes that the buildings should 
 >“vary in age and condition, including a good proportion of old ones so that they vary in the economic yield they must produce.” (197)
-
+<!-- svg: chart-e e1 -->
 Just as there was a large variation in age of buildings, there was also a large variation in asking rents, with per square foot prices ranging from $2.33 per square foot per year to $9.68, according to New York Times Classified ads. Add in the fact that would-be renters could choose a larger or smaller storefront, depending on their needs, and you find that a prospective renter could pay as little as $68 per month in 1961 for a 350 square foot space, or as much as $350 per month for a larger, possibly nicer space. 
 
-<!-- svg: chart-e e1 -->
-Jacobs expected old buildings to supply the lower end of the rent range. In the first half of 2024, according to REBNY, The Real Estate Board of New York, asking rents for storefronts on Bleecker Street between 7th Avenue South and Houston ranged from $160 to $195 per square foot, with the most expensive space costing only 22% more than the least expensive one. This is despite almost all the buildings on that stretch having been built before 1930.
+By the early 2000s, rents on Bleecker street had increased from $67 per square foot per year (in 2025 dollars) to $114 per square foot per year, a similar rate of increase to Manhattan as a whole.
 
 <!-- svg: chart-e e1a -->
-Although Greenwich Village is still a place with both old and new buildings, the buildings now do not vary in the economic yield they must produce. There is little difference between the cheapest and most expensive storefronts, leaving small and less profitable businesses priced out entirely.
+In the early 2000s, storefront rents in Manhattan continued to increase at a similar rate as they had in the past, slightly more than the rate of inflation. 
 
 <!-- svg: chart-e e2 -->
+Although it was not possible to find data covering the 2001-2007 period for Greenwich Village, by 2008 storefront rents on Bleecker Street had surged, to $380 per square foot per year (again in 2025 dollars.)
+
+Jacobs expected the mix of old and new buildings to supply a mix of high and low rents. But by 2024, there was very little range in asking rents; they were uniformly high, with the most expensive storefronts only 22% more than the least expensive ones. 
+
 Though rents are not public record, several have been documented on Vanishing New York and in articles in the New York Times, establishing a link between businesses that have closed and the surge in rents.
 
 <!-- svg: chart-k -->
-Second Childhood, a store specializing in antique toys, closed in 2008 after a rent raise from $7,000/month to $15,000/month.(source)
-Nusraty Afghan Imports moved from Bleecker Street to Christopher Street in 2008 after the rent was raised from $7,000 to $45,000/month.(NYTimes). The store closed for good in 2020.
-Rocco Ristorante closed in 2012, after the rent was raised from $8,000/month to $18,000/month(source)
-Arleen Bowman, a local designer's boutique, closed in 2012 after the rent was raised from $2,500 to $35,000.(NYTimes)
-Cafe Angelique closed in 2014 after the rent was raised from $16,000/month to $42,000/month(source)
-Da'Vinci Shoes closed in 2016, after the rent was raised from $6,000/month to nearly $40,000/month(source)
+- #### Second Childhood, a store specializing in antique toys, closed in 2008 after a rent raise from $7,000/month to $15,000/month.(source)
+
+- #### Nusraty Afghan Imports moved from Bleecker Street to Christopher Street in 2008 after the rent was raised from $7,000 to $45,000/month.(NYTimes). The store closed for good in 2020.
+- #### Rocco Ristorante closed in 2012, after the rent was raised from $8,000/month to $18,000/month(source)
+- #### Arleen Bowman, a local designer's boutique, closed in 2012 after the rent was raised from $2,500 to $35,000.(NYTimes)
+- #### Cafe Angelique closed in 2014 after the rent was raised from $16,000/month to $42,000/month(source)
+- #### Da'Vinci Shoes closed in 2016, after the rent was raised from $6,000/month to nearly $40,000/month(source)
+
+<!-- svg: -->
 
 Looking at old business records, I found many instances in the 1960s and 1970s when a business moved but stayed in Greenwich Village. Murray's Cheese started out at a different location than where it is now. Matt Umanov Guitars moved when the pizzeria John's of Bleecker Street expanded into his former location. Costos Exotic Garden, which was forced to move in 1969 to accommodate a Nathan's location, reopened a few blocks away. In fact, xx% of businesses that closed in one location reopened in another. Today, when businesses close, they reopen outside Greenwich Village - or don't reopen at all. Only xx% of businesses that closed at one location in 2015 or 2020 are still open in Greenwich Village today.   
 
 <!-- svg: -->
-The verdict: Mixed. Though Greenwich Village still has a mix of old and new buildings, the small range in rents between the cheapest and the most expensive means it only partially meets this condition. 
+
+#### THE VERDICT: MIXED 
+Though Greenwich Village still has a mix of old and new buildings, the small range in rents between the cheapest and the most expensive means it only partially meets this condition. 
 
 @verdict old-new partial
 
@@ -149,7 +159,8 @@ Not for lack of demand. People weren't moving out because they no longer wanted 
 <!-- svg: chart-h1-->
 Though the shrinking households story doesn't map cleanly onto Jacobs's 100 dwellings per acre number, it points to a similar concern: Fewer residents means fewer people to support the variety of businesses that once lined the street. That problem is compounded by the rising rents we've already seen. A business can't sustain itself when it has both rising expenses and a decreasing number of customers. Add in online shopping, and it becomes very difficult for niche businesses to stay open.
 <!-- svg: -->
-The verdict: mixed. Greenwich Village is still denser than most of Manhattan, but less dense than it was in 1970.
+#### THE VERDICT: MIXED
+Greenwich Village is still denser than most of Manhattan, but less dense than it was in 1970.
 
 @verdict density partial
 
@@ -178,9 +189,12 @@ In 2026, many storefronts sit vacant. Others are occupied by the types of chains
 The contrast between the two eras show why Jacobs considered mixed primary uses essential. In the 1960s and 1970s, Greenwich Village's variety of uses drew residents out of their homes, kept workers in the neighborhood, and drew visitors from other neighborhoods. Today, vacant storefronts, chains, and a high rate of restaurant turnover suggest that the Village may no longer support the "unconscious cooperation" Jacobs described. Stores, like parks, need users, and the Village's changing streetscape suggests it may have lost some of the users it once had. 
 
 <!-- svg: -->
-The verdict: Mixed. While Greenwich Village has both residents, workers, and visitors, the mix of different businesses is far less than what it was.
+#### THE VERDICT: MIXED
+While Greenwich Village has both residents, workers, and visitors, the mix of different businesses is far less than what it was.
 
 @verdict mixed-use partial
+
+##### city-block
 
 <!-- svg: strip-plot-->
 

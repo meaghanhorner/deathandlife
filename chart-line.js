@@ -51,6 +51,8 @@ function createHandDrawnLineChart(opts) {
     xFormat = d3.format("d"),
     xAxisTickYears = null, // e.g. 2 -> label only every 2nd year on the x-axis
     brush = true, // set false for compact use inside small multiples
+    yMax = null, // ADDED: optional fixed y maximum, so several charts can share a scale
+    tooltip = null, // ADDED: optional (seriesKey, point) => html string; turns on hover/tap tooltips
   } = opts;
  
   const instanceId = inkNextId("hdc-line");
@@ -85,6 +87,23 @@ function createHandDrawnLineChart(opts) {
   .attr("viewBox", `0 0 ${width} ${brushHeight}`)
   .attr("width", "100%")
   .style("height", "auto");
+
+  // ADDED: tooltip element and helpers (only created when a tooltip function is passed)
+  const tip = tooltip ? root.append("div").attr("class", "hdc-tooltip") : null;
+  const hideTip = () => { if (tip) tip.style("opacity", 0).style("visibility", "hidden"); };
+  function showTip(anchor, html) {
+    const rr = root.node().getBoundingClientRect();
+    const cr = anchor.getBoundingClientRect();
+    tip.html(html).style("visibility", "visible").style("opacity", 1);
+    const tw = tip.node().offsetWidth, th = tip.node().offsetHeight;
+    let left = cr.left - rr.left + cr.width / 2 - tw / 2;
+    left = Math.max(0, Math.min(left, rr.width - tw));
+    let top = cr.top - rr.top - th - 10;
+    if (top < 0) top = cr.bottom - rr.top + 10;   // flip below the dot if there's no room above
+    tip.style("left", left + "px").style("top", top + "px");
+  }
+  if (tip) root.on("pointerdown.hdc", (e) => { if (!e.target.closest(".hdc-hit")) hideTip(); });
+  // END ADDED
  
   let activeKeys = new Set(categories.map((c) => c.key));
   const allX = data[0].values.map((v) => v.x);
@@ -122,7 +141,7 @@ function createHandDrawnLineChart(opts) {
     x.domain(domain);
     const maxY =
       d3.max(visible, (d) => d3.max(d.values.filter((v) => v.x >= domain[0] && v.x <= domain[1]), (v) => v.y)) || 1;
-    y.domain([0, maxY * 1.15]);
+    y.domain([0, (yMax != null ? yMax : maxY) * 1.15]);   // CHANGED: uses yMax when given
  
     const tickCount = Math.max(2, allX.filter((v) => v >= domain[0] && v <= domain[1]).length);
     const tickValues = computeYearTicks(allX, domain, xAxisTickYears);
@@ -199,6 +218,36 @@ function createHandDrawnLineChart(opts) {
       (update) => update.transition().duration(300).attr("cx", (d) => d.cx).attr("cy", (d) => d.cy),
       (exit) => exit.transition().duration(200).style("opacity", 0).remove()
     );
+
+    // ADDED: hover/tap targets, one per data point (only when a tooltip function was passed)
+    if (tooltip) {
+      hideTip();
+      const hitRows = [];
+      visible.forEach((d) => {
+        d.values
+          .filter((v) => v.x >= domain[0] && v.x <= domain[1] && v.y != null && !Number.isNaN(v.y))
+          .forEach((v) => hitRows.push({ key: d.key, v }));
+      });
+
+      const hitG = linesLayer.selectAll("g.hdc-hit")
+        .data(hitRows, (d) => d.key + "|" + d.v.x)
+        .join((enter) => {
+          const e = enter.append("g").attr("class", "hdc-hit").attr("tabindex", 0);
+          e.append("circle").attr("class", "hdc-hit-dot").attr("r", 4)
+            .attr("fill", (d) => catByKey[d.key].color);
+          e.append("circle").attr("class", "hdc-hit-area").attr("r", 16).attr("fill", "transparent");
+          return e;
+        });
+
+      hitG
+        .attr("transform", (d) => `translate(${x(d.v.x)},${y(d.v.y)})`)
+        .attr("aria-label", (d) => tooltip(d.key, d.v).replace(/<[^>]+>/g, " "))
+        .on("pointerenter", function (event, d) { showTip(this.querySelector(".hdc-hit-dot"), tooltip(d.key, d.v)); })
+        .on("pointerleave", function (event) { if (event.pointerType !== "touch") hideTip(); })
+        .on("focus", function (event, d) { showTip(this.querySelector(".hdc-hit-dot"), tooltip(d.key, d.v)); })
+        .on("blur", hideTip);
+    }
+    // END ADDED
   }
  
   if (brush) {
