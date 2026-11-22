@@ -412,7 +412,34 @@ const centerY = (el) => {
 };
 
 
+/* ---- scrollbar bypass ---- */
+let bypass = false;
+const bypassHooks = [];   // each gate registers { stop, resume }
 
+function startBypass() {
+  if (bypass) return;
+  bypass = true;
+  gsap.killTweensOf(window);            // cancel any running scrollTo
+  bypassHooks.forEach((h) => h.stop());
+}
+
+function endBypass() {
+  if (!bypass) return;
+  bypass = false;
+  bypassHooks.forEach((h) => h.resume());
+}
+
+function initBypass() {
+  // pressing on the scrollbar (right 20px also covers Mac overlay scrollbars)
+  window.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "mouse" && e.clientX >= window.innerWidth - 20) startBypass();
+  }, true);
+
+  // any real wheel / touch / key input hands control back to the engine
+  window.addEventListener("wheel", endBypass, { passive: true });
+  window.addEventListener("touchstart", endBypass, { passive: true });
+  window.addEventListener("keydown", endBypass);
+}
 
 /* ---- 2) one image per gesture ---- */
 function initGraphicGates() {
@@ -491,8 +518,27 @@ function buildGate(section, steps) {
     onDown: () => step(-1),
   });
   gate.disable();
+  bypassHooks.push({
+  stop: () => { gate.disable(); busy = false; },
+  resume: () => {
+    const y = window.scrollY;
+    if (y > zoneStart() && y < zoneEnd()) {
+      let best = 0, bd = Infinity;
+      steps.forEach((s, i) => {
+        const d = Math.abs(centerY(s) - y);
+        if (d < bd) { bd = d; best = i; }
+      });
+      idx = best;                              // resync to where you actually are
+      readyAt = Date.now() + GATE_COOLDOWN;
+      gate.enable();                           // re-arm for the next gesture, no scroll
+    }
+  },
+});
 
-  const engage = (i) => { if (!gate.isEnabled) { gate.enable(); goTo(i); } };
+const engage = (i) => {
+  if (bypass) return;
+  if (!gate.isEnabled) { gate.enable(); goTo(i); }
+};
 
   ScrollTrigger.create({
     start: zoneStart,
@@ -632,7 +678,7 @@ renderSteps().then(() => {
   initChartH();
   initChartL();
 
-  initCardPauses();
+  initBypass();
   initGraphicGates();
 
   updateCurtainFades();
