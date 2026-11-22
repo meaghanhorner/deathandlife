@@ -256,7 +256,7 @@ text
 text
 <!-- svg: chart-l l9 -->
 text
-Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years.  Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
+
 
 ##### Conclusion
 ## Conclusion

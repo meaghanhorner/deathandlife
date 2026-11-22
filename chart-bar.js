@@ -111,6 +111,7 @@ function createHandDrawnBarChart(opts) {
     handScale = 1,
     denseWobble = false,
     categoryAxisLine = true,
+    tooltipUnit = "feet",
   } = opts;
   const boldKeys = new Set(boldKeysOpt);
   
@@ -348,7 +349,7 @@ if (valueAxisLabel) {
       .style("cursor", "pointer")
       .on("mouseenter", (event, d) => {
         tooltip
-  .html(`${d.x}: ${Math.round(d.y)} feet`)
+  .html(`${d.x}: ${Math.round(d.y)} ${tooltipUnit}`)
   .style("opacity", 1);
         moveTooltip(event);
       })

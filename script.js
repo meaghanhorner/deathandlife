@@ -411,55 +411,8 @@ const centerY = (el) => {
   return window.scrollY + r.top + r.height / 2 - window.innerHeight / 2;
 };
 
-/* ---- 1) brief hold on each card ---- */
-function initCardPauses() {
-  if (reduceMotion.matches) return;
 
-  // skip the sticky ones: the last photo_fade card and the alt curtain pin themselves
-  const cards = gsap.utils.toArray(
-    ".photo_fade_bg_steps .step-line:not(:last-of-type), .curtain:not(.curtain--alt) .step-line"
-  );
-  log("card pauses:", cards.length, "cards");
-  if (!cards.length) return;
 
-  let holding = null;
-
-  function hold() {
-  if (holding) return;
-  const t0 = performance.now();
-  let last = t0;
-  holding = Observer.create({
-    target: window,
-    type: "wheel,touch",
-    preventDefault: true,
-    allowClicks: true,
-    onChange: () => { last = performance.now(); },
-  });
-
-  const check = () => {
-    const now = performance.now();
-    const held = now - t0 >= CARD_HOLD_MS;
-    const quiet = now - last >= 120;
-    const failsafe = now - t0 >= 2500;     // can never trap you longer than this
-    if ((held && quiet) || failsafe) {
-      holding.kill();
-      holding = null;
-    } else gsap.delayedCall(0.05, check);
-  };
-  gsap.delayedCall(0.05, check);
-}
-
-  cards.forEach((el) =>
-    ScrollTrigger.create({
-      trigger: el,
-      start: "center center",
-      end: "center center",
-      markers: DEBUG_STOPS,
-      onEnter: hold,
-      onEnterBack: hold,
-    })
-  );
-}
 
 /* ---- 2) one image per gesture ---- */
 function initGraphicGates() {
@@ -479,6 +432,10 @@ function buildGate(section, steps) {
   let idx = 0;
   let busy = false;
   let readyAt = 0;   // ignore input until this timestamp (soaks up trackpad inertia)
+  let capAt = 0;
+  window.addEventListener("wheel", () => {
+    if (!busy &&Date.now() <capAt) readyAt = Math.min(Date.now() + 120, capAt);
+  }, { passive : true});
 
   const zoneStart = () => centerY(steps[0]) - window.innerHeight * 0.5;
   const zoneEnd   = () => centerY(steps[last]) + window.innerHeight * 0.5;
@@ -491,7 +448,10 @@ function buildGate(section, steps) {
       scrollTo: { y, autoKill: false },
       duration: GATE_MOVE_S,
       ease: "power2.inOut",
-      onComplete: () => { busy = false; readyAt = Date.now() + GATE_COOLDOWN; },
+      onComplete: () => { busy = false; 
+        readyAt = Date.now() + GATE_COOLDOWN;
+        capAt = Date.now() + 900;
+       },
     });
   }
 
@@ -1576,6 +1536,7 @@ fetch("data/gv_buildingsage.geojson")
       strokeDarken: 0.4,
       handScale: .5,
       denseWobble: true,
+      tooltipUnit: "buildings",
       valueAxisLabel: "Number of buildings",
       valueLabels: (v) => labelByCount.get(v) ?? `${v.toLocaleString()}`,
       yFormat: d3.format(",.0f"),
