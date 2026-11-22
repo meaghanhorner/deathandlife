@@ -224,7 +224,7 @@ const PHOTO_FADE_DURATION = 1.6;
 const DEBUG_STOPS   = false;  // true: logs + trigger markers
 const CARD_HOLD_MS  = 1000;   // brief hold on each curtain / photo_fade card
 const GATE_MOVE_S   = 0.9;    // image section: travel time between images (= min time each image shows)
-const GATE_COOLDOWN = 150;    // ms of ignored input after each move, soaks up trackpad inertia
+const GATE_COOLDOWN = 600;    // ms of ignored input after each move, soaks up trackpad inertia
 
 // register plugins (skips any whose script tag is missing, and says so)
 const plugins = [window.ScrollTrigger, window.Observer, window.ScrollToPlugin];
@@ -425,21 +425,29 @@ function initCardPauses() {
   let holding = null;
 
   function hold() {
-    if (holding) return;
-    log("hold");
-    // swallows wheel/touch input without moving the page
-    holding = Observer.create({
-      target: window,
-      type: "wheel,touch",
-      preventDefault: true,
-      allowClicks: true,
-      onChange: () => {},          // a handler must exist for preventDefault to apply
-    });
-    gsap.delayedCall(CARD_HOLD_MS / 1000, () => {
+  if (holding) return;
+  const t0 = performance.now();
+  let last = t0;
+  holding = Observer.create({
+    target: window,
+    type: "wheel,touch",
+    preventDefault: true,
+    allowClicks: true,
+    onChange: () => { last = performance.now(); },
+  });
+
+  const check = () => {
+    const now = performance.now();
+    const held = now - t0 >= CARD_HOLD_MS;
+    const quiet = now - last >= 120;
+    const failsafe = now - t0 >= 2500;     // can never trap you longer than this
+    if ((held && quiet) || failsafe) {
       holding.kill();
       holding = null;
-    });
-  }
+    } else gsap.delayedCall(0.05, check);
+  };
+  gsap.delayedCall(0.05, check);
+}
 
   cards.forEach((el) =>
     ScrollTrigger.create({
