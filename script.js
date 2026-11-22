@@ -2632,7 +2632,6 @@ chartH("#chart-h", "data/hh_size.json"); */
     // ---------- groups ----------
     const DRAWN = [];     // empty = show everything
 
-    // every category that appears in any year, ordered by the exported `order`
     const orderOf = new Map();
     data.forEach((y) => y.segments.forEach((s) => {
       if (!orderOf.has(s.group)) orderOf.set(s.group, s.order ?? 999);
@@ -2640,7 +2639,25 @@ chartH("#chart-h", "data/hh_size.json"); */
     const allGroups = [...orderOf.keys()].sort((a, b) => orderOf.get(a) - orderOf.get(b));
     const groups = DRAWN.length ? allGroups.filter((g) => DRAWN.includes(g)) : allGroups;
 
-    console.log("chart-i groups:", groups);
+// ---- pre-drawing planner: no SVGs needed ----
+(function plan() {
+  const EPS_ = 0.0005, TARGET_H_ = 180, ART_H = 300;  // ART_H = artboard height (px) of your TALLEST building
+  const avail_ = 1440 - 30 - 30;
+  const K_ = avail_ / d3.max(data, (y) => d3.sum(y.segments, (s) => s.pct));
+  groups.forEach((g) => {
+    const shares = data
+      .map((y) => y.segments.find((s) => s.group === g)?.pct ?? 0)
+      .filter((v) => v >= EPS_);
+    if (!shares.length) return;
+    const medPx = d3.median(shares) * K_;
+    console.log(
+      `${g}: median ${Math.round(medPx)}px wide on screen -> ` +
+      `draw ${Math.round(medPx / TARGET_H_ * ART_H)} wide for a ${ART_H}-tall artboard ` +
+      `(width:height = ${(medPx / TARGET_H_).toFixed(2)} vs the tallest building)`
+    );
+  });
+})();
+
 
     const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -2648,11 +2665,26 @@ chartH("#chart-h", "data/hh_size.json"); */
     const parse = (txt) =>
       new DOMParser().parseFromString(txt, "image/svg+xml").documentElement;
 
-    const loadPiece = async (file) => {
+    // Illustrator reuses .cls-1, .cls-2 and ids in every export; once inlined into one page
+    // those collide. Prefix them per file so each building keeps its own styles.
+    const scope = (txt, prefix) => {
+      txt = txt.replace(/\bcls-(\d+)/g, `${prefix}-cls-$1`);
+      const ids = [...txt.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
+      ids.forEach((id) => {
+        const esc = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        txt = txt
+          .replace(new RegExp(`id="${esc}"`, "g"), `id="${prefix}-${id}"`)
+          .replace(new RegExp(`url\\(#${esc}\\)`, "g"), `url(#${prefix}-${id})`)
+          .replace(new RegExp(`href="#${esc}"`, "g"), `href="#${prefix}-${id}"`);
+      });
+      return txt;
+    };
+
+    const loadPiece = async (file, prefix) => {
       try {
         const r = await fetch(file);
         if (!r.ok) throw new Error(r.status);
-        const node = parse(await r.text());
+        const node = parse(scope(await r.text(), prefix));
         let [x, y, w, h] = (node.getAttribute("viewBox") || "")
           .trim().split(/[\s,]+/).map(Number);
         if (![x, y, w, h].every(Number.isFinite)) {
@@ -2663,7 +2695,7 @@ chartH("#chart-h", "data/hh_size.json"); */
         return { html: node.innerHTML, x, y, w, h };
       } catch (e) {
         return {
-          html: `<rect width="40" height="100" fill="#ccc" stroke="#888"/>`,
+          html: `<rect width="40" height="100" fill="#fff" stroke="#000"/>`,
           x: 0, y: 0, w: 40, h: 100,
         };
       }
@@ -2672,10 +2704,7 @@ chartH("#chart-h", "data/hh_size.json"); */
     const pieces = {};
     await Promise.all(groups.map(async (g) => {
       const s = slug(g);
-      const [L, M, R] = await Promise.all(
-        ["left", "mid", "right"].map((p) => loadPiece(`data/buildings/${s}-${p}.svg`))
-      );
-      pieces[g] = { L, M, R };
+      pieces[g] = await loadPiece(`data/buildings/${s}-mid.svg`, s);
     }));
 
     // ---------- settings ----------
@@ -2686,13 +2715,12 @@ chartH("#chart-h", "data/hh_size.json"); */
     const LINE_PX = 0.8;                     // min on-screen thickness for black linework; 0 = off
 
     const SIGN_FONT  = "'newshound', sans-serif";
-    const SIGN_DY    = 40;                   // px down from the top of the artwork (on the building)
+    const SIGN_DY    = 40;
     const SIGN_SIZE  = 12;
     const SIGN_COLOR = "#000";
-    const SIGN_PAD   = 6;                   // px of breathing room each side before text counts as "too wide"
-    const UNDER_DY   = 18;                   // px below the ground line when the name goes underneath
+    const SIGN_PAD   = 6;
+    const UNDER_DY   = 18;
 
-    // short names shown on the buildings (anything not listed shows its full name)
     const signNames = {
       "Restaurants, cafes & bars": "Restaurants",
       "Personal services": "Services",
@@ -2702,7 +2730,6 @@ chartH("#chart-h", "data/hh_size.json"); */
       "Grocery, food & liquor": "Grocery",
     };
 
-    // what each short name stands for (shown in the legend; edit freely)
     const legendText = {
       "Grocery, food & liquor": "grocery, specialty food, liquor",
       "Restaurants, cafes & bars": "restaurants, bars, cafes and nightclubs",
@@ -2712,10 +2739,9 @@ chartH("#chart-h", "data/hh_size.json"); */
       "Arts & entertainment": "arts & entertainment",
     };
 
-    const OVERLAP = .5;                       // 0 = no overlap between pieces
-    const EPS     = 0.0005;                  // below this share, treat as 0%
+    const EPS = 0.0005;                      // below this share, treat as 0%
 
-    // ---------- layout (order matters: each line uses the ones above it) ----------
+    // ---------- layout ----------
     const margin = { top: 40, right: 30, bottom: 40, left: 30 };
     const width  = 1440;
     const avail  = width - margin.left - margin.right;
@@ -2723,24 +2749,29 @@ chartH("#chart-h", "data/hh_size.json"); */
     const maxSum = d3.max(data, (y) => d3.sum(y.segments, (s) => s.pct));
     const K      = avail / maxSum;           // px per 100% share
 
-    // widest cap in the artwork's own units, measured from the files
-    const CAP_NATIVE = d3.max(groups, (g) => Math.max(pieces[g].L.w, pieces[g].R.w));
-    const CAP_PCT    = 0.01;                 // each end = 1% of the line
-    const BUILD_S    = CAP_PCT * K / CAP_NATIVE;
-    const V_STRETCH = 1.5;   // 1 = current height, 2 = twice as tall
+    // Height: the tallest export is TARGET_H px; every building uses the same y scale (SY),
+    // so relative heights from Illustrator are preserved. Only x is stretched per building.
+    const TARGET_H  = 180;                   // px height of the tallest building
+    const NATIVE_H  = d3.max(groups, (g) => pieces[g].h);
+    const SY        = TARGET_H / NATIVE_H;
+    const rowH      = TARGET_H;
+    const artTop    = (g) => rowH - pieces[g].h * SY;
 
-    const rowH = d3.max(groups, (g) => pieces[g].L.h) * BUILD_S * V_STRETCH;
-
-    // share of the line the two caps take at full size
-    const fullShare = (g) => (pieces[g].L.w + pieces[g].R.w) * BUILD_S / K;
-    const capFactor = (g, pct) => pct < EPS ? 0 : Math.min(1, pct / fullShare(g));
-    const midPx     = (g, pct) => Math.max(0, pct - fullShare(g)) * K;
-
-    console.log("chart-i: BUILD_S =", BUILD_S.toFixed(3), " rowH =", Math.round(rowH));
+    // diagnostic: native export width that would give zero distortion at each category's median share
+    groups.forEach((g) => {
+      const shares = data.map((y) => y.segments.find((s) => s.group === g)?.pct ?? 0).filter((v) => v >= EPS);
+      if (!shares.length) return;
+      const med = d3.median(shares), lo = d3.min(shares), hi = d3.max(shares);
+      const stretch = (p) => ((p * K) / pieces[g].w / SY).toFixed(2);
+      console.log(
+        `chart-i ${g}: native w=${Math.round(pieces[g].w)}, ` +
+        `ideal w≈${Math.round(med * K / SY)}, x-stretch min/med/max = ${stretch(lo)}/${stretch(med)}/${stretch(hi)}`
+      );
+    });
 
     const height = margin.top + rowH + margin.bottom;
 
-    // ---------- measure the sign text (canvas, so it works even if the chart is hidden) ----------
+    // ---------- measure the sign text ----------
     await document.fonts.ready;
     const ctx = document.createElement("canvas").getContext("2d");
     ctx.font = `${SIGN_SIZE}px ${SIGN_FONT}`;
@@ -2758,13 +2789,12 @@ chartH("#chart-h", "data/hh_size.json"); */
       .style("display", "flex").style("align-items", "center").style("gap", "12px");
     const slider = sliderRow.append("input")
       .attr("type", "range")
-      .attr("min", 0).attr("max", years.length - 1)   // index, not year
+      .attr("min", 0).attr("max", years.length - 1)
       .attr("step", 1).attr("value", 0)
       .style("flex", "1");
     const yearLabel = sliderRow.append("span")
       .style("font-weight", "bold").style("min-width", "3em").text(years[0]);
 
-    // year ticks under the slider (states are evenly spaced by index)
     controls.append("div")
       .style("display", "flex").style("justify-content", "space-between")
       .style("font-size", "11px").style("margin-right", "3.9em")
@@ -2779,7 +2809,6 @@ chartH("#chart-h", "data/hh_size.json"); */
     const plot = svg.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    // ground line
     plot.append("line")
       .attr("x1", 0).attr("x2", avail)
       .attr("y1", rowH).attr("y2", rowH)
@@ -2790,41 +2819,35 @@ chartH("#chart-h", "data/hh_size.json"); */
       .join("g")
       .attr("class", "building");
 
-    // art group: uniformly scaled by BUILD_S, sitting on the ground line
+    // art group sits on the ground line; g.piece inside it gets the x-stretch in update()
     const art = bld.append("g").attr("class", "art")
-      .attr("transform", (g) =>
-       `translate(0, ${rowH - pieces[g].L.h * BUILD_S * V_STRETCH}) scale(${BUILD_S}, ${BUILD_S * V_STRETCH})`);
+      .attr("transform", (g) => `translate(0, ${artTop(g)})`);
 
-    art.append("g").attr("class", "cap-left").html((g) => pieces[g].L.html);
-    art.append("g").attr("class", "mid").html((g) => pieces[g].M.html)
-      .selectAll("*").attr("vector-effect", "non-scaling-stroke");
-    art.append("g").attr("class", "cap-right").html((g) => pieces[g].R.html);
+    art.append("g").attr("class", "piece").html((g) => pieces[g].html);
 
-    // color: swap only the white fills for the tint; black linework is untouched
+    // ---------- color + linework (computed styles, so attributes, classes and inheritance all count) ----------
+    const SHAPES = "path, rect, polygon, polyline, circle, ellipse";
+    const rgbOf = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+
     art.each(function (g) {
       const tint = tintFor(g);
-      d3.select(this).selectAll("path, rect, polygon").each(function () {
-        const f = this.style.fill;   // browsers report "#fff" as "rgb(255, 255, 255)"
-        if (f === "rgb(255, 255, 255)" || f === "#fff" || f === "#ffffff" || f === "white") {
-          this.style.fill = tint;
-        }
-      });
-    });
-
-    // minimum on-screen thickness for black shapes so thin outlines don't fade to gray
-    if (LINE_PX > 0) {
-      art.selectAll("path, rect, polygon").each(function () {
-        const f = this.style.fill;   // black shapes have no fill set
-        if (f === "" || f === "black" || f === "#000" || f === "rgb(0, 0, 0)") {
-          this.setAttribute("stroke", "#000");
+      d3.select(this).selectAll(SHAPES).each(function () {
+        const cs = getComputedStyle(this);
+        const fill = cs.fill;
+        if (!fill || fill === "none") return;
+        const [r, gr, b] = rgbOf(fill);
+        if (r >= 250 && gr >= 250 && b >= 250) {
+          this.style.setProperty("fill", tint);             // white -> tint
+        } else if (r <= 10 && gr <= 10 && b <= 10 && LINE_PX > 0) {
+          this.setAttribute("stroke", "#000");              // black shape -> min thickness
           this.setAttribute("stroke-width", LINE_PX);
           this.setAttribute("stroke-linejoin", "round");
-          this.setAttribute("vector-effect", "non-scaling-stroke");
         }
       });
-    }
+      // keep every stroke a constant on-screen width while the piece is stretched in x
+      d3.select(this).selectAll(SHAPES).attr("vector-effect", "non-scaling-stroke");
+    });
 
-    // short name: on the building if it fits, underneath if not (position set in update())
     bld.append("text").attr("class", "sign-label")
       .attr("text-anchor", "middle")
       .style("font-size", `${SIGN_SIZE}px`)
@@ -2833,7 +2856,6 @@ chartH("#chart-h", "data/hh_size.json"); */
       .style("pointer-events", "none")
       .text((g) => signNames[g] ?? g);
 
-    // percent above
     bld.append("text").attr("class", "pct-label")
       .attr("y", -10).attr("text-anchor", "middle")
       .style("font-weight", "bold");
@@ -2861,7 +2883,6 @@ chartH("#chart-h", "data/hh_size.json"); */
       const segs = new Map(byYear.get(year).map((s) => [s.group, s]));
       const pct = (g) => (segs.get(g) ? segs.get(g).pct : 0);
 
-      // building positions, end to end (width = share * K)
       let x = 0;
       const pos = new Map();
       groups.forEach((g) => {
@@ -2873,31 +2894,14 @@ chartH("#chart-h", "data/hh_size.json"); */
       bld.transition().duration(duration)
         .attr("transform", (g) => `translate(${pos.get(g).x},0)`);
 
-      // pieces live inside the BUILD_S-scaled group, so screen px are divided by BUILD_S.
-      // each piece's viewBox origin is undone, then it is squished/stretched in x only
-      const place = (p, x0, w) =>
-        `translate(${x0 / BUILD_S},0) scale(${Math.max(w, 1e-3) / BUILD_S / p.w},1) translate(${-p.x},${-p.y})`;
-
-      const capL = (g) => pieces[g].L.w * BUILD_S * capFactor(g, pct(g));
-      const capR = (g) => pieces[g].R.w * BUILD_S * capFactor(g, pct(g));
-
-      bld.select("g.cap-left").transition().duration(duration)
-        .attr("opacity", (g) => capFactor(g, pct(g)) > 0 ? 1 : 0)
-        .attr("transform", (g) => place(pieces[g].L, 0, capL(g)));
-
-      bld.select("g.mid").transition().duration(duration)
-        .attr("opacity", (g) => midPx(g, pct(g)) > 0.01 ? 1 : 0)
+      // one piece: undo its viewBox origin, then stretch x to the building's width, y at the shared scale
+      bld.select("g.piece").transition().duration(duration)
+        .attr("opacity", (g) => pct(g) < EPS ? 0 : 1)
         .attr("transform", (g) => {
-          const m = midPx(g, pct(g));
-          return m > 0.01
-            ? place(pieces[g].M, capL(g) - OVERLAP, m + 2 * OVERLAP)
-            : place(pieces[g].M, capL(g), 0);
+          const p = pieces[g];
+          const w = Math.max(pos.get(g).w, 1e-3);
+          return `scale(${w / p.w},${SY}) translate(${-p.x},${-p.y})`;
         });
-
-      bld.select("g.cap-right").transition().duration(duration)
-        .attr("opacity", (g) => capFactor(g, pct(g)) > 0 ? 1 : 0)
-        .attr("transform", (g) =>
-          place(pieces[g].R, capL(g) + midPx(g, pct(g)), capR(g)));
 
       bld.select("text.pct-label").transition().duration(duration)
         .attr("x", (g) => pos.get(g).w / 2)
@@ -2907,16 +2911,12 @@ chartH("#chart-h", "data/hh_size.json"); */
           return (t) => d3.format(".0%")(i(t));
         });
 
-      // short name: on the building if there's room, otherwise underneath
       const fits = (g) => pos.get(g).w >= textW[g] + 2 * SIGN_PAD;
 
       bld.select("text.sign-label").transition().duration(duration)
         .attr("x", (g) => pos.get(g).w / 2)
-        .attr("y", (g) => fits(g)
-          ? rowH - pieces[g].L.h * BUILD_S * V_STRETCH + SIGN_DY
-          : rowH + UNDER_DY);
+        .attr("y", (g) => fits(g) ? artTop(g) + SIGN_DY : rowH + UNDER_DY);
 
-      // hide the labels at 0% (named transition so it doesn't cancel the ones above)
       bld.selectAll("text").transition("fade").duration(duration)
         .style("opacity", function () {
           const g = d3.select(this.parentNode).datum();
@@ -2933,6 +2933,8 @@ chartH("#chart-h", "data/hh_size.json"); */
   } catch (err) {
     console.error("Chart I failed:", err);
   }
+
+  
 })();
 //END CHART I
 
