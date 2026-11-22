@@ -222,9 +222,9 @@ const PHOTO_FADE_DURATION = 1.6;
 
 // scroll stops
 const DEBUG_STOPS   = false;  // true: logs + trigger markers
-const CARD_HOLD_MS  = 1000;   // brief hold on each curtain / photo_fade card
-const GATE_MOVE_S   = 0.9;    // image section: travel time between images (= min time each image shows)
-const GATE_COOLDOWN = 600;    // ms of ignored input after each move, soaks up trackpad inertia
+const CARD_HOLD_MS  = 500;   // brief hold on each curtain / photo_fade card
+const GATE_MOVE_S   = 0.7;    // image section: travel time between images (= min time each image shows)
+const GATE_COOLDOWN = 100;    // ms of ignored input after each move, soaks up trackpad inertia
 
 // register plugins (skips any whose script tag is missing, and says so)
 const plugins = [window.ScrollTrigger, window.Observer, window.ScrollToPlugin];
