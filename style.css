@@ -1025,6 +1025,26 @@ img {
   overflow: visible; pointer-events: none;
 }
 
+/* second curtain */
+.pin-at-end {
+  position: sticky !important;
+  top: min(0px, calc(100vh - var(--pin-h, 100vh)));
+  z-index: 1 !important;
+}
+
+/* Covers the pinned section as it scrolls up */
+.curtain-wrap.curtain-over {
+  position: relative;
+  z-index: 2;
+  background: #f3f3e7;                      /* must be solid; use your page background */
+  box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.25);   /* optional edge shadow */
+  margin-top: 0;
+}
+
+.narration-no-image.timeline .step[data-section="Timeline"] {
+  visibility: hidden;
+  opacity: 0;
+}
 
 /* sources */
 
@@ -1033,6 +1053,11 @@ img {
 }
 
 .step[data-section="Sources"] p + p { margin-top: 0.75em; max-width: 150ch; }
+
+
+
+
+
 
 
 /* chart specific */
@@ -1091,6 +1116,7 @@ img {
   flex-direction: column;
   gap: 0.35rem;
   align-items: flex-start;
+  pointer-events: none;
 }
 
 .hdc-legend-title {
@@ -1216,15 +1242,22 @@ img {
 .chart-j .cj-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .chart-j .cj-btn {
   font: inherit; padding: 6px 14px; cursor: pointer;
-  border: 2px solid currentColor; border-radius: 999px;
+  border: none;  border-radius: 2px;
   background: transparent; color: inherit;
 }
 .chart-j .cj-btn.is-active {
-  background: var(--accent, #e8735a); border-color: var(--accent, #e8735a); color: #1a1a1a;
+  background: #fdfcf8; border:none; color: #33302a;  transform: rotate(-3deg);
 }
 .chart-j .cj-btn:focus-visible { outline: 3px solid var(--accent, #e8735a); outline-offset: 2px; }
 .chart-j .cj-readout { font-weight: 700; margin: 8px 0 0; }
 .chart-j .cj-caption { font-size: .85rem; opacity: .7; margin-top: 4px; }
+
+.chart-j .hdc-legend-btn {display: none;}
+.chart-j .hdc-tooltip { visibility: hidden; }
+.chart-j .hdc-axis text {
+  font-size: 16px !important;
+  font-family: 'Jost', sans-serif;
+}
 
 /* the helper's own legend, hint and empty brush strip aren't wanted here */
 /*.chart-j .hdc-legend,

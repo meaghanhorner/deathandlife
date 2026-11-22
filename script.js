@@ -5,6 +5,13 @@ if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 ScrollTrigger.clearScrollMemory?.("manual");  
 window.scrollTo(0, 0);
 
+//pin at end on second curtain
+const pinEl = document.querySelector(".pin-at-end");
+if (pinEl) {
+  const setH = () => pinEl.style.setProperty("--pin-h", pinEl.offsetHeight + "px");
+  setH();
+  new ResizeObserver(setH).observe(pinEl);
+}
 
 //conditions bar
 
@@ -570,7 +577,7 @@ function initChartH() {
     density: {
       title: "Manhattan became more dense; Greenwich Village less",
       subtitle: "Residents per acre of land, 1970-2020",
-      source: "Source: U.S. Census Bureau via NHGIS;",
+      source: "Source: U.S. Census Bureau via NHGIS",
     },
     household: {
       title: "Household size shrank in Greenwich Village and Manhattan",
@@ -618,7 +625,20 @@ function initChartH() {
   });
 }
 
-
+// chart-l: each step that names a state (l1 ... l6) reveals the timeline up to that entry
+function initChartL() {
+  document.querySelectorAll('.step-line[data-svg="chart-l"]').forEach((el, i) => {
+    if (!el.dataset.state) return;
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top 60%",
+      onEnter:     () => window.chartL?.show(el.dataset.state),
+      onEnterBack: () => window.chartL?.show(el.dataset.state),
+      // scrolling back above the first step empties the timeline again
+      onLeaveBack: i === 0 ? () => window.chartL?.show("none") : undefined,
+    });
+  });
+}
 /* =========================================================
    INIT
    ========================================================= */
@@ -642,6 +662,7 @@ renderSteps().then(() => {
   initPhotoFadeSteps();
   initChartE();
   initChartH();
+  initChartL();
 
   initCardPauses();
   initGraphicGates();
@@ -1081,6 +1102,9 @@ Promise.all([
     .domain(thresholds)
     .range(groupColors);
 
+
+
+
   // 1. neighborhoods
   const neighborhoodMap = createHandDrawnMap({
     container: "#map-a",
@@ -1093,6 +1117,8 @@ Promise.all([
   });
 
 
+
+
   createLegend({
     container: "#map-a",
     title: "Average block length",
@@ -1101,6 +1127,32 @@ Promise.all([
   });
 
   const inkFilter = `url(#${neighborhoodMap.filterId})`;
+
+//add in Central Park
+
+  const centralPark = {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [[
+        [-73.9825, 40.7676], // SW: 59th St & Columbus Circle
+        [-73.9585, 40.8012], // NW: 110th St & Central Park West
+        [-73.9490, 40.7972], // NE: 110th St & 5th Ave
+        [-73.9727, 40.7637], // SE: 59th St & 5th Ave
+        [-73.9825, 40.7676]  // back to SW
+      ]]
+    }
+  };
+
+  neighborhoodMap.g
+    .insert("path", ":first-child")
+    .datum(centralPark)
+    .attr("class", "hdc-park")
+    .attr("d", neighborhoodMap.path)
+    .attr("fill", "#f9eac0")
+    .attr("stroke", "none")
+    .style("pointer-events", "none");
+
 
    // 2. street segments
   neighborhoodMap.g
@@ -1122,6 +1174,7 @@ Promise.all([
 
   // 3. GV border + labels
   const labelFeatures = neighborhoods.features.filter((f) => f.properties.is_gv);
+
 
   neighborhoodMap.g
     .append("g")
@@ -1309,6 +1362,20 @@ lots.features.forEach((f, i) => {
   f.properties._idx = i;
 });
 
+const OPEN_SPACE_IDX = new Set([1197]); // replace with the _idx from the tooltip
+
+  const isOpenSpace = (p) =>
+    OPEN_SPACE_IDX.has(p._idx) ||
+    String(p.landuse).padStart(2, "0") === "09";
+
+    const LABELS = {
+    yearbuilt: "Year Built",
+    address: "Address",
+    // add others as needed, e.g. address: "Address", landuse: "Land use"
+  };
+
+
+
 
 
 const EXCLUDE = new Set([2954,861,884,883,859,878,879,2963,2962,887,2964,886,2961,2960,940,2957]);
@@ -1363,30 +1430,47 @@ svg.attr("viewBox", `${bx0 - 10} ${by0 - 10} ${bx1 - bx0 + 20} ${by1 - by0 + 20}
     .style("display", "none")
     .style("z-index", 9999)
     .style("background", "#fff")
-    .style("border", "1px solid #333")
+    .style("border", "1px solid #33302a")
     .style("padding", "6px 8px")
     .style("font", "11px/1.35 'Jost', sans-serif")
     .style("max-width", "280px");
 
   const g = svg.append("g");
 
+const OPEN_SPACE = "#dbc398"; // or your "open space" color
+
+ function moveTip(event) {
+    const pad = 12;
+    const node = tip.node();
+    const w = node.offsetWidth, h = node.offsetHeight;
+    let left = event.clientX + pad;
+    let top = event.clientY + pad;
+    if (left + w > window.innerWidth - 8) left = event.clientX - w - pad;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, event.clientY - h - pad);
+    tip.style("left", left + "px").style("top", top + "px");
+  }
 
   g.selectAll("path.hdc-lot")
     .data(lots.features.filter((f) => f.geometry != null))
     .join("path")
     .attr("class", "hdc-lot")
     .attr("d", path)
-    .attr("fill", (d) => colorFor(d.properties.yearbuilt))
-    .attr("stroke", "#333333")
+    .attr("fill", (d) => {
+      const p = d.properties;
+      if (isOpenSpace(p)) return OPEN_SPACE;
+      return colorFor(+p.yearbuilt);
+    })
+    .attr("stroke", "#33302a")
     .attr("stroke-width", 0.3)
     .style("pointer-events", "all")
     .on("mousemove", (event, d) => {
+      if (isOpenSpace(d.properties)) { tip.style("display", "none"); return; }
       tip.style("display", "block")
-        .style("left", event.clientX + 12 + "px")
-        .style("top", event.clientY + 12 + "px")
         .html(Object.entries(d.properties)
-          .map(([k, v]) => `<b>${k}</b>: ${v}`)
+          .filter(([k]) => k !== "_idx")
+          .map(([k, v]) => `<b>${LABELS[k] ?? k}</b>: ${v}`)
           .join("<br>"));
+      moveTip(event);
     })
     .on("mouseleave", () => tip.style("display", "none"))
     
@@ -1410,7 +1494,9 @@ svg.attr("viewBox", `${bx0 - 10} ${by0 - 10} ${bx1 - bx0 + 20} ${by1 - by0 + 20}
   const legend = d3.select("#map-c").append("div").attr("class", "hdc-legend");
   legend.append("div").attr("class", "hdc-legend-title").text("Year built");
 
-  const items = [...eras, { label: "No data", color: NO_DATA }];
+  const items = [...eras,
+     {label: "Open space", color: OPEN_SPACE }, 
+      {label: "No data", color: NO_DATA }];
   const row = legend.selectAll(".hdc-legend-row")
     .data(items)
     .join("div")
@@ -1612,7 +1698,7 @@ Promise.all([
       const bg = /rebny/i.test(n)
         ? c
         : `repeating-linear-gradient(90deg, ${c} 0 7px, transparent 7px 11px)`;
-      return `<span class="hdc-swatch" style="display:inline-block;width:34px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${bg}"></span>${label}`;
+      return `<span class="hdc-swatch" style="display:inline-block;width:29px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${bg}"></span>${label}`;
     });
 
   const svg = root.append("svg")
@@ -1681,7 +1767,7 @@ Promise.all([
   g.append("text")
     .attr("x", 0).attr("y", -14)
     .attr("font-size", 16).attr("fill", "#33302a").attr("font-family", "'Jost', sans-serif")
-    .text("Average Annual rent per square foot, adjusted for inflation");
+    .text("Average annual rent per square foot, adjusted for inflation");
 
   // ---------- layers: one lines group + one points group per dataset ----------
   function makeLayer(seriesList, cls, dashed = false) {
@@ -1837,7 +1923,7 @@ Promise.all([
   const states = {
     e1: {
       targets: [
-        [L.e1.lines, 0.5], [L.e1.pts, 0.8],
+        [L.e1.lines, 1], [L.e1.pts, 1],
         [L.nyt.lines, 0], [L.nyt.pts, 0],
         [L.rebnyMan.lines, 0], [L.rebnyMan.pts, 0],
         [L.rebnyBlk.lines, 0], [L.rebnyBlk.pts, 0],
@@ -1969,6 +2055,7 @@ Promise.all([
 ]).then(([lots, outlines, labels]) => {
 
   const TAN   = "#dbc398";
+  const FILL_OPACITY = 0.6;
   const OTHER = "residential, open space, or other";
 
   const statuses = [
@@ -2011,7 +2098,9 @@ d3.select("#map-g svg").attr(
 
 
   // thinner lot outlines than the neighborhood map
-  vacancyMap.g.selectAll("path.hdc-feature").attr("stroke-width", 0.5);
+  vacancyMap.g.selectAll("path.hdc-feature")
+  .attr("stroke-width", 0.5)
+  .style("fill-opacity", FILL_OPACITY);
 
   // street names: same italic serif as the Chart A labels
    const LABEL_DROP = 0.01;                        // fraction of the map's height; raise for more
@@ -2148,9 +2237,9 @@ const labelData = labels.features.flatMap((f) => {
     .join("div")
     .attr("class", "hdc-legend-row");
   row.append("span")
-    .attr("class", "hdc-legend-swatch")
-    .style("background", (d) => d.color)
-    .style("border", (d) => (d.key === OTHER ? "1px solid rgba(51,48,42,0.4)" : null));
+  .attr("class", "hdc-legend-swatch")
+  .style("background", (d) => d3.interpolateRgb(TAN, d.color)(FILL_OPACITY))
+  .style("border", (d) => (d.key === OTHER ? "1px solid rgba(51,48,42,0.4)" : null));
   row.append("span").text((d) => d.label);
 
   if (window.ScrollTrigger) ScrollTrigger.refresh();    
@@ -2837,7 +2926,7 @@ chartH("#chart-h", "data/hh_size.json"); */
 function createChartJ(dataPath = "data/focus_small_multiples.json") {
   const metric    = "n";
   const sharedY   = true;
-  const lineColor = "#E4572E";
+  const lineColor = "#b25a3f";
   const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const fmt  = metric === "share" ? d3.format(".1%") : d3.format("d");
   const mq   = window.matchMedia("(max-width: 600px)");
@@ -2853,11 +2942,53 @@ function createChartJ(dataPath = "data/focus_small_multiples.json") {
     const root = d3.select("#chart-j").classed("chart-j", true).html("");
     const buttons = root.append("div").attr("class", "cj-buttons")
       .attr("role", "group").attr("aria-label", "Business type");
-    const plot    = root.append("div").attr("class", "cj-plot");
-    const readout = root.append("p").attr("class", "cj-readout").attr("aria-live", "polite");
-    root.append("p").attr("class", "cj-caption").text(
-      (metric === "share" ? "Share of surveyed entries" : "Number of businesses") +
-      ` at the surveyed addresses. Surveyed entries per year: ${raw.entries_min}–${raw.entries_max}.`);
+      const plot = root.append("div").attr("class", "cj-plot");
+
+// Chart J tooltip, built like map-g's: body-level, fixed, positioned by clientX/Y
+const tip = d3.select("body").append("div")
+  .attr("class", "hdc-tooltip")
+  .style("opacity", 0);
+
+window.addEventListener("mousemove", (event) => {
+  // only act while the mouse is over chart J's plot
+  if (!plot.node().contains(event.target)) { tip.style("opacity", 0); return; }
+
+  // find whatever tooltip the shared code is showing (lines or points)
+  const shared = Array.from(document.querySelectorAll('[class*="tooltip"]'))
+    .find((el) => {
+      if (el === tip.node()) return false;
+      const cs = getComputedStyle(el);
+      return cs.display !== "none" && parseFloat(cs.opacity) > 0 && el.innerHTML.trim();
+    });
+
+  if (!shared) { tip.style("opacity", 0); return; }
+
+  tip.html(shared.innerHTML).style("opacity", 1);
+  shared.style.visibility = "hidden";   // hide the misplaced one
+
+  const pad = 14, node = tip.node();
+  const w = node.offsetWidth, h = node.offsetHeight;
+  let left = event.clientX + pad;
+  let top  = event.clientY + pad;
+  if (left + w > window.innerWidth - 8) left = event.clientX - w - pad;
+  if (top + h > window.innerHeight - 8) top = event.clientY - h - pad;
+  tip.style("left", `${left}px`).style("top", `${top}px`);
+}, true);
+    
+
+// The shared chart function builds its own tooltip inside #chart-j.
+// Copy its text and visibility into ours (it stays hidden by the CSS below).
+new MutationObserver(() => {
+  const shared = root.node().querySelector(".hdc-tooltip");
+  if (!shared) { tip.style("opacity", 0); return; }
+  tip.html(shared.innerHTML)
+     .style("opacity", getComputedStyle(shared).opacity);
+}).observe(plot.node(), {
+  subtree: true, childList: true, attributes: true, characterData: true
+});
+
+
+
 
     const pct = d3.format(".1%"), num = d3.format(",");
     let current = null;
@@ -2871,18 +3002,43 @@ function createChartJ(dataPath = "data/focus_small_multiples.json") {
         container: plot.node(),
         categories: [{ key: s.key, label: s.label, color: lineColor }],
         data: [{ key: s.key, values: s.values }],
-        width: 860,     // smaller coordinate space on phones = larger text
+        width: 860,     
         mainHeight: 760,
         brush: false,
         yMax: sharedY ? globalMax : null,
         tooltip: (key, p) =>
-          `<strong>${s.label}, ${p.x}</strong><br>` +
-          `${p.n} ${p.n === 1 ? "business" : "businesses"} · ` +
-          `${pct(p.share)} of ${num(p.N)} surveyed entries`
+          `<strong>${s.label}, ${p.x}: ${p.n}</strong><br>`
       });
 
-      const first = s.values[0], last = s.values[s.values.length - 1];
-      readout.text(`${s.label}: ${fmt(first.y)} in ${first.x}, ${fmt(last.y)} in ${last.x}`);
+
+      // Chart J's own axis titles, drawn after each redraw
+const svg = plot.select("svg");
+if (!svg.attr("data-vb0")) svg.attr("data-vb0", svg.attr("viewBox"));  // remember the original
+const vb0 = svg.attr("data-vb0").split(/\s+/).map(Number);             // [x, y, w, h]
+
+const padL = 40, padB = 36;   // extra room: raise these if the titles still get cut off
+svg.attr("viewBox", `${vb0[0] - padL} ${vb0[1]} ${vb0[2] + padL} ${vb0[3] + padB}`);
+
+svg.selectAll(".cj-axis-title").remove();
+
+svg.append("text")
+  .attr("class", "cj-axis-title")
+  .attr("x", vb0[0] + vb0[2] / 2)
+  .attr("y", vb0[1] + vb0[3] + padB - 12)
+  .attr("text-anchor", "middle")
+  .attr("font-family", "'Jost', sans-serif")
+  .attr("font-size", 20)
+  .attr("fill", "#33302a")
+  .text("Year");
+
+svg.append("text")
+  .attr("class", "cj-axis-title")
+  .attr("transform", `translate(${vb0[0] - padL + 32},${vb0[1] + vb0[3] / 2}) rotate(-90)`)
+  .attr("text-anchor", "middle")
+  .attr("font-family", "'Jost', sans-serif")
+  .attr("font-size", 20)
+  .attr("fill", "#33302a")
+  .text("Number of businesses");
 
       buttons.selectAll("button")
         .classed("is-active", d => d.key === current)
@@ -2921,7 +3077,6 @@ function createChartK(data = null) {
       prevRent: 7000,
       newRent: 15000,
       outcome: "closed",
-      source: "Press report"
     },
     {
       name: "Nusraty Afghan Imports",
@@ -2930,7 +3085,6 @@ function createChartK(data = null) {
       prevRent: 7000,
       newRent: 45000,
       outcome: "moved",
-      source: "The New York Times"
     },
     {
       name: "Rocco Ristorante",
@@ -2939,7 +3093,6 @@ function createChartK(data = null) {
       prevRent: 8000,
       newRent: 18000,
       outcome: "closed",
-      source: "Press report"
     },
     {
       name: "Arleen Bowman",
@@ -2948,7 +3101,6 @@ function createChartK(data = null) {
       prevRent: 2500,
       newRent: 35000,
       outcome: "closed",
-      source: "The New York Times"
     },
     {
       name: "Cafe Angelique",
@@ -2957,7 +3109,7 @@ function createChartK(data = null) {
       prevRent: 16000,
       newRent: 42000,
       outcome: "closed",
-      source: "Press report"
+
     },
     {
       name: "Da'Vinci Shoes",
@@ -2967,7 +3119,6 @@ function createChartK(data = null) {
       newRent: 40000,
       approx: true,
       outcome: "closed",
-      source: "Press report"
     }
   ];
 
@@ -3153,17 +3304,22 @@ function createChartK(data = null) {
       .attr("stroke-width", 2.2)
       .attr("filter", inkFilter);
 
-    // 5. Direct end labels
-    storeGroups.append("text")
-      .attr("class", "ck-label")
-      .attr("x", (d) => coords(d).x1 + 9)
-      .attr("y", (d) => coords(d).y1 + (labelOffsets[d.key] || 0))
-      .attr("dominant-baseline", "middle")
-      .attr("font-family", "'Jost', sans-serif")
-      .attr("font-size", "12px")
-      .attr("font-weight", "600")
-      .attr("fill", "#33302a")
-      .text((d) => `${d.name} (${d.year})`);
+    // 5. Direct end labels: one shared layer, drawn above all lines/markers
+const labelLayer = g.append("g")
+  .attr("class", "ck-labels")
+
+const labels = labelLayer.selectAll("text.ck-label")
+  .data(stores, (d) => d.key)
+  .join("text")
+  .attr("class", "ck-label")
+  .attr("x", (d) => coords(d).x1 + 9)
+  .attr("y", (d) => coords(d).y1 + (labelOffsets[d.key] || 0))
+  .attr("dominant-baseline", "middle")
+  .attr("font-family", "'Jost', sans-serif")
+  .attr("font-size", "12px")
+  .attr("font-weight", "600")
+  .attr("fill", "#33302a")
+  .text((d) => `${d.name} (${d.year})`);
 
 
  // 6. Wide invisible hit areas so the thin lines are easy to hover
@@ -3209,18 +3365,27 @@ function createChartK(data = null) {
         .style("top", `${my - 28}px`);
     };
 
-    storeGroups
-      .on("mouseenter", (event, d) => {
-        tooltip.html(tipHtml(d)).style("opacity", 1);
-        placeTip(event);
-      })
-      .on("mousemove", placeTip)
-      .on("mouseleave", () => tooltip.style("opacity", 0));
+    const showTip = (event, d) => {
+  tooltip.html(tipHtml(d)).style("opacity", 1);
+  placeTip(event);
+};
+const hideTip = () => tooltip.style("opacity", 0);
+
+storeGroups
+  .on("mouseenter", showTip)
+  .on("mousemove", placeTip)
+  .on("mouseleave", hideTip);
+
+labels
+  .style("cursor", "default")
+  .on("mouseenter", showTip)
+  .on("mousemove", placeTip)
+  .on("mouseleave", hideTip);
 
        // Subtle legend in top-left for closed vs. moved (stacked)
     const legend = g.append("g")
       .attr("class", "ck-legend")
-      .attr("transform", "translate(8, 6)");
+      .attr("transform", "translate(36, 36)");
 
     legend.append("circle")
       .attr("cx", 0).attr("cy", 0).attr("r", 4)
@@ -3245,19 +3410,26 @@ function createChartK(data = null) {
     let current = "all";
 
     function setSeries(name) {
-      const targetKey = slug(String(name));
-      const isAll = targetKey === "all";
-      const match = isAll ? null : stores.find((d) => d.key === targetKey);
-      if (!isAll && !match) return;
+  const targetKey = slug(String(name));
+  const isAll = targetKey === "all";
+  const match = isAll ? null : stores.find((d) => d.key === targetKey);
+  if (!isAll && !match) return;
 
-      current = isAll ? "all" : match.key;
+  current = isAll ? "all" : match.key;
 
-      storeGroups
-        .transition().duration(180)
-        .style("opacity", (d) => (isAll || d.key === current) ? 1 : 0.16);
+  const opacityOf = (d) => (isAll || d.key === current) ? 1 : 0.16;
 
-      storeGroups.filter((d) => d.key === current).raise();
-    }
+  storeGroups
+    .transition().duration(180)
+    .style("opacity", opacityOf);
+
+  labels
+    .transition().duration(180)
+    .style("opacity", opacityOf);
+
+  storeGroups.filter((d) => d.key === current).raise();
+  labelLayer.raise(); // keep labels above the line that was just raised
+}
 
     window.chartK = { setSeries, names: stores.map((d) => d.name) };
     setSeries("all");
@@ -3272,9 +3444,351 @@ function createChartK(data = null) {
 }
 
 // END CHART K
+// CHART L BLEECKER STREET TIMELINE (VERTICAL, DRAWN TO SCALE)
+// Container: <div id="chart-l"></div>
+// Call: createChartL();   (optionally createChartL(yourOwnArray))
+// Entries are either a point ({ at: 2001 }) or a span ({ start: 1961, end: 2001 }).
+// Spans get a curly brace; vertical position is proportional to time (pxPerYear).
+// States: l1 ... l6, one per entry, in the order they appear in defaultData.
+//   window.chartL.show("l3") reveals entries 1-3 and marks entry 3 as current.
+//   show("all") reveals everything, show("none") hides everything (the starting state).
+// Scroll wiring: see initChartL() at the bottom (same pattern as initChartE).
 
+function createChartL(data = null) {
+  const accentColor = "#b25a3f";
+  const inkColor = "#33302a";
+  const FONT = "'Jost', sans-serif";
+
+  // when: label. at: a point in time. start/end: a span. stat/statNote: big callout.
+  // "$…" marks numbers still to be filled in.
+  const defaultData = [
+    {
+      state: "l1", start: 1961, end: 2001, when: "1961–2001",
+      text: "Rents in Greenwich Village moved in tandem with rents in Manhattan as a whole.",
+      stat: "$113",
+      statNote: "mean asking rent in Greenwich Village in 2001:",
+    },
+    {
+      state: "l2", at: 2000.5, when: "July 2000",
+      text: "“Sex and the City”fans flock to Bleecker Street, already an emerging fashion scene for the young and fashion-conscious, after a scene set at Magnolia Bakery.",
+    },
+    {
+      state: "l3", at: 2001, when: "2001",
+      text: "Marc Jacobs begins opening boutiques on Bleecker, soon followed by Ralph Lauren and Cynthia Rowley.",
+
+    },
+    {
+      state: "l4", start: 2001, end: 2010, when: "2001–2010",
+      text: "As older leases expired, landlords raised rents to match the going rate, leaving stores vacant if no high-rent tenant would take over right away.",
+    },
+     {
+      state: "l5", at: 2008, when: "2008",
+      text: "REBNY adds Bleecker to the commercial corridors it tracks, alongside Madison Avenue and 5th Avenue, cementing its high-end retail status.",
+      stat: "$397",
+      statNote: "mean asking rent on Bleecker Street in 2008:",
+    },
+    {
+      state: "l6", at: 2009, when: "2009",
+      stat: "$528",
+      statNote: "commercial rents peak on Bleecker Street at",
+    },
+    {
+      state: "l7", at: 2010, when: "2010",
+      text: "The profits the high-fashion brands expected never materialized, and they began to pull out.",
+    },
+    {
+      state: "l8", start: 2013, end: 2021, when: "2013–2021",
+      text: "Landlords, still holding out for $500+, were slow to realize that number might be unrealistic. Storefronts stay vacant in many cases for months or years.",
+      stat: "$528 to $226",
+      statNote: "Asking rents on Bleecker Street tumbled from" 
+    },
+  ];
+
+  const steps = (data || defaultData).map((d, i) => ({ ...d, state: d.state || `l${i + 1}` }));
+
+  // ---- layout constants (SVG coordinate space) ----
+  const W = 860;
+  const spineX = 340;
+  const pxPerYear = 11;            // raise for a taller, more spread-out timeline
+  const padTop = 14, padBottom = 24, GAP = 14;
+  const left  = { right: 266, width: 254 };                       // span text, right-aligned
+  const right = { x: spineX + 46, width: W - (spineX + 46) - 10 }; // point text, left-aligned
+  const braceEnd = 296, braceTip = 284;
+
+  const F_DATE = `600 14px ${FONT}`;
+  const F_NOTE = `400 12.5px ${FONT}`;
+  const F_BODY = `400 14px ${FONT}`;
+  const DATE_LH = 18, STAT_LH = 32, NOTE_LH = 16, BODY_LH = 18;
+
+  // Scoped styles, injected once. Move into your stylesheet if you prefer.
+  if (!document.getElementById("chart-l-styles")) {
+    const style = document.createElement("style");
+    style.id = "chart-l-styles";
+    style.textContent = `
+      .chart-l { font-family: ${FONT}; color: ${inkColor}; max-width: ${W}px; }
+      .chart-l .cl-axis, .chart-l .cl-entry { opacity: 0; transition: opacity 0.5s; }
+      .chart-l .cl-axis.is-on, .chart-l .cl-entry.is-on { opacity: 1; }
+      .chart-l .cl-dot { transform-box: fill-box; transform-origin: center; transition: transform 0.3s; }
+      .chart-l .cl-entry.is-current .cl-dot { transform: scale(1.5); }
+      @media (prefers-reduced-motion: reduce) {
+        .chart-l .cl-axis, .chart-l .cl-entry, .chart-l .cl-dot { transition: none; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // Text measuring on a canvas, so wrapping works even while the chart is hidden
+  const ctx = document.createElement("canvas").getContext("2d");
+  const wrap = (text, width, font) => {
+    ctx.font = font;
+    const lines = [];
+    let line = "";
+    text.split(/\s+/).forEach((w) => {
+      const test = line ? `${line} ${w}` : w;
+      if (line && ctx.measureText(test).width > width) { lines.push(line); line = w; }
+      else line = test;
+    });
+    if (line) lines.push(line);
+    return lines;
+  };
+
+  const buildBlock = (d, width) => {
+  const body = d.text ? wrap(d.text, width, F_BODY) : [];
+  const note = d.statNote ? wrap(d.statNote, width, F_NOTE) : [];
+
+  const hasStatRow = Boolean(d.stat || note.length);
+  const statRowH = Math.max(
+    d.stat ? STAT_LH : 0,
+    note.length * NOTE_LH
+  );
+
+  const h = DATE_LH
+          + body.length * BODY_LH
+          + (body.length && hasStatRow ? 4 : 0)
+          + statRowH;
+
+  return { body, note, h };
+};
+
+  const drawBlock = (g, d, blk, x, top, anchor) => {
+  const putLine = (str, baseline, size, weight, fill) =>
+    g.append("text")
+      .attr("x", x)
+      .attr("y", baseline)
+      .attr("text-anchor", anchor)
+      .attr("font-family", FONT)
+      .attr("font-size", size)
+      .attr("font-weight", weight)
+      .attr("fill", fill)
+      .text(str);
+
+  let y = top;
+
+  // 1. Date
+  putLine(d.when, y + 13, 14, 600, accentColor);
+  y += DATE_LH;
+
+  // 2. Body
+  blk.body.forEach((l) => {
+    putLine(l, y + 13, 14, 400, inkColor);
+    y += BODY_LH;
+  });
+
+  // Gap between body and the (statnote)(stat) row
+  const hasStatRow = Boolean(d.stat || d.statNote);
+  if (blk.body.length && hasStatRow) {
+    y += 4;
+  }
+
+  // 3. (statnote)(stat) together
+  if (hasStatRow) {
+    const rowBaseline = y + 24;
+    const rowEl = g.append("text")
+      .attr("x", x)
+      .attr("y", rowBaseline)
+      .attr("text-anchor", anchor)
+      .attr("font-family", FONT)
+      .attr("fill", inkColor);
+
+    if (d.statNote) {
+      rowEl.append("tspan")
+        .attr("font-size", 14)
+        .attr("font-weight", 600)
+        .attr("fill", inkColor)
+        .text(d.statNote + (d.stat ? " " : ""));
+    }
+
+    if (d.stat) {
+      rowEl.append("tspan")
+        .attr("font-size", 20)
+        .attr("font-weight", 600)
+        .attr("fill", accentColor)
+        .text(d.stat);
+    }
+
+    y += STAT_LH;
+  }
+};
+
+  // Curly brace "{" from y0 to y1: ends at xEnd (toward the spine), tip at xTip
+  const brace = (y0, y1, xEnd, xTip) => {
+    const r = Math.max(1, Math.min(6, (y1 - y0) / 4));
+    const xm = xTip + (xEnd - xTip) / 2;
+    const ym = (y0 + y1) / 2;
+    return [
+      `M${xEnd},${y0}`,
+      `Q${xm},${y0} ${xm},${y0 + r}`,
+      `L${xm},${ym - r}`,
+      `Q${xm},${ym} ${xTip},${ym}`,
+      `Q${xm},${ym} ${xm},${ym + r}`,
+      `L${xm},${y1 - r}`,
+      `Q${xm},${y1} ${xEnd},${y1}`,
+    ].join(" ");
+  };
+
+  const render = () => {
+    const root = d3.select("#chart-l").classed("chart-l", true).html("");
+
+    const T0 = d3.min(steps, (d) => d.start ?? d.at);
+    const T1 = Math.max(2026, d3.max(steps, (d) => d.end ?? d.at));
+    const y = (t) => padTop + (t - T0) * pxPerYear;
+
+    // ---- place the text blocks ----
+    const pts = steps.filter((d) => d.at != null).sort((a, b) => a.at - b.at);
+    const spans = steps.filter((d) => d.start != null).sort((a, b) => a.start - b.start);
+    let bottom = y(T1);
+
+    let prev = padTop - GAP;
+    const rightLift = 180; // raises right-side text blocks above their dots (increase to lift higher)
+    pts.forEach((d) => {
+      d.ay = y(d.at);
+      d.blk = buildBlock(d, right.width);
+      const desiredTop = Math.max(padTop, d.ay - rightLift);
+      d.top = Math.max(desiredTop, prev + GAP);
+      prev = d.top + d.blk.h;
+      bottom = Math.max(bottom, prev);
+    });
+
+    prev = padTop - GAP;
+    spans.forEach((d) => {
+      d.y0 = y(d.start); d.y1 = y(d.end); d.mid = (d.y0 + d.y1) / 2;
+      d.blk = buildBlock(d, left.width);
+      d.top = Math.max(d.mid - d.blk.h / 2, prev + GAP, padTop);
+      prev = d.top + d.blk.h;
+      bottom = Math.max(bottom, prev);
+    });
+    const H = bottom + padBottom;
+
+    // ---- svg + hand-drawn helpers (same guarded pattern as chart K) ----
+    const instanceId = typeof inkNextId === "function" ? inkNextId("hdc-chart-l") : "hdc-chart-l";
+    const svg = root.append("svg")
+      .attr("class", "hdc-main")
+      .attr("viewBox", `0 0 ${W} ${H}`)
+      .attr("width", "100%")
+      .style("max-width", `${W}px`)
+      .style("height", "auto")
+      .style("overflow", "visible");
+    const defs = svg.append("defs");
+    const ink = typeof installInkFilters === "function" ? installInkFilters(defs, instanceId) : null;
+    const inkFilter = ink ? `url(#${ink.filterId})` : null;
+    const inkPath = (p, seed) =>
+      typeof inkLinePath === "function" ? inkLinePath(p, seed) : d3.line()(p);
+
+    // ---- axis: spine + decade ticks ----
+    const axis = svg.append("g").attr("class", "cl-axis");
+    const yA = y(T0), yB = y(T1), yM = (yA + yB) / 2;
+    axis.append("path")
+      .attr("d", inkPath([[spineX, yA], [spineX, yM], [spineX, yB]], 7))
+      .attr("fill", "none").attr("stroke", inkColor).attr("stroke-width", 2)
+      .attr("stroke-linecap", "round").attr("filter", inkFilter);
+    const ticks = Array.from(new Set([T0, ...d3.range(Math.ceil(T0 / 10) * 10, T1, 10), T1]));
+    ticks.forEach((t) => {
+      axis.append("line")
+        .attr("x1", spineX - 5).attr("x2", spineX).attr("y1", y(t)).attr("y2", y(t))
+        .attr("stroke", inkColor).attr("stroke-width", 1);
+      axis.append("text")
+        .attr("x", spineX - 10).attr("y", y(t) + 4).attr("text-anchor", "end")
+        .attr("font-family", FONT).attr("font-size", 11).attr("fill", inkColor)
+        .attr("fill-opacity", 0.7).text(Math.round(t));
+    });
+
+    // ---- entries ----
+    const entries = svg.selectAll("g.cl-entry")
+      .data(steps)
+      .join("g")
+      .attr("class", "cl-entry")
+      .attr("data-state", (d) => d.state);
+
+    entries.each(function (d) {
+      const g = d3.select(this);
+      if (d.at != null) {
+        // point: dot on the spine, leader to the text on the right
+        const cy = d.top + 9;
+        g.append("path")
+          .attr("d", `M${spineX + 7},${d.ay} C${spineX + 30},${d.ay} ${right.x - 30},${cy} ${right.x - 8},${cy}`)
+          .attr("fill", "none").attr("stroke", inkColor)
+          .attr("stroke-opacity", 0.5).attr("stroke-width", 1);
+        g.append("circle").attr("class", "cl-dot")
+          .attr("cx", spineX).attr("cy", d.ay).attr("r", 5)
+          .attr("fill", accentColor).attr("stroke", inkColor).attr("stroke-width", 2)
+          .attr("filter", inkFilter);
+        drawBlock(g, d, d.blk, right.x, d.top, "start");
+      } else {
+        // span: curly brace on the left, small dots on the spine at each end
+        [d.y0, d.y1].forEach((yy) =>
+          g.append("circle").attr("class", "cl-dot")
+            .attr("cx", spineX).attr("cy", yy).attr("r", 3.5)
+            .attr("fill", accentColor).attr("stroke", inkColor).attr("stroke-width", 1.5));
+        g.append("path")
+          .attr("d", brace(d.y0 + 2, d.y1 - 2, braceEnd, braceTip))
+          .attr("fill", "none").attr("stroke", inkColor).attr("stroke-width", 1.8)
+          .attr("stroke-linecap", "round").attr("filter", inkFilter);
+        const cy = d.top + d.blk.h / 2;
+        if (Math.abs(cy - d.mid) > 2) {
+          g.append("path")
+            .attr("d", `M${braceTip - 1},${d.mid} C${braceTip - 8},${d.mid} ${left.right + 12},${cy} ${left.right + 6},${cy}`)
+            .attr("fill", "none").attr("stroke", inkColor)
+            .attr("stroke-opacity", 0.5).attr("stroke-width", 1);
+        }
+        drawBlock(g, d, d.blk, left.right, d.top, "end");
+      }
+    });
+
+    return function applyShow(state) {
+      const all = state === "all";
+      const none = state === "none";
+      const at = steps.findIndex((d) => d.state === state);
+      if (!all && !none && at < 0) return;
+      axis.classed("is-on", !none);
+      entries
+        .classed("is-on", (d, i) => all || (!none && i <= at))
+        .classed("is-current", (d, i) => !all && !none && i === at);
+    };
+  };
+
+  // window.chartL exists immediately; steps that fire before the first draw are remembered
+  let apply = null;
+  let pending = "l1";
+  window.chartL = {
+    show: (s) => { pending = s; if (apply) apply(s); },
+    states: steps.map((d) => d.state),
+  };
+
+  // wait for fonts so text wraps with the real Jost metrics
+  const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+  return fontsReady.then(() => {
+    apply = render();
+    apply(pending);
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    return window.chartL;
+  });
+}
+
+
+// END CHART L
 //END CHARTS
 
 //necessary extra calls
 createChartJ();
 createChartK();
+createChartL();

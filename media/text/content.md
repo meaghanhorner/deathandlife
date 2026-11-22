@@ -174,10 +174,14 @@ Greenwich Village is still denser than most of Manhattan, but less dense than it
 ##### Mixed Uses
 <!-- svg: chart-j -->
 Jacobs compared Greenwich Village, whose streets were used by residents, workers and visitors alike, giving it a wide variety of uses, to a single-use district, the Financial District, which mostly was used for work. 
->"... the district is miserable at providing services and amenities proportional to the need. Its eating places and clothing shops are pitifully inadequate in number and variety for the demands on them. The district used to have one of the best hardware stores in New York, but a few years ago it could no longer make ends meet, and closed."(201) Without all-day use from residents and visitors, interesting shops and restaurants could not sustain themselves.
+>"... the district is miserable at providing services and amenities proportional to the need. Its eating places and clothing shops are pitifully inadequate in number and variety for the demands on them. The district used to have one of the best hardware stores in New York, but a few years ago it could no longer make ends meet, and closed."(201)
+
+Without all-day use from residents and visitors, interesting shops and restaurants could not sustain themselves.
 Jacobs's last condition for a vital neighborhood is mixed primary uses. She thought for a neighborhood to work well, it needed to have more than one primary function, and preferably more than two. A mix of uses meant that people would be using the streets at all times of the day, bringing money into the district. 
 Of Greenwich Village, Jacobs wrote, 
+
 >"The workers from the laboratories, meat-packing plants, warehouses, plus those from a bewildering variety of small manufacturers, printers and other little industries and offices, give all the eating places and much of the other commerce support at midday. We residents on the street and on its more purely residential tributaries could and would support a modicum of commerce by ourselves, but relatively little. We possess more convenience, liveliness, variety and choice than we 'deserve' in our own right... We support these things together by unconsciously cooperating economically."(199). 
+
 This is backed up by the listings from Cole's Cross-Reference Directory. The 1971 volume, the first I could access, lists dozens of types of shops, from XX to XX. We also know from the density data that Greenwich Village was densely populated, and its volume of restaurants and other amenities suggest that the neighborhood was popular with visitors.
 <!-- svg: map-g -->
 The Greenwich Village of the 1960s and 1970s was a residential neighborhood, but also a neighborhood people worked in, a neighborhood people shopped in, and a neighborhood people ate and drank in. It had restaurants and bars, clothing stores and shoe stores, grocery stores and drugstores, laundromats and beauty parlors. It had small stores that catered to niche interests, and art galleries that were destinations for people outside the neighborhood. These different uses gave the residents reasons to leave their homes and explore the neighborhood, and they gave people living outside the neighborhood reasons to visit. As a result, the streets were lively and filled with people most of the day. 
@@ -214,24 +218,6 @@ Mixed - Greenwich Village is still almost as dense as it used to be, but the den
 ### 4:  Mixed Uses
 Mixed - Almost half of businesses in 2026 are either restaurants of some type or clothing retail, leaving little room for other uses.
 
-
-
-##### What Has Been Lost
-## What Has Been Lost
-
-Statistics can give you an idea of the scope of the issue, but can't tell you the effect on people within the community. Jeremiah Moss's blog "Vanishing New York", which has, since 2007, documented the closures of the businesses that make New York City unique.  
-
-Commenter Kyle Campion writes, in 2019, on a post about the closing of Trattoria Spaghetto, an Italian restaurant at the intersection of Carmine and Bleecker:"God, a Dig Inn[a chain serving salads and grain bowls] is going there? What a joke. Obviously, the Village has been dead for some time now, but 6th ave is a parade of tragedies - for blocks, it's literally 50% drug stores, banks and empty storefronts. That Barnes and Noble space has been vacant for at least 7 years. It's simply a disgrace."(cite)
-
-He's not the only one to refer to Greenwich Village as 'dead'.
-A commenter calling himself "Larry" writes, on the sale of the White Horse tavern to a new owner who kept its name, "I've wondered when this day might come, and here's that day. RIP, White Horse. RIP, Greenwich Village."(https://draft.blogger.com/comment/fullpage/post/683382864156505640/6509681187919706314)
-
-RMAN writes, in response to the closure of Cornelia Street Cafe: "The greed of some landlords is astounding and unsettling, there is no remorse in tearing apart the fabric of a unique neighborhood. Look back at pictures of NYC before the 2000s, better yet go to the 60s - look at how many small bars, clubs, shops there were. Not a single chain to be found (you had to go to "the country" to see those)." (https://draft.blogger.com/comment/fullpage/post/683382864156505640/8918666088488101533)
-
-Other commenters see more than a neighborhood changing, they see the history of their community at risk of being lost. Timmmyk writes: "...As bad as the closing of Cornelia Street Cafe is, I did some shopping on Christopher Street on 12/22 and was utterly flabbergasted at what has happened to the very heart of LGBT history. The South side of Christopher between Bleecker and Bedford only has 3 open storefronts - A small shop/gallery, a spa and Ty's bar, which has been around since 1972. The photos are frightening." (https://draft.blogger.com/comment/fullpage/post/683382864156505640/8918666088488101533)
-
-**** need some extra chart and writing here --- would love to document the # of Greenwich Village businesses that have closed that specifically served the LGBTQ community ***
-
 ##### Option Value
 
 <!-- svg: -->
@@ -252,23 +238,52 @@ When you imagine 10, 20 or 100 landlords all making the same calculation, sudden
 In examining storefront vacancy in New York City, economists Erica Moszkowski and Daniel Stackman cite two sources of uncertainty which generate option value for landlords. The first, time series uncertainty, states that in a market where rents are often cyclical, landlords have an incentive to sign tenants as close to the top of the rent cycle as possible. The second, cross-sectional heterogeneity in tenant willingness to pay, also referred to as "match quality", states that there is substantial variation between what any two given tenants are willing to pay for a given space, creating an incentive for the landlord to wait for a higher-paying tenant rather than lease to a lower-paying one. (Moszkowski & Stackman, 2026)
 
 ##### Timeline
-## Timeline
-After examining all these factors, we can put together a timeline and a hypothesis.
+<!-- svg: chart-l l1 -->
+text
+<!-- svg: chart-l l2 -->
+text
+<!-- svg: chart-l l3 -->
+text
+<!-- svg: chart-l l4 -->
+text
+<!-- svg: chart-l l5 -->
+text
+<!-- svg: chart-l l6 -->
+text
+<!-- svg: chart-l l7 -->
+text
+<!-- svg: chart-l l8 -->
+text
+<!-- svg: chart-l l9 -->
+text
+Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years.  Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
 
-Between 1961 and 2001, commercial rents on Bleecker Street and across Greenwich Village moved in tandem with commercial rents in Manhattan as a whole.
+##### Conclusion
+## Conclusion
+Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years.  Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
+<!-- svg: -->
+Commenter Kyle Campion writes, in 2019, on a post about the closing of Trattoria Spaghetto: 
+>“Obviously the Village has been dead for some time now, but 6th ave is a parade of tragedies… It’s simply a disgrace.”
 
-In July of 2000, Carrie Bradshaw and Miranda Hobbes eat cupcakes outside the original Magnolia Bakery at 401 Bleecker Street on "Sex and the City", turning it into an overnight sensation that drew massive crowds to Bleecker Street.
+A commenter calling himself “Larry” writes, on the sale of the White Horse tavern to a new owner who kept its name,
 
-In 2001, Marc Jacobs begins opening boutiques on Bleecker Street, soon followed by Ralph Lauren and Cynthia Rowley. In response to Bleecker Street's new popularity and rising rents, REBNY (The Real Estate Board of New York) added Bleecker Street to the commercial corridors they tracked, putting it in the company of Madison Avenue and 5th Avenue, among others. At this point mean asking rent on Bleecker Street was between $265 and $600 per square foot per year, with a mean of $397.
+>“RIP, White Horse. RIP, Greenwich Village.”
 
-As older leases expired, landlords raised rents to keep up with the going market rate in the neighborhood, leaving stores vacant if there was no high-rent tenant willing to immediately take over the lease.  
+RMAN writes, in response to the closure of Cornelia Street Cafe: 
 
-The profits the high-fashion brands expected to see never materialized, though, and they began to pull out of the neighborhood.
+>“The greed of some landlords is astounding and unsettling, there is no remorse in tearing apart the fabric of a unique neighborhood.”
 
-By 2010, 5 of 6 Bleecker Street Marc Jacobs stores were closed. 
+Others see more than a neighborhood changing; they see the history of their community at risk of being lost.Timmmyk writes: 
 
-Landlords, still holding out for that $600 rent, were slow to realize that that number might be unrealistic. Asking rents tumbled between 2013 and 2024 from a mean of $xxxx in 2009 to a mean of $xxxx in 2021, their storefronts sitting vacant in many cases for months or years on end. 
-
+>“…(I) was utterly flabbergasted at what has happened the very heart of LGBT history. The South side of Christopher between Bleecker and Bedford only has 3 open storefronts… The photos are frightening.”
+<!-- svg: -->
+When I embarked on this project I assumed that the hyper-gentrification and high-rent blight of today’s Greenwich Village was something that Jacobs could never have predicted. Yet, in “The Death and Life of Great American Cities”, she maps out the exact feedback loop currently playing out in the neighborhood. In a chapter called “The Self-Destruction of Diversity,” Jacobs writes, 
+>“A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location’s success… ardent competition for space in this locality develops… The winners in the competition for space will represent only a narrow segment of the many uses that together created success… But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process…”
+<!-- svg: -->
+When financial speculation and monoculture strip away the fine-grained variety of the street, they destroy the very diversity that made the neighborhood resilient in the first place.
+<!-- svg: -->
+As Jacobs observed, 
+>“Cities have the capability of providing something for everybody, only because, and only when, they are created by everybody.”
 
 ##### Putting Everything Together
 ## Putting Everything Together
@@ -305,8 +320,6 @@ Jacobs argued that this trust accumulates through small, everyday contacts in th
 ##### Call to action
 ## What can you do?
 
-A neighborhood must be constantly changing to meet the needs of its residents. We don’t need or want a Greenwich Village frozen in the 1960s, or 70s or 80s. We don’t need the typewriter shops or the travel agencies, and if a trendy new frozen yogurt place is bringing in long lines of influencers, maybe they will stick around and see what else there is to see in the neighborhood, patronizing shops that need the business. So how can a balance be struck between preserving the neighborhood in amber by stopping development entirely and letting the free market and “option value” let businesses sit empty for years on end?  
-
 Three bills in Albany take aim at this problem. All three were introduced during the 2025-2026 legislative session, but none made it into law. Let your legislators know why these bills should be reintroduced in the 2027-2028 session, and why you support their passage. Though Greenwich Village has already lost many of its historic businesses, many more are still at risk, and other neighborhoods like Greenpoint and Park Slope face similar fates. 
 
 The New York City Small Business Rent Stabilization Act (A05568/S8319) would create a board to cap commercial rent increases and guarantee lease renewals, preventing the type of 100+% rent increases that closed down shops like (TKTKTKTK) and (TKTKTKTK).  
@@ -317,8 +330,31 @@ Find your state senator and assembly member(link)
 Follow progress on the New York City Small Business Rent Stabilization Act and learn more details about how you can take action (https://smallbizunited.com/)
 
 
-##### Conclusion
-## Conclusion
+##### What Has Been Lost
+## What Has Been Lost
+
+<!-- svg: chart-l-timeline -->
+Statistics can give you an idea of the scope of the issue, but can't tell you the effect on people within the community. Jeremiah Moss's blog "Vanishing New York", which has, since 2007, documented the closures of the businesses that make New York City unique.  
+
+<!-- svg: chart-l-timeline -->
+Commenter Kyle Campion writes, in 2019, on a post about the closing of Trattoria Spaghetto, an Italian restaurant at the intersection of Carmine and Bleecker:"God, a Dig Inn[a chain serving salads and grain bowls] is going there? What a joke. Obviously, the Village has been dead for some time now, but 6th ave is a parade of tragedies - for blocks, it's literally 50% drug stores, banks and empty storefronts. That Barnes and Noble space has been vacant for at least 7 years. It's simply a disgrace."(cite)
+
+<!-- svg: chart-l-timeline -->
+He's not the only one to refer to Greenwich Village as 'dead'.
+A commenter calling himself "Larry" writes, on the sale of the White Horse tavern to a new owner who kept its name, "I've wondered when this day might come, and here's that day. RIP, White Horse. RIP, Greenwich Village."(https://draft.blogger.com/comment/fullpage/post/683382864156505640/6509681187919706314)
+
+<!-- svg: chart-l-timeline -->
+RMAN writes, in response to the closure of Cornelia Street Cafe: "The greed of some landlords is astounding and unsettling, there is no remorse in tearing apart the fabric of a unique neighborhood. Look back at pictures of NYC before the 2000s, better yet go to the 60s - look at how many small bars, clubs, shops there were. Not a single chain to be found (you had to go to "the country" to see those)." (https://draft.blogger.com/comment/fullpage/post/683382864156505640/8918666088488101533)
+
+<!-- svg: chart-l-timeline -->
+Other commenters see more than a neighborhood changing, they see the history of their community at risk of being lost. Timmmyk writes: "...As bad as the closing of Cornelia Street Cafe is, I did some shopping on Christopher Street on 12/22 and was utterly flabbergasted at what has happened to the very heart of LGBT history. The South side of Christopher between Bleecker and Bedford only has 3 open storefronts - A small shop/gallery, a spa and Ty's bar, which has been around since 1972. The photos are frightening." (https://draft.blogger.com/comment/fullpage/post/683382864156505640/8918666088488101533)
+
+<!-- svg: chart-l-timeline -->
+**** need some extra chart and writing here --- would love to document the # of Greenwich Village businesses that have closed that specifically served the LGBTQ community ***
+
+
+##### Conclusion-old
+## Conclusion-old
 
 When I embarked on this project I assumed that the hyper-gentrification and high-rent blight of today's Greenwich Village was something that Jacobs could never have predicted.Yet, in "The Death and Life of Great American Cities", she maps out the exact feedback loop currently playing out in the neighborhood. In a chapter called "The Self-Destruction of Diversity", Jacobs writes,
 >"Whichever form the self-destruction takes, this, in broad strokes, is what happens: A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location's success, which is invariably based on flourishing and magnetic diversity, ardent competition for space in this locality develops. It is taken up in what amounts to the economic equivalent of a fad. The winners in the competition for space will represent only a narrow segment of the many uses that together created success...Thus, from this process, one or few dominating uses finally emerge triumphant. But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process... In time, a place that was once so successful and once the object of such ardent competition, wanes and becomes marginal."
@@ -368,9 +404,13 @@ Cole Publications, *Cole’s Cross Reference Directory: Manhattan*. (Elmhurst, N
 
 Google. “Google Street View.” Imagery dates 2009-2026. Accessed August-November 2026. https://www.google.com/streetview/.
 
+Hoylman, Brad. Bleaker on Bleecker: A Snapshot of High-Rent Blight in Greenwich Village and Chelsea. New York State Senate, May 2017. https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf.
+
 Jacobs, Jane. *The Death and Life of Great American Cities*. 1961; repr., New York:Modern Library,2011.
 
-Moss, Jeremiah. *Jeremiah’s Vanishing New York* (blog). Accessed November 19, 2026. https://blogspot.com.
+Moss, Jeremiah. *Jeremiah’s Vanishing New York* (blog). Accessed November 2026. https://vanishingnewyork.blogspot.com/.
+
+Moszkowski, Erica, and Daniel Stackman. “Option Value and Storefront Vacancy in New York City.” Working paper, April 10, 2026. Accessed November 2026. https://emoszkowski.github.io/ericamoszkowski.com/Moszkowski_JMP.pdf.
 
 New York City Department of City Planning. 2026. "LION Single Line Street Base Map" (Version 26A) and "MapPLUTO" (Version 26v2). Accessed via NYC Open Data. https://data.cityofnewyork.us/.
 
@@ -382,6 +422,15 @@ Schroeder, Jonathan, David Van Riper, Steven Manson, Grace Cooper, Zachary Kraus
 ##### Methodology
 ## Methodology
 
+The study area is a set of just under 1,000 Greenwich Village street addresses, chosen for feasibility and for their proximity to key commercial streets, including Bleecker Street, MacDougal Street, and Christopher Street.
+
+I recorded the businesses at each address in 1971, 1975, and every five years after that through 2020, with a final survey in 2026. For 1971 through 2005, business names come from Cole's Cross Reference Directory: Manhattan, with 1971 the first volume I could access. Because the directory was no longer a reliable source after 2005, names for the later years were compiled from Google Street View. When imagery for the exact survey year was not available, I used the most recent earlier imagery. Addresses with more than one business in a given year were recorded as separate entries. A storefront was recorded as vacant when Google Imagery depicted it as vacant or when I found documented evidence the business had closed and the storefront was left vacant. Residential addresses were excluded. 
+
+Businesses were classified using the function codes of the American Planning Association’s Land-Based Classification Standards (LBCS). Classification was rule-based. Each entry was checked first against a list of manual assignments, then matched on its descriptor (for example, “bakery” or “tattoo shop”), and then on keywords in the business name. Entries that matched no rule were listed for review, and I added assignments for those I could identify. Entries that remained unmatched appear as “unclassified” in the charts.
+
+Asking rents come from two sources: classified advertisements in the New York Times archive for […], and Real Estate Board of New York reports on Bleecker Street for […]. Rents are expressed per square foot per year in 2025 dollars, adjusted using […]. The rent increases for individual businesses were documented on Vanishing New York and in New York Times reporting. They are the cases I could find, not a systematic sample. 
+
+*UNFINISHED NEED TO FINISH*
 
 ##### EXTRA dont know where to put it
 Let’s get some quotes from historical newspapers. This one is from The Villager, October 2, 1969. “ It seems to be the trend of the times,” (Mrs. Anita Adelman) said. “Everything is getting bigger and more depersonalized. This neighborhood was developed by small people who operated small businesses, and now the warlords, the large chain operations, are coming in and pushing all the little people out.” Phil Arlotta, operator of Costos Exotic Garden, another business that was forced to move, said “A large chain store will only help to further a bad change that has been gradually occurring in this neighborhood.” (Eighth St. Shops Dying One By One by Steven L. Kaplan).
