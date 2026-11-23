@@ -2742,12 +2742,10 @@ chartH("#chart-h", "data/hh_size.json"); */
     const EPS = 0.0005;                      // below this share, treat as 0%
 
     // ---------- layout ----------
-    const margin = { top: 40, right: 30, bottom: 40, left: 30 };
-    const width  = 1440;
-    const avail  = width - margin.left - margin.right;
-
-    const maxSum = d3.max(data, (y) => d3.sum(y.segments, (s) => s.pct));
-    const K      = avail / maxSum;           // px per 100% share
+    const margin = { top: 40, right: 0, bottom: 40, left: 0 };
+const width  = 1440;
+const avail  = width - margin.left - margin.right;   // 1440
+const K      = avail;                                // px per 100% share
 
     // Height: the tallest export is TARGET_H px; every building uses the same y scale (SY),
     // so relative heights from Illustrator are preserved. Only x is stretched per building.
@@ -2883,13 +2881,14 @@ chartH("#chart-h", "data/hh_size.json"); */
       const segs = new Map(byYear.get(year).map((s) => [s.group, s]));
       const pct = (g) => (segs.get(g) ? segs.get(g).pct : 0);
 
-      let x = 0;
-      const pos = new Map();
-      groups.forEach((g) => {
-        const w = pct(g) * K;
-        pos.set(g, { x, w });
-        x += w;
-      });
+      const total = d3.sum(groups, (g) => pct(g)) || 1;
+let x = 0;
+const pos = new Map();
+groups.forEach((g) => {
+  const w = (pct(g) / total) * K;
+  pos.set(g, { x, w });
+  x += w;
+});
 
       bld.transition().duration(duration)
         .attr("transform", (g) => `translate(${pos.get(g).x},0)`);
@@ -2929,6 +2928,9 @@ chartH("#chart-h", "data/hh_size.json"); */
     slider.on("input", (e) => update(years[+e.target.value], 400));
 
     update(years[0]);
+
+    const r = svg.node().getBoundingClientRect();
+console.log("svg w×h px:", r.width, r.height, "| expected h:", (r.width * height / width).toFixed(0));
 
   } catch (err) {
     console.error("Chart I failed:", err);
