@@ -147,6 +147,66 @@ function initConditionsBar() {
   window.addEventListener('load', () => ScrollTrigger.refresh());
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
 }
+// checkboxes on flyer #2
+
+// FLYER CHECKBOXES
+// Reuses MARKS, buildMarks() and drawMark() from the conditions bar script,
+// so this must load after it (or be pasted below it).
+
+const FLYER_ARTICLE = 'article.step.flyer[data-section="Conditions Scorecard"]';
+const FLYER_VERDICTS = ['yes', 'no', 'partial', 'yes'];   // one per h3, in order
+const FLYER_LABELS = {
+  yes: 'meets the condition',
+  no: 'does not meet the condition',
+  partial: 'partly meets the condition'
+};
+
+function initFlyerChecks() {
+  const root = document.querySelector(FLYER_ARTICLE);
+  if (!root) { console.warn('flyer-checks: article not found'); return; }
+
+  // returns true once the h3s exist and the boxes are added
+  const addBoxes = () => {
+    const heads = root.querySelectorAll('h3');
+    if (!heads.length) return false;
+    if (root.dataset.checksDone) return true;
+    root.dataset.checksDone = '1';
+
+    const boxes = [];
+    heads.forEach((h, i) => {
+      const v = FLYER_VERDICTS[i];
+      if (!v) return;
+      const box = document.createElement('span');
+      box.className = 'flyer-box';
+      box.setAttribute('role', 'img');
+      box.setAttribute('aria-label', FLYER_LABELS[v]);
+      buildMarks(box);
+      h.prepend(box);
+      boxes.push({ box, v });
+    });
+
+    console.log('flyer-checks: boxes added', boxes.length);
+
+    // draw the marks in one after another when the first h3 scrolls into view
+    ScrollTrigger.create({
+      trigger: heads[0],
+      start: 'top 80%',
+      once: true,
+      onEnter: () => boxes.forEach(({ box, v }, i) =>
+        gsap.delayedCall(i * 0.3, () => drawMark(box, v)))
+    });
+    ScrollTrigger.refresh();
+    return true;
+  };
+
+  // the md is injected after load, so wait for the h3s if they aren't there yet
+  if (addBoxes()) return;
+  const mo = new MutationObserver(() => { if (addBoxes()) mo.disconnect(); });
+  mo.observe(root, { childList: true, subtree: true });
+}
+
+
+// end checkboxes on flyer #2
 
 // this is the parser
 
@@ -201,6 +261,7 @@ async function renderSteps() {
     });
   });
   initConditionsBar();
+  initFlyerChecks();
 }
 
 
@@ -2620,7 +2681,6 @@ chartH("#chart-h", "data/hh_size.json"); */
 
 //END CHART H
 
-
 //CHART I: STRETCHY BUILDINGS BY YEAR (share of businesses by category)
 
 (async function () {
@@ -2708,18 +2768,36 @@ chartH("#chart-h", "data/hh_size.json"); */
     }));
 
     // ---------- settings ----------
-    const COLORS = d3.scaleOrdinal().domain(groups).range(d3.schemeTableau10);
+    const isUnclassified = (g) => /unclassified/i.test(g);
+    const isVacant       = (g) => /vacant/i.test(g);
+
+    const PALETTE = ["#b25a3f", "#87aa8b", "#e0a638", "#aa404a", "#8a9a4f",
+                     "#dc7565", "#52889b", "#f9eac0", "#6a2238"];
+    const UNCLASSIFIED_COLOR = "#d9d9d9";    // light grey
+    const VACANT_COLOR       = "#222222";    // dark grey
+    const FILL_OPACITY       = 0.6;          // strength of the color; mixed into BG, not applied as alpha
+    const BG                 = "#dbc398";    // page background the colors are premixed with
+
+    const colored = groups.filter((g) => !isUnclassified(g) && !isVacant(g));
+    const COLORS  = d3.scaleOrdinal().domain(colored).range(PALETTE);
     const TINT    = null;                    // one color for all, or null = per-group COLORS
-    const tintFor = (g) => TINT ?? COLORS(g);
+    const tintFor = (g) =>
+      isUnclassified(g) ? UNCLASSIFIED_COLOR :
+      isVacant(g)       ? VACANT_COLOR :
+      (TINT ?? COLORS(g));
+    // solid color = FILL_OPACITY of the tint mixed over BG, so stacked white layers can't show through each other
+    const fillFor = (g) => d3.interpolateRgb(BG, tintFor(g))(FILL_OPACITY);
 
     const LINE_PX = 0.8;                     // min on-screen thickness for black linework; 0 = off
 
-    const SIGN_FONT  = "'newshound', sans-serif";
+    const FONT       = "'Jost', sans-serif";
+    const SIGN_FONT  = FONT;
     const SIGN_DY    = 40;
     const SIGN_SIZE  = 12;
     const SIGN_COLOR = "#000";
     const SIGN_PAD   = 6;
-    const UNDER_DY   = 18;
+    const PCT_DY     = 18;                   // percentages sit directly under the ground line
+    const UNDER_DY   = 40;                   // overflow sign labels go under the percentages
 
     const signNames = {
       "Restaurants, cafes & bars": "Restaurants",
@@ -2742,7 +2820,7 @@ chartH("#chart-h", "data/hh_size.json"); */
     const EPS = 0.0005;                      // below this share, treat as 0%
 
     // ---------- layout ----------
-    const margin = { top: 40, right: 0, bottom: 40, left: 0 };
+    const margin = { top: 50, right: 0, bottom: 70, left: 0 };
 const width  = 1440;
 const avail  = width - margin.left - margin.right;   // 1440
 const K      = avail;                                // px per 100% share
@@ -2779,9 +2857,11 @@ const K      = avail;                                // px per 100% share
     // ---------- DOM ----------
     const root = d3.select("#chart-i");
     root.selectAll("*").remove();
+    root.style("font-family", FONT);
 
     const controls = root.append("div").attr("class", "chart-i-controls")
-      .style("margin-bottom", "8px");
+      .style("margin-bottom", "8px")
+      .style("font-family", FONT);
 
     const sliderRow = controls.append("div")
       .style("display", "flex").style("align-items", "center").style("gap", "12px");
@@ -2790,22 +2870,30 @@ const K      = avail;                                // px per 100% share
       .attr("min", 0).attr("max", years.length - 1)
       .attr("step", 1).attr("value", 0)
       .style("flex", "1");
-    const yearLabel = sliderRow.append("span")
-      .style("font-weight", "bold").style("min-width", "3em").text(years[0]);
 
     controls.append("div")
       .style("display", "flex").style("justify-content", "space-between")
-      .style("font-size", "11px").style("margin-right", "3.9em")
+      .style("font-size", "11px")
       .selectAll("span").data(years).join("span").text((d) => d);
 
     const svg = root.append("svg")
       .attr("viewBox", `0 0 ${width} ${height}`)
       .attr("width", "100%")
       .style("max-width", `${width}px`)
-      .style("overflow", "visible");
+      .style("overflow", "visible")
+      .style("font-family", FONT);
 
     const plot = svg.append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    // current year, above the buildings
+    const yearLabel = plot.append("text").attr("class", "year-label")
+      .attr("x", avail / 2).attr("y", -22)
+      .attr("text-anchor", "middle")
+      .style("font-family", FONT)
+      .style("font-size", "26px")
+      .style("font-weight", "bold")
+      .text(years[0]);
 
     plot.append("line")
       .attr("x1", 0).attr("x2", avail)
@@ -2828,14 +2916,15 @@ const K      = avail;                                // px per 100% share
     const rgbOf = (c) => (c.match(/[\d.]+/g) || []).map(Number);
 
     art.each(function (g) {
-      const tint = tintFor(g);
+      const tint = fillFor(g);
       d3.select(this).selectAll(SHAPES).each(function () {
         const cs = getComputedStyle(this);
         const fill = cs.fill;
         if (!fill || fill === "none") return;
         const [r, gr, b] = rgbOf(fill);
         if (r >= 250 && gr >= 250 && b >= 250) {
-          this.style.setProperty("fill", tint);             // white -> tint
+          this.style.setProperty("fill", tint);                       // white -> premixed solid tint
+          this.style.setProperty("fill-opacity", "1");
         } else if (r <= 10 && gr <= 10 && b <= 10 && LINE_PX > 0) {
           this.setAttribute("stroke", "#000");              // black shape -> min thickness
           this.setAttribute("stroke-width", LINE_PX);
@@ -2855,13 +2944,15 @@ const K      = avail;                                // px per 100% share
       .text((g) => signNames[g] ?? g);
 
     bld.append("text").attr("class", "pct-label")
-      .attr("y", -10).attr("text-anchor", "middle")
+      .attr("y", rowH + PCT_DY).attr("text-anchor", "middle")
+      .style("font-family", FONT)
       .style("font-weight", "bold");
 
     // ---------- legend ----------
     const legend = root.append("div").attr("class", "chart-i-legend")
       .style("display", "flex").style("flex-wrap", "wrap")
       .style("gap", "6px 28px").style("margin-top", "14px")
+      .style("font-family", FONT)
       .style("font-size", "13px").style("line-height", "1.3");
 
     const item = legend.selectAll("div.legend-item").data(groups).join("div")
@@ -2870,7 +2961,7 @@ const K      = avail;                                // px per 100% share
 
     item.append("span")
       .style("width", "12px").style("height", "12px").style("flex", "none")
-      .style("background", (g) => tintFor(g))
+      .style("background", (g) => fillFor(g))
       .style("border", "1px solid #000");
 
     item.append("span").html((g) =>
@@ -2914,7 +3005,9 @@ groups.forEach((g) => {
 
       bld.select("text.sign-label").transition().duration(duration)
         .attr("x", (g) => pos.get(g).w / 2)
-        .attr("y", (g) => fits(g) ? artTop(g) + SIGN_DY : rowH + UNDER_DY);
+        .attr("y", (g) => fits(g) ? artTop(g) + SIGN_DY : rowH + UNDER_DY)
+        // white on the dark vacant building; black whenever the label sits below it on the page
+        .style("fill", (g) => (isVacant(g) && fits(g)) ? "#fff" : SIGN_COLOR);
 
       bld.selectAll("text").transition("fade").duration(duration)
         .style("opacity", function () {
