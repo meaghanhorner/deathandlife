@@ -6,23 +6,14 @@
 
 ##### Section Intro
 ## Commercial Space Available
-Caffe Reggio, at 119 MacDougal Street, served the first cappuccino in America 1927. Though the 1902 imported espresso machine that made that first cappuncino is now just a display piece, the cafe is still serving them 99 years later. It's still early in the morning and the street is quiet. Across the street, at 128 MacDougal, a metal gate covers the street-level windows. A sign advertises "Commercial Space Available". It has been vacant since at least April, according to Google's Street View. 
+
+
+
+135 West 3rd Street doesn't look any different from any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, two key Greenwich Village entertainment venues, there's no reason that it shouldn't be a popular spot. In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 that 7-11 was closed and boarded up.
 <!-- svg: -->
-128 MacDougal is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half — six consecutive quarters. The problem is now big enough that in June 2026, the city comptroller's office issued a report, titled *Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City*. This follows a 2017 report by then-State Senator Brad Hoylman, titled *Bleaker on Bleecker*, focusing particularly on storefront vacancies in Greenwich Village and Chelsea. The citywide storefront vacancy rate, a modest 4 percent in 2017 and comparable to the nationwide 4.08 percent, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
+135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, a modest 4 percent in 2017 and comparable to the nationwide 4.08 percent, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
 <!-- svg: -->
-While media outlets, politicians and economists have debated the exact cause, the reality of the problem is undisputed. When asked on Jeremiah Moss's blog *Vanishing New York* about pasting oversized Monopoly cards onto empty Manhattan storefronts, the street artist known as Symbol explained:
-> "Everywhere I walked in Manhattan there were empty storefronts, and it seemed like one big game between landlords and tenants... Is there a better analogy for that than the game of Monopoly?"—*[Vanishing New York](https://vanishingnewyork.blogspot.com/2018/06/high-rent-blight-monopoly.html)*
-
-One such Monopoly card had this to say:
- >"There are only two ultimate public powers in shaping and running American cities: votes and control of the money. To sound nicer, we may call these "public opinion" and "disbursement of funds," but they are still votes and money."
-
-<!-- svg: -->
-The text is not the artist’s own. It’s a quotation from Jane Jacobs's *The Death and Life of Great American Cities*.
-
-Jacobs, who wrote about her beloved neighborhood in the late 1950s and early 1960s, recognized the importance of storefront businesses to the vitality of a neighborhood. 
-
->"The trust of a city street is formed over time from many, many little public sidewalk contacts. It grows out of people stopping by at the bar for a beer, getting advice from the grocer and giving advice to the newsstand man, comparing opinions with other customers at the bakery and nodding hello to the two boys drinking pop on the stoop... admiring the new babies and sympathizing over the way a coat faded."(73)
-
+While media outlets, politicians and economists have debated the exact cause, the reality of the problem is undisputed. 
 <!-- svg: -->
 Greenwich Village incubated the '60s folk music boom, the East Coast beat movement, and the Stonewall uprising. It was businesses like the Gaslight Cafe, Kettle of Fish, and the Oscar Wilde Memorial Bookshop that provided space and opportunity for these movements to take hold.
 
@@ -259,6 +250,7 @@ text
 
 
 ##### Conclusion
+<!-- svg: -->
 ## Conclusion
 Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years.  Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
 <!-- svg: -->

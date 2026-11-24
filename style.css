@@ -1092,6 +1092,18 @@ img {
   margin-top: 0;
 }
 
+.step-line.image-end {
+  margin-bottom: 15vh;  
+}
+
+
+.narration-no-image.timeline {
+  position: sticky !important;
+  top: min(0px, calc(100vh - var(--pin-h, 100vh)));
+  z-index: 1 !important;
+}
+
+
 .narration-no-image.timeline .step[data-section="Timeline"] {
   visibility: hidden;
   opacity: 0;

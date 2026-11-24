@@ -13,6 +13,17 @@ if (pinEl) {
   new ResizeObserver(setH).observe(pinEl);
 }
 
+//image runway so things arent skipped
+function addImageRunway() {
+  gsap.utils.toArray(".centered-on-white, .narration-no-image").forEach((section) => {
+    gsap.utils.toArray(".step-line", section).forEach((s) => {
+      // empty step-lines that name an image get a fixed hold; text lines are left alone
+      if (s.dataset.svg && !s.textContent.trim()) s.style.minHeight = "45vh";   // adjust to taste
+    });
+  });
+}
+
+
 //conditions bar
 
 const MARKS = {
@@ -147,23 +158,40 @@ function initConditionsBar() {
   window.addEventListener('load', () => ScrollTrigger.refresh());
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
 }
-// checkboxes on flyer #2
 
-// FLYER CHECKBOXES
+//checkboxes on flyers
+
+// FLYER CHECKBOXES (both flyers)
 // Reuses MARKS, buildMarks() and drawMark() from the conditions bar script,
 // so this must load after it (or be pasted below it).
 
-const FLYER_ARTICLE = 'article.step.flyer[data-section="Conditions Scorecard"]';
-const FLYER_VERDICTS = ['yes', 'no', 'partial', 'yes'];   // one per h3, in order
 const FLYER_LABELS = {
   yes: 'meets the condition',
   no: 'does not meet the condition',
-  partial: 'partly meets the condition'
+  partial: 'partly meets the condition',
+  blank: 'not yet assessed'
 };
 
+const FLYERS = [
+  {
+    // flyer #1: every h3 gets an empty box, no marks
+    selector: 'article.step.flyer:not([data-section="Conditions Scorecard"])',
+    blank: true
+  },
+  {
+    // flyer #2: marks drawn in order, one per h3
+    selector: 'article.step.flyer[data-section="Conditions Scorecard"]',
+    verdicts: ['yes', 'partial', 'partial', 'partial']
+  }
+];
+
 function initFlyerChecks() {
-  const root = document.querySelector(FLYER_ARTICLE);
-  if (!root) { console.warn('flyer-checks: article not found'); return; }
+  FLYERS.forEach(setupFlyer);
+}
+
+function setupFlyer(cfg) {
+  const root = document.querySelector(cfg.selector);
+  if (!root) { console.warn('flyer-checks: article not found', cfg.selector); return; }
 
   // returns true once the h3s exist and the boxes are added
   const addBoxes = () => {
@@ -174,18 +202,21 @@ function initFlyerChecks() {
 
     const boxes = [];
     heads.forEach((h, i) => {
-      const v = FLYER_VERDICTS[i];
+      const v = cfg.blank ? 'blank' : cfg.verdicts[i];
       if (!v) return;
       const box = document.createElement('span');
       box.className = 'flyer-box';
       box.setAttribute('role', 'img');
       box.setAttribute('aria-label', FLYER_LABELS[v]);
-      buildMarks(box);
+      buildMarks(box);              // marks stay hidden (opacity 0) until drawMark runs
       h.prepend(box);
-      boxes.push({ box, v });
+      if (!cfg.blank) boxes.push({ box, v });
     });
 
-    console.log('flyer-checks: boxes added', boxes.length);
+    console.log('flyer-checks: boxes added', heads.length, cfg.blank ? '(blank)' : '');
+
+    // blank flyer: nothing to draw
+    if (cfg.blank) { ScrollTrigger.refresh(); return true; }
 
     // draw the marks in one after another when the first h3 scrolls into view
     ScrollTrigger.create({
@@ -205,8 +236,20 @@ function initFlyerChecks() {
   mo.observe(root, { childList: true, subtree: true });
 }
 
+/* CSS (unchanged)
+.flyer-box {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 0.5em;
+  vertical-align: -0.15em;
+  border: 1.5px solid currentColor;
+  border-radius: 3px;
+}
+.flyer-box svg { display: block; width: 100%; height: 100%; overflow: visible; }
+*/
 
-// end checkboxes on flyer #2
+//end checkboxes on flyers
 
 // this is the parser
 
@@ -274,8 +317,8 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const CURTAIN_FADE_ZONE = 0.25;
 
 // graphic crossfades
-const FADE_OUT  = 0.9;
-const FADE_IN   = 1.4;
+const FADE_OUT  = .5;
+const FADE_IN   = .5;
 const FADE_EASE = "power1.inOut";
 
 // photo fade (time-based)
@@ -284,8 +327,6 @@ const PHOTO_FADE_DURATION = 1.6;
 // scroll stops
 const DEBUG_STOPS   = false;  // true: logs + trigger markers
 const CARD_HOLD_MS  = 500;   // brief hold on each curtain / photo_fade card
-const GATE_MOVE_S   = 0.7;    // image section: travel time between images (= min time each image shows)
-const GATE_COOLDOWN = 100;    // ms of ignored input after each move, soaks up trackpad inertia
 
 // register plugins (skips any whose script tag is missing, and says so)
 const plugins = [window.ScrollTrigger, window.Observer, window.ScrollToPlugin];
@@ -372,7 +413,34 @@ const panelOf = (stage, id) => {
   return el ? graphicKids(stage).find((c) => c === el || c.contains(el)) : null;
 };
 
+const MIN_SHOW_MS = 700;   // minimum time each image stays up
+const fadeQ = new WeakMap();
+
 function crossfadeOnly(stage, rawId) {
+  if (!rawId) return;   // text-only step-lines don't swap anything
+  if (!fadeQ.has(stage)) fadeQ.set(stage, { items: [], last: 0, timer: null });
+  const q = fadeQ.get(stage);
+  if (q.items[q.items.length - 1] === rawId) return;   // ignore repeats
+  q.items.push(rawId);
+  pump(stage, q);
+}
+
+function pump(stage, q) {
+  if (q.timer || !q.items.length) return;
+  const wait = q.last + MIN_SHOW_MS - Date.now();
+  if (wait > 0) {
+    q.timer = setTimeout(() => { q.timer = null; pump(stage, q); }, wait);
+    return;
+  }
+  q.last = Date.now();
+  showNow(stage, q.items.shift());
+  if (q.items.length) {
+    q.timer = setTimeout(() => { q.timer = null; pump(stage, q); }, MIN_SHOW_MS);
+  }
+}
+
+
+function showNow(stage, rawId) {
   const m = rawId && rawId.match(/^(.*)-zoom-(in|out)$/);
   const id = m ? m[1] : rawId;
   if (m && zoomHandlers[id]) zoomHandlers[id](m[2] === "in");
@@ -466,160 +534,7 @@ function initPhotoFadeSteps() {
    Neither one moves the page except the gate's own scrollTo.
    ========================================================= */
 
-// y that puts an element's center at the viewport center
-const centerY = (el) => {
-  const r = el.getBoundingClientRect();
-  return window.scrollY + r.top + r.height / 2 - window.innerHeight / 2;
-};
 
-
-/* ---- scrollbar bypass ---- */
-let bypass = false;
-const bypassHooks = [];   // each gate registers { stop, resume }
-
-function startBypass() {
-  if (bypass) return;
-  bypass = true;
-  gsap.killTweensOf(window);            // cancel any running scrollTo
-  bypassHooks.forEach((h) => h.stop());
-}
-
-function endBypass() {
-  if (!bypass) return;
-  bypass = false;
-  bypassHooks.forEach((h) => h.resume());
-}
-
-function initBypass() {
-  // pressing on the scrollbar (right 20px also covers Mac overlay scrollbars)
-  window.addEventListener("pointerdown", (e) => {
-    if (e.pointerType === "mouse" && e.clientX >= window.innerWidth - 20) startBypass();
-  }, true);
-
-  // any real wheel / touch / key input hands control back to the engine
-  window.addEventListener("wheel", endBypass, { passive: true });
-  window.addEventListener("touchstart", endBypass, { passive: true });
-  window.addEventListener("keydown", endBypass);
-}
-
-/* ---- 2) one image per gesture ---- */
-function initGraphicGates() {
-  if (reduceMotion.matches) return;
-  if (!window.ScrollToPlugin) { console.warn("[stops] ScrollToPlugin missing; gates disabled"); return; }
-
-  gsap.utils.toArray(".centered-on-white, .narration-no-image").forEach((section) => {
-    const steps = gsap.utils.toArray(".step-line", section);   // this section only
-    if (!steps.length || !section.querySelector(".graphic-stage")) return;
-    buildGate(section, steps);
-  });
-}
-
-function buildGate(section, steps) {
-  const last = steps.length - 1;
-  const holdEl = section.querySelector(".logo-hold");   // optional
-  let idx = 0;
-  let busy = false;
-  let readyAt = 0;   // ignore input until this timestamp (soaks up trackpad inertia)
-  let capAt = 0;
-  window.addEventListener("wheel", () => {
-    if (!busy &&Date.now() <capAt) readyAt = Math.min(Date.now() + 120, capAt);
-  }, { passive : true});
-
-  const zoneStart = () => centerY(steps[0]) - window.innerHeight * 0.5;
-  const zoneEnd   = () => centerY(steps[last]) + window.innerHeight * 0.5;
-
-  log("gate built:", section.className, steps.length, "steps");
-
-  function scrollToY(y) {
-    busy = true;
-    gsap.to(window, {
-      scrollTo: { y, autoKill: false },
-      duration: GATE_MOVE_S,
-      ease: "power2.inOut",
-      onComplete: () => { busy = false; 
-        readyAt = Date.now() + GATE_COOLDOWN;
-        capAt = Date.now() + 900;
-       },
-    });
-  }
-
-  function goTo(i) {
-    idx = i;
-    log("gate ->", section.className, i);
-    scrollToY(centerY(steps[i]));
-  }
-
-  function step(dir) {            // +1 down the page, -1 up
-    if (busy || Date.now() < readyAt) return;
-    const next = idx + dir;
-    if (next < 0)    return release("up");
-    if (next > last) return release("down");
-    goTo(next);
-  }
-
-  function release(dir) {
-    log("gate release", section.className, dir);
-    gate.disable();
-    // land just outside the zone so scrolling back re-engages
-    const y = dir === "down"
-      ? Math.max(holdEl ? centerY(holdEl) : 0, zoneEnd() + 2)
-      : Math.max(0, zoneStart() - 2);
-    scrollToY(y);
-  }
-
-  // wheelSpeed -1: onUp = scrolling down the page (swap if yours feels reversed)
-  const gate = Observer.create({
-    target: window,
-    type: "wheel,touch",
-    wheelSpeed: -1,
-    tolerance: 10,
-    preventDefault: true,
-    allowClicks: true,
-    onUp:   () => step(+1),
-    onDown: () => step(-1),
-  });
-  gate.disable();
-  bypassHooks.push({
-  stop: () => { gate.disable(); busy = false; },
-  resume: () => {
-    const y = window.scrollY;
-    if (y > zoneStart() && y < zoneEnd()) {
-      let best = 0, bd = Infinity;
-      steps.forEach((s, i) => {
-        const d = Math.abs(centerY(s) - y);
-        if (d < bd) { bd = d; best = i; }
-      });
-      idx = best;                              // resync to where you actually are
-      readyAt = Date.now() + GATE_COOLDOWN;
-      gate.enable();                           // re-arm for the next gesture, no scroll
-    }
-  },
-});
-
-const engage = (i) => {
-  if (bypass) return;
-  if (!gate.isEnabled) { gate.enable(); goTo(i); }
-};
-
-  ScrollTrigger.create({
-    start: zoneStart,
-    end: zoneEnd,
-    markers: DEBUG_STOPS,
-    onEnter:     () => engage(0),
-    onEnterBack: () => engage(last),
-    onLeave:     () => gate.disable(),
-    onLeaveBack: () => gate.disable(),
-  });
-
-  window.addEventListener("keydown", (e) => {
-    if (!gate.isEnabled) return;
-    const down = [" ", "PageDown", "ArrowDown"].includes(e.key);
-    const up   = ["PageUp", "ArrowUp"].includes(e.key);
-    if (!down && !up) return;
-    e.preventDefault();
-    step(down ? +1 : -1);
-  });
-}
 
 
 /* =========================================================
@@ -732,15 +647,14 @@ renderSteps().then(() => {
     stage.dataset.current = kids[0].querySelector("[id]:not([id^='block-'])")?.id ?? kids[0].id;
   });
 
+  addImageRunway();
   initGraphicTriggers();
   initPhotoFade();
   initPhotoFadeSteps();
+  
   initChartE();
   initChartH();
   initChartL();
-
-  initBypass();
-  initGraphicGates();
 
   updateCurtainFades();
   window.scrollTo(0,0);
@@ -2771,8 +2685,8 @@ chartH("#chart-h", "data/hh_size.json"); */
     const isUnclassified = (g) => /unclassified/i.test(g);
     const isVacant       = (g) => /vacant/i.test(g);
 
-    const PALETTE = ["#b25a3f", "#87aa8b", "#e0a638", "#aa404a", "#8a9a4f",
-                     "#dc7565", "#52889b", "#f9eac0", "#6a2238"];
+    const PALETTE = ["#b25a3f", "#87aa8b", "#e0a638", "#aa406e", "#8a9a4f",
+                     "#e08248", "#52889b", "#f9eac0", "#6a2238"];
     const UNCLASSIFIED_COLOR = "#d9d9d9";    // light grey
     const VACANT_COLOR       = "#222222";    // dark grey
     const FILL_OPACITY       = 0.6;          // strength of the color; mixed into BG, not applied as alpha
