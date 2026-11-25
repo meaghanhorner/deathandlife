@@ -54,7 +54,7 @@ These must insure the presence of people who go outdoors on different schedules 
 @condition short-blocks
 
 >"Long blocks, in their nature, thwart the potential advantages that cities offer to incubation, experimentation, and many small or special enterprises, insofar as these depend upon drawing their customers or clients from among much larger cross-sections of passing public."(238)
-##### Short Blocks
+##### short-blocks
 <!-- svg: map-a-zoom-out -->
 Jacobs writes that short blocks give pedestrians frequent opportunities to turn corners, which means more possible routes any person can take to a given destination. A resident who goes to the same place regularly (whether it's their subway stop or favorite grocery store) will often take different routes to get there on different days, if the short blocks allow it, giving them more opportunities to see different parts of the neighborhood. 
 <!-- svg: map-a-zoom-in -->
@@ -79,7 +79,7 @@ With no major changes to the street grid since the 1960s, we can say yes, Greenw
 
 >"If a city area has only new buildings, the enterprises that can exist there are automatically limited to those that can support the high costs of new construction."(244) 
 
-##### A Mixture of Old and New Buildings 
+##### old-new 
 <!-- svg: map-c -->
 Following Dutch and English colonization of Lenape land, Greenwich Village grew from farmland into a built-up neighborhood in the early 1800s, which left it some of Manhattan's oldest surviving buildings. Much of that early construction is still standing. Although parts of the neighborhood were threatened with 'urban renewal' in the 1950s and 1960s, which would have demolished many older buildings, residents defeated those plans. In 1969 the city designated the Greenwich Village Historic District, protecting many of the neighborhood's older buildings from demolition.
 <!-- svg: chart-d -->
@@ -127,7 +127,7 @@ Though Greenwich Village still has a mix of old and new buildings, the small ran
 @condition density
 
 >"The district must have a sufficiently dense concentration of people, for whatever purpose they may be there. This includes people there because of residence."
-##### A Dense Concentration of People, Including Residents
+##### density
 <!-- svg: chart-h1-->
 According to Jacobs, 
 >"dense concentrations of people are one of the necessary conditions for flourishing city diversity". 
@@ -162,7 +162,7 @@ Greenwich Village is still denser than most of Manhattan, but less dense than it
 @condition mixed-use
 
 >"On successful city streets, people must appear at different times... If consumer enterprises lie idle for much of the day they may disappear. Or, to be more accurate, in most such cases they never appear in the first place. Stores, like parks, need users."(199) 
-##### Mixed Uses
+##### mixed-use
 <!-- svg: chart-j -->
 Jacobs compared Greenwich Village, whose streets were used by residents, workers and visitors alike, giving it a wide variety of uses, to a single-use district, the Financial District, which mostly was used for work. 
 >"... the district is miserable at providing services and amenities proportional to the need. Its eating places and clothing shops are pitifully inadequate in number and variety for the demands on them. The district used to have one of the best hardware stores in New York, but a few years ago it could no longer make ends meet, and closed."(201)

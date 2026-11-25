@@ -23,6 +23,8 @@ function addImageRunway() {
   });
 }
 
+const smooth = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 
 //conditions bar
 
@@ -70,6 +72,39 @@ function initConditionsBar() {
 
   // 1. build the SVG marks inside each box
   bar.querySelectorAll('.box').forEach(buildMarks);
+   const LOGO_VH = 1.41;  
+
+  const logo = document.createElement('a');
+  logo.className = 'bar-logo';
+  logo.href = '#top';
+  logo.setAttribute('aria-label', 'Back to the title screen');
+  logo.innerHTML = '<img src="media/images/logo.png" alt="The Death and Life of Greenwich Village">';
+  logo.addEventListener('click', e => {
+    e.preventDefault();
+    const y = LOGO_VH * window.innerHeight;
+    console.log('logo click, jumping to', y);
+
+    const root = document.documentElement;
+    const prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, y);
+    root.style.scrollBehavior = prev;
+  });
+  bar.prepend(logo);
+
+  // 1c. number each condition and wrap its contents in a link
+  bar.querySelectorAll('li').forEach((li, i) => {
+    const a = document.createElement('a');
+    a.className = 'cond-link';
+    a.href = '#section-' + li.dataset.condition;
+    while (li.firstChild) a.appendChild(li.firstChild);
+    li.appendChild(a);
+
+    const num = document.createElement('span');
+    num.className = 'cond-num';
+    num.textContent = (i + 1) + '.';
+    a.querySelector('.box').after(num);   // number sits between the box and the label
+  });
 
   // 2. swap marker paragraphs for invisible anchors
   const anchors = [];
@@ -95,6 +130,21 @@ function initConditionsBar() {
     });
     p.replaceWith(frag);
   });
+
+  // 2b. wire the links to the first anchor of each condition
+  bar.querySelectorAll('.cond-link').forEach(a => {
+    const c = a.parentElement.dataset.condition;
+    const target = anchors.find(x => x.dataset.type === 'condition' && x.dataset.condition === c);
+    if (!target) return;
+    target.id = 'section-' + c;
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      // land the anchor at ~35% down the viewport so its ScrollTrigger (top 40%) fires
+      const y = target.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.35;
+      window.scrollTo({ top: y, behavior: smooth() });
+    });
+  });
+
 
   console.log('conditions-bar anchors found:', anchors.length);
 
@@ -235,19 +285,6 @@ function setupFlyer(cfg) {
   const mo = new MutationObserver(() => { if (addBoxes()) mo.disconnect(); });
   mo.observe(root, { childList: true, subtree: true });
 }
-
-/* CSS (unchanged)
-.flyer-box {
-  display: inline-block;
-  width: 1.1em;
-  height: 1.1em;
-  margin-right: 0.5em;
-  vertical-align: -0.15em;
-  border: 1.5px solid currentColor;
-  border-radius: 3px;
-}
-.flyer-box svg { display: block; width: 100%; height: 100%; overflow: visible; }
-*/
 
 //end checkboxes on flyers
 

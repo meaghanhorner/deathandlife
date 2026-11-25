@@ -1033,14 +1033,21 @@ img {
   border-bottom: 1px solid rgba(0,0,0,.15);
   box-shadow: 0 0 0 rgba(0,0,0,0);
   transition: box-shadow .35s ease;
-  padding: 10px 20px;
+  padding:2px 20px;
   font-family: "Jost", sans-serif;
-  font-size:1.2rem;
+  font-size: 1.2rem;
+  display: flex;                 /* NEW: logo on the left, list fills the rest */
+  align-items: center;
+  gap: 20px;
 }
+
 #conditions-bar[hidden] { display: block; visibility: hidden; }
 #conditions-bar.is-visible {
   box-shadow: 0 6px 14px rgba(0,0,0,.18);   /* your shadow values here */
 }
+
+#conditions-bar .bar-logo { flex: none; display: flex; align-items: center; }
+#conditions-bar .bar-logo img { height: 56px; width: auto; display: block; }
 
 #conditions-bar ul {
   list-style: none; margin: 0 auto; padding: 0; max-width: 1440px;
@@ -1048,8 +1055,8 @@ img {
 }
 #conditions-bar li {
   grid-column: span 3;
-  display: flex; align-items: center; gap: 12px;
-  padding: 6px 10px; border-radius: 6px;
+  display: flex;                
+  border-radius: 6px;
   font-size: .95rem; opacity: .5;
   box-shadow: inset 0 -3px 0 transparent;
   transition: opacity .25s, background .25s, box-shadow .25s;
@@ -1061,8 +1068,32 @@ img {
   box-shadow: inset 0 -3px 0 var(--accent);
 }
 
+
+/* NEW: the link is now the flex row, so the whole tile is clickable */
+#conditions-bar .cond-link {
+  flex: 1;
+  display: flex; align-items: center; gap: 12px;
+  padding: 6px 10px;
+  color: inherit; text-decoration: none;
+  border-radius: 6px;
+}
+#conditions-bar .cond-link:hover .cond-label { text-decoration: underline; }
+#conditions-bar .cond-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+#conditions-bar .cond-link .box { flex: none; }
+#conditions-bar .cond-num { font-variant-numeric: tabular-nums; flex: none; }
+
+#conditions-bar li.is-active {
+  opacity: 1; font-weight: 700;
+  background: var(--accent-soft);
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
 #conditions-bar li.is-active .box { border-color: var(--accent); }
-@media (max-width: 700px) { #conditions-bar li { grid-column: span 6; font-size: .85rem; } }
+
+@media (max-width: 700px) {
+  #conditions-bar { gap: 10px; padding: 8px 12px; }
+  #conditions-bar .bar-logo img { height: 24px; }
+  #conditions-bar li { grid-column: span 6; font-size: .85rem; }
+}
 
 
 .box {
