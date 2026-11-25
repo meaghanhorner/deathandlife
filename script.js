@@ -30,7 +30,7 @@ const smooth = () =>
 
 const MARKS = {
   yes: { color: '#509464', width: 2.6, paths: [{ d: 'M9.5 9.5 L13 15 L22.5 3.5', len: 24, delay: 0 }] },
-  no:      { color: '#c8372d', width: 2.6, paths: [{ d: 'M7.5 7.5 L16.5 16.5', len: 13, delay: 0 },
+  no:      { color: '#b25a3f', width: 2.6, paths: [{ d: 'M7.5 7.5 L16.5 16.5', len: 13, delay: 0 },
                                                    { d: 'M16.5 7.5 L7.5 16.5', len: 13, delay: 0.25 }] },
   partial: { color: '#d5861e', width: 2.6, paths: [{ d: 'M8.5 13.5 L22.5 8.5', len: 12, delay: 0 }] }
 };
@@ -2086,8 +2086,8 @@ Promise.all([
   const OTHER = "residential, open space, or other";
 
   const statuses = [
-    { key: "vacant",     label: "Has a vacant storefront",           color: "#8e361b" },
-    { key: "occupied",   label: "Occupied",                          color: "#4e9a82" },
+    { key: "vacant",     label: "Has a vacant storefront",           color: "#33302a" },
+    { key: "occupied",   label: "Occupied",                          color: "#b25a3f" },
     { key: "demolished", label: "Demolished",                        color: "#636363" },
     { key: OTHER,        label: "Residential, open space, or other", color: TAN },
   ];
@@ -2725,7 +2725,7 @@ chartH("#chart-h", "data/hh_size.json"); */
     const PALETTE = ["#b25a3f", "#87aa8b", "#e0a638", "#aa406e", "#8a9a4f",
                      "#e08248", "#52889b", "#f9eac0", "#6a2238"];
     const UNCLASSIFIED_COLOR = "#d9d9d9";    // light grey
-    const VACANT_COLOR       = "#222222";    // dark grey
+    const VACANT_COLOR       = "#33302a";    // dark grey
     const FILL_OPACITY       = 0.6;          // strength of the color; mixed into BG, not applied as alpha
     const BG                 = "#dbc398";    // page background the colors are premixed with
 
@@ -3849,9 +3849,134 @@ function createChartL(data = null) {
 
 
 // END CHART L
+
+// CHART M
+
+// CHART M LGBTQ+ BUSINESSES OVER TIME
+
+function createChartM(dataPath = "data/lgbtq_chart.json") {
+  const metric    = "n";
+  const lineColor = "#b25a3f";
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const mq   = window.matchMedia("(max-width: 600px)");
+
+  return d3.json(dataPath).then(raw => {
+    const s0 = raw.series[0];
+    const s = {
+      key:    slug(s0.name),
+      label:  s0.name,
+      values: s0.points.map(p => ({ x: p.year, y: p[metric], n: p.n, N: p.N, share: p.share }))
+    };
+    const yMax = d3.max(s.values, v => v.y);
+
+    const root = d3.select("#chart-m").classed("chart-m", true).html("");
+    const plot = root.append("div").attr("class", "cm-plot");
+
+    // Chart M tooltip, built like chart J's: body-level, fixed, positioned by clientX/Y
+    const tip = d3.select("body").append("div")
+      .attr("class", "hdc-tooltip")
+      .style("opacity", 0);
+
+    window.addEventListener("mousemove", (event) => {
+      if (!plot.node().contains(event.target)) { tip.style("opacity", 0); return; }
+
+      const shared = Array.from(document.querySelectorAll('[class*="tooltip"]'))
+        .find((el) => {
+          if (el === tip.node()) return false;
+          const cs = getComputedStyle(el);
+          return cs.display !== "none" && parseFloat(cs.opacity) > 0 && el.innerHTML.trim();
+        });
+
+      if (!shared) { tip.style("opacity", 0); return; }
+
+      tip.html(shared.innerHTML).style("opacity", 1);
+      shared.style.visibility = "hidden";
+
+      const pad = 14, node = tip.node();
+      const w = node.offsetWidth, h = node.offsetHeight;
+      let left = event.clientX + pad;
+      let top  = event.clientY + pad;
+      if (left + w > window.innerWidth - 8) left = event.clientX - w - pad;
+      if (top + h > window.innerHeight - 8) top = event.clientY - h - pad;
+      tip.style("left", `${left}px`).style("top", `${top}px`);
+    }, true);
+
+    // Copy the shared function's own tooltip text and visibility into ours
+    new MutationObserver(() => {
+      const shared = root.node().querySelector(".hdc-tooltip");
+      if (!shared) { tip.style("opacity", 0); return; }
+      tip.html(shared.innerHTML)
+         .style("opacity", getComputedStyle(shared).opacity);
+    }).observe(plot.node(), {
+      subtree: true, childList: true, attributes: true, characterData: true
+    });
+
+    function draw() {
+      createHandDrawnLineChart({
+        container: plot.node(),
+        categories: [{ key: s.key, label: "", color: lineColor }],
+        data: [{ key: s.key, values: s.values }],
+        width: 860,
+        mainHeight: 760,
+        brush: false,
+        yMax: yMax,
+        tooltip: (key, p) =>
+          `<strong>${s.label}, ${p.x}: ${p.n}</strong><br>`
+      });
+
+      // Chart M's own axis titles, drawn after each redraw
+      const svg = plot.select("svg");
+      if (!svg.attr("data-vb0")) svg.attr("data-vb0", svg.attr("viewBox"));
+      const vb0 = svg.attr("data-vb0").split(/\s+/).map(Number);   // [x, y, w, h]
+
+      const padL = 40, padB = 36;
+      svg.attr("viewBox", `${vb0[0] - padL} ${vb0[1]} ${vb0[2] + padL} ${vb0[3] + padB}`);
+
+      svg.selectAll(".cm-axis-title").remove();
+
+      svg.append("text")
+        .attr("class", "cm-axis-title")
+        .attr("x", vb0[0] + vb0[2] / 2)
+        .attr("y", vb0[1] + vb0[3] + padB - 12)
+        .attr("text-anchor", "middle")
+        .attr("font-family", "'Jost', sans-serif")
+        .attr("font-size", 24)
+        .attr("fill", "#33302a")
+        .text("Year");
+
+      svg.append("text")
+        .attr("class", "cm-axis-title")
+        .attr("transform", `translate(${vb0[0] - padL + 32},${vb0[1] + vb0[3] / 2}) rotate(-90)`)
+        .attr("text-anchor", "middle")
+        .attr("font-family", "'Jost', sans-serif")
+        .attr("font-size", 24)
+        .attr("fill", "#33302a")
+        .text("Number of businesses");
+    }
+
+    // redraw when the screen crosses the phone breakpoint
+    mq.addEventListener("change", () => {
+      draw();
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+
+    window.chartM = { redraw: draw };
+    draw();
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+    return window.chartM;
+  });
+}
+
+// END CHART M
+
+// END CHART M
+
+
+
 //END CHARTS
 
 //necessary extra calls
 createChartJ();
 createChartK();
 createChartL();
+createChartM();
