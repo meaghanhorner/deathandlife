@@ -15,12 +15,61 @@ if (pinEl) {
 
 //image runway so things arent skipped
 function addImageRunway() {
+  const introSection = document
+    .querySelector(".graphic-stage")
+    ?.closest(".centered-on-white, .narration-no-image");
+
   gsap.utils.toArray(".centered-on-white, .narration-no-image").forEach((section) => {
     gsap.utils.toArray(".step-line", section).forEach((s) => {
-      // empty step-lines that name an image get a fixed hold; text lines are left alone
-      if (s.dataset.svg && !s.textContent.trim()) s.style.minHeight = "45vh";   // adjust to taste
+      const introSteps = introSection ? [...introSection.querySelectorAll(".step-line[data-scrub]")] : [];
+const lastIntro = introSteps[introSteps.length - 1];
+if (lastIntro) lastIntro.style.minHeight = "62svh";   // 22 + 40 of hold on the final image
+      if (!(s.dataset.svg && !s.textContent.trim())) return;
+      if (section === introSection) {
+        s.dataset.scrub = "1";
+        s.style.minHeight = "22svh";   // scroll distance per image
+        s.style.margin = "0";
+        s.style.padding = "0";
+      } else {
+        s.style.minHeight = "55svh";
+      }
     });
   });
+}
+
+function initIntroScrub() {
+  const stage = document.querySelector(".graphic-stage");
+  const section = stage?.closest(".centered-on-white, .narration-no-image");
+  if (!section) return;
+
+  const kids = graphicKids(stage);
+  if (kids.length < 2) return;
+
+  gsap.set(kids, { autoAlpha: 0, y: 0 });
+  gsap.set(kids[0], { autoAlpha: 1 });
+  stage.dataset.current = "intro-scrub";   // stops other triggers swapping this stage
+
+  const tl = gsap.timeline({
+    defaults: { ease: "none" },
+    scrollTrigger: {
+  trigger: section,
+  start: 0,
+  end: () => {
+    const first = document.querySelector(".photo_fade_bg_steps .step-line");
+    const textStart = first.getBoundingClientRect().top + window.scrollY - innerHeight * 0.75;
+    return Math.max(100, textStart);   // absolute scroll position
+  },
+  scrub: 0.4,
+  invalidateOnRefresh: true,
+},
+  });
+
+  // each step = 1 unit: 0.6 crossfade, 0.4 hold
+  kids.slice(1).forEach((k, i) => {
+    tl.to(kids[i], { autoAlpha: 0, duration: 0.6 }, i)
+      .to(k,       { autoAlpha: 1, duration: 0.6 }, i);
+  });
+  tl.to({}, { duration: 0.4 });   // hold on the last image
 }
 
 const smooth = () =>
@@ -351,7 +400,7 @@ async function renderSteps() {
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 // text fades
-const CURTAIN_FADE_ZONE = 0.25;
+const CURTAIN_FADE_ZONE = 0.15;
 
 // graphic crossfades
 const FADE_OUT  = .5;
@@ -359,7 +408,7 @@ const FADE_IN   = .5;
 const FADE_EASE = "power1.inOut";
 
 // photo fade (time-based)
-const PHOTO_FADE_DURATION = 1.6;
+const PHOTO_FADE_DURATION = .9;
 
 // scroll stops
 const DEBUG_STOPS   = false;  // true: logs + trigger markers
@@ -422,13 +471,17 @@ function updateGraphic(id) {
   stage.dataset.current = id;
   updateCue(stage, id);   
 
-  graphicKids(stage).forEach((g) => {
-    if (g === panel) {
-      gsap.fromTo(g, { y: 20 }, { autoAlpha: 1, y: 0, duration: 1.2, ease: FADE_EASE, overwrite: true });
-    } else {
-      gsap.to(g, { autoAlpha: 0, y: -20, duration: 0.8, ease: FADE_EASE, overwrite: true });
-    }
-  });
+  const FADE_ONLY = ["chart-h1"];
+const isFlat = (g) => FADE_ONLY.some((id) => g.id === id || g.querySelector("#" + id));
+
+graphicKids(stage).forEach((g) => {
+  if (g === panel) {
+    if (isFlat(g)) gsap.to(g, { autoAlpha: 1, y: 0, duration: 1.2, ease: FADE_EASE, overwrite: true });
+    else gsap.fromTo(g, { y: 20 }, { autoAlpha: 1, y: 0, duration: 1.2, ease: FADE_EASE, overwrite: true });
+  } else {
+    gsap.to(g, { autoAlpha: 0, y: isFlat(g) ? 0 : -20, duration: 0.8, ease: FADE_EASE, overwrite: true });
+  }
+});
 }
 
 const CUE_GRAPHICS = 2;   // cue shows on this many graphics, counting from the first
@@ -501,6 +554,7 @@ function showNow(stage, rawId) {
 // each step-line swaps its graphic as it crosses mid-screen (CSS sticky holds the stage; no pin)
 function initGraphicTriggers() {
   gsap.utils.toArray(".step-line").forEach((line) => {
+    if (line.dataset.scrub) return;
     const go = () => {
       console.log("[step]", line.dataset.svg, "stage.current =", line.closest(".centered-on-white, .narration-no-image")?.querySelector(".graphic-stage")?.dataset.current);
       const stage = line
@@ -550,15 +604,8 @@ function initPhotoFadeSteps() {
   gsap.utils.toArray(".photo_fade_bg_steps .step-line").forEach((step) => {
     gsap.set(step, { autoAlpha: 0, y: 30 });
     gsap.to(step, {
-      autoAlpha: 1,
-      y: 0,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: step,
-        start: "top 75%",
-        end: "top 45%",
-        scrub: true,
-      },
+      autoAlpha: 1, y: 0, ease: "power2.out",
+      scrollTrigger: { trigger: step, start: "top 75%", end: "top 45%", scrub: true },
     });
   });
 }
@@ -595,23 +642,23 @@ function initChartE() {
 function initChartH() {
   const hStates = ["population", "density", "household"]; // step 1, 2, 3
 
-  const hText = {
-    population: {
-      title: "Greenwich Village's population shrank, while Manhattan's grew",
-      subtitle: "Residents counted in decennial census, 1970-2020",
-      source: "Source: U.S. Census Bureau via NHGIS",
-    },
-    density: {
-      title: "Manhattan became more dense; Greenwich Village less",
-      subtitle: "Residents per acre of land, 1970-2020",
-      source: "Source: U.S. Census Bureau via NHGIS",
-    },
-    household: {
-      title: "Household size shrank in Greenwich Village and Manhattan",
-      subtitle: "Average Household Size, 1970-2020",
-      source: "Source: U.S. Census Bureau via NHGIS",
-    },
-  };
+ const hText = {
+  population: {
+    title: "Greenwich Village's population shrank, while Manhattan's grew",
+    subtitle: "Percent change in residents, 1970-2020",
+    source: "Source: U.S. Census Bureau via NHGIS",
+  },
+  density: {
+    title: "Manhattan became more dense; Greenwich Village less",
+    subtitle: "Percent change in residents per acre of land, 1970-2020",
+    source: "Source: U.S. Census Bureau via NHGIS",
+  },
+  household: {
+    title: "Household size shrank in Greenwich Village and Manhattan",
+    subtitle: "Percent change in average household size, 1970-2020",
+    source: "Source: U.S. Census Bureau via NHGIS",
+  },
+};
 
   const block = document.querySelector("#block-chart-h");
   if (!block) return;
@@ -686,6 +733,7 @@ renderSteps().then(() => {
 
   addImageRunway();
   initGraphicTriggers();
+  initIntroScrub();
   initPhotoFade();
   initPhotoFadeSteps();
   
@@ -2276,7 +2324,9 @@ const labelData = labels.features.flatMap((f) => {
 
 //END CHART G
 
-//START CHART H1: SLOPE CHARTS (population / density / household size)
+// START CHART H1
+
+//START CHART H1: DIVERGING BARS (percent change, 1970-2020: population / density / household size)
 
 window.chartH1 = window.chartH1 || {
   requested: "population",
@@ -2290,36 +2340,25 @@ fetch("data/metrics_comparison.json")
     const rows = allRows.filter((d) => d.year != null && isFinite(+d.year));
     const Y0 = 1970, Y1 = 2020;
     const ACRES_PER_KM2 = 247.105;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // EDIT TEXT HERE
+    // EDIT TEXT HERE (the page title/subtitle/source swap lives in initChartH's hText)
     const states = {
       population: {
         value: (d) => +d.population,
-        yLabel: "Residents",
+        yLabel: "Change in residents",
         fmt: d3.format(",.0f"),
-        yMax: () => 1800000,
-        axisFmt: d3.format(".2~s"),   // 200k, 1.2M, 1.8M
-        title: "Total Population, 1970 and 2020",
-        subtitle: "Residents counted in the decennial census",
-        source: "Source: U.S. Census Bureau via NHGIS. 1970 interpolated to 2010 tract boundaries."
       },
       density: {
         value: (d) => +d.density_km2 / ACRES_PER_KM2,
-        yLabel: "People per acre",
+        yLabel: "Change in people per acre",
         fmt: d3.format(",.0f"),
-        title: "Population Density, 1970 and 2020",
-        subtitle: "Residents per acre of land",
-        source: "Source: U.S. Census Bureau via NHGIS; area from 2010 tract boundaries."
       },
       household: {
         value: (d) => +d.avg_household_size,
-        yLabel: "Average people per household",
+        yLabel: "Change in average household size",
         fmt: d3.format(".2f"),
-        yMax: (hi) => Math.max(2, Math.ceil(hi * 2) / 2),
-        title: "Average Household Size, 1970 and 2020",
-        subtitle: "People per household",
-        source: "Source: U.S. Census Bureau via NHGIS. 1970 interpolated to 2010 tract boundaries."
-      }
+      },
     };
 
     const areas = ["Manhattan", "Greenwich Village"];
@@ -2327,20 +2366,28 @@ fetch("data/metrics_comparison.json")
     const keys = { "Manhattan": "manhattan", "Greenwich Village": "gv" };
     const names = { manhattan: "Manhattan", gv: "Greenwich Village" };
 
-    // two values per series per state: 1970 and 2020
+    const pctFmt = (v) => d3.format(Math.abs(v) < 0.1 ? "+.1%" : "+.0%")(v);
+    const tickFmt = (v) => (v === 0 ? "0%" : d3.format("+.0%")(v));
+
+    // per series, per state: 1970 value, 2020 value, percent change
     const seriesDefs = areas.map((areaName) => {
       const areaRows = rows.filter((d) => d.area === areaName);
       const at = (yr) => areaRows.find((d) => +d.year === yr);
       const vals = {};
       Object.entries(states).forEach(([k, st]) => {
-        const a = at(Y0), b = at(Y1);
-        vals[k] = [a ? st.value(a) : null, b ? st.value(b) : null];
+        const ra = at(Y0), rb = at(Y1);
+        const a = ra ? st.value(ra) : null;
+        const b = rb ? st.value(rb) : null;
+        vals[k] = {
+          a, b,
+          pct: a != null && b != null && isFinite(a) && isFinite(b) && a !== 0 ? (b - a) / a : null,
+        };
       });
       return { key: keys[areaName], color: colors[areaName], vals };
     });
 
-    const width = 660, height = 660;
-    const margin = { top: 44, right: 190, bottom: 56, left: 120 };
+    const width = 660, height = 440;
+    const margin = { top: 64, right: 50, bottom: 60, left: 150 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
@@ -2369,15 +2416,6 @@ fetch("data/metrics_comparison.json")
       .on("mousemove", placeTip)
       .on("mouseleave", () => tooltip.style("opacity", 0));
 
-    root.append("div").attr("class", "hdc-legend")
-      .selectAll("span")
-      .data(seriesDefs)
-      .join("span")
-      .attr("class", "hdc-legend-btn")
-      .style("cursor", "default")
-      .style("pointer-events", "none")
-      .html((d) => `<span class="hdc-swatch" style="display:inline-block;width:34px;height:3px;margin-right:0.4rem;vertical-align:middle;background:${d.color}"></span>${names[d.key]}`);
-
     const svg = root.append("svg")
       .attr("class", "hdc-main")
       .attr("viewBox", `0 0 ${width} ${height}`)
@@ -2391,27 +2429,29 @@ fetch("data/metrics_comparison.json")
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const xL = 0;              // x of the 1970 side, inside g
-    const xR = innerWidth;     // x of the 2020 side
-    const GAP = 16;            // minimum vertical gap between direct labels
-
-    // keep labels from overlapping
-    const spread = (items) => {
-      const s = items.slice().sort((a, b) => a.y - b.y);
-      for (let i = 1; i < s.length; i++) if (s[i].y - s[i - 1].y < GAP) s[i].y = s[i - 1].y + GAP;
-      return s;
-    };
-
     const OFFSET = 14;
+    const FONT = "'Jost', sans-serif";
+    const INK = "#33302a";
     const layers = {};
+    
 
     Object.entries(states).forEach(([name, st]) => {
-      const all = seriesDefs.flatMap((s) => s.vals[name]).filter((v) => v != null);
-      const hi = d3.max(all);
-      const y = d3.scaleLinear()
-        .domain([0, st.yMax ? st.yMax(hi) : hi * 1.15])
-        .range([innerHeight, 0]);
-      if (!st.yMax) y.nice();
+      const usable = seriesDefs.filter((s) => s.vals[name].pct != null);
+      const pcts = usable.map((s) => s.vals[name].pct);
+
+      // symmetric-ish domain with room for the value labels at the bar ends
+      const lo = Math.min(0, ...pcts), hi = Math.max(0, ...pcts);
+      const span = (hi - lo) || 0.1;
+      const x = d3.scaleLinear()
+        .domain([lo - span * 0.3, hi + span * 0.3])
+        .range([0, innerWidth])
+        .nice();
+      const x0 = x(0);
+
+      const y = d3.scaleBand()
+        .domain(usable.map((s) => s.key))
+        .range([0, innerHeight])
+        .padding(0.4);
 
       const layer = g.append("g")
         .attr("class", `hdc-layer hdc-layer-${name}`)
@@ -2419,76 +2459,83 @@ fetch("data/metrics_comparison.json")
         .style("pointer-events", "none")
         .attr("transform", `translate(0,${OFFSET})`);
 
-      // y axis title (what is being measured)
+      // what is being measured
       layer.append("text")
-        .attr("x", xL - margin.left + 6).attr("y", -22)
-        .attr("font-size", 16).attr("fill", "#33302a").attr("fill-opacity", 1).attr("font-family", "'Jost', sans-serif")
+        .attr("x", -margin.left + 6).attr("y", -36)
+        .attr("font-size", 16).attr("fill", INK).attr("font-family", FONT)
         .text(st.yLabel);
 
-      // solid left axis and solid bottom axis (ticks at the two census years)
-      layer.append("g")
-        .attr("class", "hdc-axis")
-        .call(d3.axisLeft(y).ticks(6).tickFormat(st.axisFmt || st.fmt))
-        .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
+      // direction cues on either side of zero
+      layer.append("text")
+        .attr("x", x0 - 8).attr("y", -10).attr("text-anchor", "end")
+        .attr("font-size", 13).attr("fill", INK).attr("fill-opacity", 0.7).attr("font-family", FONT)
+        .text("\u2190 Decrease");
+      layer.append("text")
+        .attr("x", x0 + 8).attr("y", -10).attr("text-anchor", "start")
+        .attr("font-size", 13).attr("fill", INK).attr("fill-opacity", 0.7).attr("font-family", FONT)
+        .text("Increase \u2192");
 
-      const xAxisScale = d3.scaleLinear().domain([Y0, Y1]).range([xL, xR]);
-      layer.append("g")
-        .attr("class", "hdc-axis")
-        .attr("transform", `translate(0,${y(0)})`)
-        .call(d3.axisBottom(xAxisScale).tickValues([Y0, Y1]).tickFormat(d3.format("d")))
-        .call((sel) => sel.select(".domain").attr("stroke", "#33302a"));
+      // bottom axis with faint gridlines
+      const axis = layer.append("g")
+  .attr("class", "hdc-axis")
+  .attr("transform", `translate(0,${innerHeight})`)
+  .call(d3.axisBottom(x).ticks(6).tickFormat(tickFmt).tickSize(5).tickSizeOuter(0))
+  .call((sel) => sel.select(".domain").attr("stroke", INK));
+
       layer.append("text")
         .attr("x", innerWidth / 2).attr("y", innerHeight + 46)
         .attr("text-anchor", "middle")
-        .attr("font-size", 16).attr("fill", "#33302a").attr("fill-opacity", 1).attr("font-family", "'Jost', sans-serif")
-        .text("Census year");
+        .attr("font-size", 16).attr("fill", INK).attr("font-family", FONT)
+        .text(`Percent change, ${Y0}\u2013${Y1}`);
 
-      const usable = seriesDefs.filter((s) => s.vals[name][0] != null && s.vals[name][1] != null);
-
-       // slopes + end dots + hover targets
+      // bars
+      const bars = [];
       usable.forEach((s, i) => {
-        const [a, b] = s.vals[name];
-        const head = `<div style="font-weight:600;color:${s.color};">${names[s.key]}</div>`;
-        const unit = `<div style="opacity:.7;">${st.yLabel}</div>`;
+        const { a, b, pct } = s.vals[name];
+        const by = y(s.key), bh = y.bandwidth();
+        const bx = pct >= 0 ? x0 : x(pct);
+        const bw = Math.abs(x(pct) - x0);
 
-        layer.append("path")
-          .attr("fill", "none").attr("stroke", s.color)
-          .attr("stroke-width", 3).attr("stroke-linecap", "round")
-          .attr("filter", inkFilter).style("opacity", 0.9)
-          .attr("d", inkPath([[xL, y(a)], [xR, y(b)]], s.key.length + i));
+        const rect = layer.append("rect")
+          .attr("class", "hdc-bar")
+          .attr("x", bx).attr("y", by).attr("width", bw).attr("height", bh)
+          .attr("fill", s.color).style("opacity", 0.9)
+          .attr("filter", inkFilter);
+        bars.push({ sel: rect, x: bx, w: bw, x0 });
 
-        // wide invisible line: shows both years and the change
+        // area name on the left, in the bar's color
+        layer.append("text")
+          .attr("x", -12).attr("y", by + bh / 2 + 5).attr("text-anchor", "end")
+          .attr("font-size", 16).attr("font-weight", 600)
+          .attr("fill", s.color).attr("font-family", FONT)
+          .text(names[s.key]);
+
+        // percent label at the bar end
+        layer.append("text")
+          .attr("x", pct >= 0 ? x(pct) + 8 : x(pct) - 8)
+          .attr("y", by + bh / 2 + 6)
+          .attr("text-anchor", pct >= 0 ? "start" : "end")
+          .attr("font-size", 20).attr("font-weight", 600)
+          .attr("fill", s.color).attr("font-family", FONT)
+          .text(pctFmt(pct));
+
+        // hover target covers the whole row
         bindTip(
-          layer.append("path")
-            .attr("d", `M${xL},${y(a)}L${xR},${y(b)}`)
-            .attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 16),
-          head +
-          `<div>${Y0}: <strong>${st.fmt(a)}</strong> ${st.yLabel}</div>` +
-          `<div>${Y1}: <strong>${st.fmt(b)}</strong> ${st.yLabel}</div>` +
-          `<div>Change: ${d3.format("+.0%")((b - a) / a)}</div>`
+          layer.append("rect")
+            .attr("x", 0).attr("y", by - 6).attr("width", innerWidth).attr("height", bh + 12)
+            .attr("fill", "transparent"),
+          `<div style="font-weight:600;color:${s.color};">${names[s.key]}</div>` +
+          `<div>${Y0}: <strong>${st.fmt(a)}</strong></div>` +
+          `<div>${Y1}: <strong>${st.fmt(b)}</strong></div>` +
+          `<div>Change: ${pctFmt(pct)}</div>`
         );
-
-        [[xL, a, Y0], [xR, b, Y1]].forEach(([px, v, yr]) => {
-          layer.append("circle").attr("cx", px).attr("cy", y(v)).attr("r", 5).attr("fill", s.color);
-          bindTip(
-            layer.append("circle").attr("cx", px).attr("cy", y(v)).attr("r", 12).attr("fill", "transparent"),
-            head + `<div>${yr}: <strong>${st.fmt(v)}</strong></div>` + unit
-          );
-        });
       });
 
-      // direct labels
-      const left = spread(usable.map((s) => ({ color: s.color, y: y(s.vals[name][0]), v: s.vals[name][0] })));
-      const right = spread(usable.map((s) => ({ color: s.color, y: y(s.vals[name][1]), v: s.vals[name][1], key: s.key })));
-
-      left.forEach((d) => layer.append("text")
-        .attr("x", xL - 12).attr("y", d.y + 4).attr("text-anchor", "end")
-        .attr("font-size", 16).attr("font-weight", 600).attr("fill", d.color).attr("font-family", "'Jost', sans-serif")
-        .text(st.fmt(d.v)));
-      right.forEach((d) => layer.append("text")
-        .attr("x", xR + 12).attr("y", d.y + 4).attr("text-anchor", "start")
-        .attr("font-size", 16).attr("font-weight", 600).attr("fill", d.color).attr("font-family", "'Jost', sans-serif")
-        .text(`${st.fmt(d.v)}  ${names[d.key]}`));
+      // zero line, drawn last so it sits on top of the bars
+      layer.append("path")
+        .attr("d", inkPath([[x0, -2], [x0, innerHeight / 2], [x0, innerHeight]], 3))
+        .attr("fill", "none").attr("stroke", INK).attr("stroke-width", 2)
+        .attr("stroke-linecap", "round").attr("filter", inkFilter);
 
       layers[name] = layer;
     });
@@ -2498,39 +2545,32 @@ fetch("data/metrics_comparison.json")
     function show(name, instant) {
       if (!states[name]) { console.warn(`Chart H1: unknown state "${name}"`); return; }
       if (name === current && !instant) return;
-      
 
-      const dur = instant ? 0 : 600;
+      const dur = instant || reduceMotion ? 0 : 600;
       const prev = current;
       current = name;
-      tooltip.style("opacity", 0)
+      tooltip.style("opacity", 0);
 
       if (prev && layers[prev]) {
-        layers[prev]
-          .style("pointer-events", "none")
-          .transition("layer").duration(dur).ease(d3.easeCubicInOut)
-          .style("opacity", 0)
-          .attr("transform", `translate(0,${-OFFSET})`);
-      }
+  layers[prev]
+    .style("pointer-events", "none")
+    .transition("layer").duration(dur).ease(d3.easeCubicInOut)
+    .style("opacity", 0);
+}
 
-      layers[name]
-        .interrupt("layer")
-        .attr("transform", `translate(0,${OFFSET})`)
-        .style("pointer-events", "all")
-        .transition("layer").duration(dur).ease(d3.easeCubicInOut)
-        .style("opacity", 1)
-        .attr("transform", "translate(0,0)");
+layers[name]
+  .interrupt("layer")
+  .style("pointer-events", "all")
+  .transition("layer").duration(dur).ease(d3.easeCubicInOut)
+  .style("opacity", 1);
     }
-
-
-
 
     window.chartH1.show = show;
     show(window.chartH1.requested, true);
 
   }).catch((err) => console.error("Chart H1 failed:", err));
 
-//END CHART H1 POPULATION
+//END CHART H1
 
 
 /* //START CHART H2 DENSITY
@@ -3507,23 +3547,12 @@ labels
 }
 
 // END CHART K
-// CHART L BLEECKER STREET TIMELINE (VERTICAL, DRAWN TO SCALE)
-// Container: <div id="chart-l"></div>
-// Call: createChartL();   (optionally createChartL(yourOwnArray))
-// Entries are either a point ({ at: 2001 }) or a span ({ start: 1961, end: 2001 }).
-// Spans get a curly brace; vertical position is proportional to time (pxPerYear).
-// States: l1 ... l6, one per entry, in the order they appear in defaultData.
-//   window.chartL.show("l3") reveals entries 1-3 and marks entry 3 as current.
-//   show("all") reveals everything, show("none") hides everything (the starting state).
-// Scroll wiring: see initChartL() at the bottom (same pattern as initChartE).
 
 function createChartL(data = null) {
   const accentColor = "#b25a3f";
   const inkColor = "#33302a";
   const FONT = "'Jost', sans-serif";
 
-  // when: label. at: a point in time. start/end: a span. stat/statNote: big callout.
-  // "$…" marks numbers still to be filled in.
   const defaultData = [
     {
       state: "l1", start: 1961, end: 2001, when: "1961–2001",
@@ -3533,18 +3562,17 @@ function createChartL(data = null) {
     },
     {
       state: "l2", at: 2000.5, when: "July 2000",
-      text: "“Sex and the City”fans flock to Bleecker Street, already an emerging fashion scene for the young and fashion-conscious, after a scene set at Magnolia Bakery.",
+      text: "“Sex and the City” fans flock to Bleecker Street, already an emerging fashion scene for the young and fashion-conscious, after a scene set at Magnolia Bakery.",
     },
     {
       state: "l3", at: 2001, when: "2001",
       text: "Marc Jacobs begins opening boutiques on Bleecker, soon followed by Ralph Lauren and Cynthia Rowley.",
-
     },
     {
       state: "l4", start: 2001, end: 2010, when: "2001–2010",
       text: "As older leases expired, landlords raised rents to match the going rate, leaving stores vacant if no high-rent tenant would take over right away.",
     },
-     {
+    {
       state: "l5", at: 2008, when: "2008",
       text: "REBNY adds Bleecker to the commercial corridors it tracks, alongside Madison Avenue and 5th Avenue, cementing its high-end retail status.",
       stat: "$397",
@@ -3563,27 +3591,27 @@ function createChartL(data = null) {
       state: "l8", start: 2013, end: 2021, when: "2013–2021",
       text: "Landlords, still holding out for $500+, were slow to realize that number might be unrealistic. Storefronts stay vacant in many cases for months or years.",
       stat: "$528 to $226",
-      statNote: "Asking rents on Bleecker Street tumbled from" 
+      statNote: "Asking rents on Bleecker Street tumbled from",
     },
   ];
 
   const steps = (data || defaultData).map((d, i) => ({ ...d, state: d.state || `l${i + 1}` }));
 
   // ---- layout constants (SVG coordinate space) ----
-  const W = 860;
-  const spineX = 340;
-  const pxPerYear = 11;            // raise for a taller, more spread-out timeline
-  const padTop = 14, padBottom = 24, GAP = 14;
-  const left  = { right: 266, width: 254 };                       // span text, right-aligned
-  const right = { x: spineX + 46, width: W - (spineX + 46) - 10 }; // point text, left-aligned
-  const braceEnd = 296, braceTip = 284;
+  const W = 1000;
+  const padX = 30;                  // space left/right of the time axis
+  const padTop = 14, padBottom = 24, GAP = 12;
+  const SPAN_W = 230;               // text width for blocks above the spine
+  const PT_W = 176;                 // text width for blocks below the spine
+  const ABOVE_GAP = 80;             // spine -> bottom of span text
+  const BELOW_GAP = 60;             // spine -> top of point text
+  const braceEndOff = 30, braceTipOff = 42;   // brace distance above the spine
 
   const F_DATE = `600 14px ${FONT}`;
-  const F_NOTE = `400 12.5px ${FONT}`;
+  const F_NOTE = `600 13px ${FONT}`;
   const F_BODY = `400 14px ${FONT}`;
-  const DATE_LH = 18, STAT_LH = 32, NOTE_LH = 16, BODY_LH = 18;
+  const DATE_LH = 18, STAT_LH = 28, NOTE_LH = 16, BODY_LH = 18;
 
-  // Scoped styles, injected once. Move into your stylesheet if you prefer.
   if (!document.getElementById("chart-l-styles")) {
     const style = document.createElement("style");
     style.id = "chart-l-styles";
@@ -3600,7 +3628,6 @@ function createChartL(data = null) {
     document.head.appendChild(style);
   }
 
-  // Text measuring on a canvas, so wrapping works even while the chart is hidden
   const ctx = document.createElement("canvas").getContext("2d");
   const wrap = (text, width, font) => {
     ctx.font = font;
@@ -3615,98 +3642,67 @@ function createChartL(data = null) {
     return lines;
   };
 
+  // date, body, then the stat note (wrapped) and the big stat on its own line
   const buildBlock = (d, width) => {
-  const body = d.text ? wrap(d.text, width, F_BODY) : [];
-  const note = d.statNote ? wrap(d.statNote, width, F_NOTE) : [];
+    const body = d.text ? wrap(d.text, width, F_BODY) : [];
+    const note = d.statNote ? wrap(d.statNote, width, F_NOTE) : [];
+    const hasStat = Boolean(note.length || d.stat);
+    const h = DATE_LH
+            + body.length * BODY_LH
+            + (body.length && hasStat ? 4 : 0)
+            + note.length * NOTE_LH
+            + (d.stat ? STAT_LH : 0);
+    return { body, note, h };
+  };
 
-  const hasStatRow = Boolean(d.stat || note.length);
-  const statRowH = Math.max(
-    d.stat ? STAT_LH : 0,
-    note.length * NOTE_LH
-  );
+  const drawBlock = (g, d, blk, x, top) => {
+    const put = (str, baseline, size, weight, fill) =>
+      g.append("text")
+        .attr("x", x).attr("y", baseline).attr("text-anchor", "start")
+        .attr("font-family", FONT).attr("font-size", size)
+        .attr("font-weight", weight).attr("fill", fill)
+        .text(str);
 
-  const h = DATE_LH
-          + body.length * BODY_LH
-          + (body.length && hasStatRow ? 4 : 0)
-          + statRowH;
+    let y = top;
+    put(d.when, y + 13, 14, 600, accentColor);
+    y += DATE_LH;
 
-  return { body, note, h };
-};
+    blk.body.forEach((l) => { put(l, y + 13, 14, 400, inkColor); y += BODY_LH; });
 
-  const drawBlock = (g, d, blk, x, top, anchor) => {
-  const putLine = (str, baseline, size, weight, fill) =>
-    g.append("text")
-      .attr("x", x)
-      .attr("y", baseline)
-      .attr("text-anchor", anchor)
-      .attr("font-family", FONT)
-      .attr("font-size", size)
-      .attr("font-weight", weight)
-      .attr("fill", fill)
-      .text(str);
+    if (blk.body.length && (blk.note.length || d.stat)) y += 4;
 
-  let y = top;
+    blk.note.forEach((l) => { put(l, y + 12, 13, 600, inkColor); y += NOTE_LH; });
 
-  // 1. Date
-  putLine(d.when, y + 13, 14, 600, accentColor);
-  y += DATE_LH;
+    if (d.stat) { put(d.stat, y + 20, 20, 600, accentColor); y += STAT_LH; }
+  };
 
-  // 2. Body
-  blk.body.forEach((l) => {
-    putLine(l, y + 13, 14, 400, inkColor);
-    y += BODY_LH;
-  });
-
-  // Gap between body and the (statnote)(stat) row
-  const hasStatRow = Boolean(d.stat || d.statNote);
-  if (blk.body.length && hasStatRow) {
-    y += 4;
-  }
-
-  // 3. (statnote)(stat) together
-  if (hasStatRow) {
-    const rowBaseline = y + 24;
-    const rowEl = g.append("text")
-      .attr("x", x)
-      .attr("y", rowBaseline)
-      .attr("text-anchor", anchor)
-      .attr("font-family", FONT)
-      .attr("fill", inkColor);
-
-    if (d.statNote) {
-      rowEl.append("tspan")
-        .attr("font-size", 14)
-        .attr("font-weight", 600)
-        .attr("fill", inkColor)
-        .text(d.statNote + (d.stat ? " " : ""));
-    }
-
-    if (d.stat) {
-      rowEl.append("tspan")
-        .attr("font-size", 20)
-        .attr("font-weight", 600)
-        .attr("fill", accentColor)
-        .text(d.stat);
-    }
-
-    y += STAT_LH;
-  }
-};
-
-  // Curly brace "{" from y0 to y1: ends at xEnd (toward the spine), tip at xTip
-  const brace = (y0, y1, xEnd, xTip) => {
-    const r = Math.max(1, Math.min(6, (y1 - y0) / 4));
-    const xm = xTip + (xEnd - xTip) / 2;
-    const ym = (y0 + y1) / 2;
+  // Horizontal curly brace from x0 to x1: ends at yEnd (toward the spine), tip at yTip (away)
+  const hbrace = (x0, x1, yEnd, yTip) => {
+    const r = Math.max(1, Math.min(6, (x1 - x0) / 4));
+    const ym = yTip + (yEnd - yTip) / 2;
+    const xm = (x0 + x1) / 2;
     return [
-      `M${xEnd},${y0}`,
-      `Q${xm},${y0} ${xm},${y0 + r}`,
-      `L${xm},${ym - r}`,
-      `Q${xm},${ym} ${xTip},${ym}`,
-      `Q${xm},${ym} ${xm},${ym + r}`,
-      `L${xm},${y1 - r}`,
-      `Q${xm},${y1} ${xEnd},${y1}`,
+      `M${x0},${yEnd}`,
+      `Q${x0},${ym} ${x0 + r},${ym}`,
+      `L${xm - r},${ym}`,
+      `Q${xm},${ym} ${xm},${yTip}`,
+      `Q${xm},${ym} ${xm + r},${ym}`,
+      `L${x1 - r},${ym}`,
+      `Q${x1},${ym} ${x1},${yEnd}`,
     ].join(" ");
+  };
+
+  // Spread text blocks left to right so they never overlap, keeping time order
+  const spread = (items, width) => {
+    const minX = 10, maxX = W - 10;
+    items.sort((a, b) => a.want - b.want);
+    items.forEach((it, i) => {
+      it.bx = Math.max(it.want, i ? items[i - 1].bx + width + GAP : minX);
+    });
+    for (let i = items.length - 1; i >= 0; i--) {
+      const lim = (i === items.length - 1 ? maxX : items[i + 1].bx - GAP) - width;
+      if (items[i].bx > lim) items[i].bx = lim;
+    }
   };
 
   const render = () => {
@@ -3714,35 +3710,34 @@ function createChartL(data = null) {
 
     const T0 = d3.min(steps, (d) => d.start ?? d.at);
     const T1 = Math.max(2026, d3.max(steps, (d) => d.end ?? d.at));
-    const y = (t) => padTop + (t - T0) * pxPerYear;
+    const pxPerYear = (W - 2 * padX) / (T1 - T0);
+    const x = (t) => padX + (t - T0) * pxPerYear;
 
-    // ---- place the text blocks ----
-    const pts = steps.filter((d) => d.at != null).sort((a, b) => a.at - b.at);
-    const spans = steps.filter((d) => d.start != null).sort((a, b) => a.start - b.start);
-    let bottom = y(T1);
+    const pts = steps.filter((d) => d.at != null);
+    const spans = steps.filter((d) => d.start != null);
 
-    let prev = padTop - GAP;
-    const rightLift = 180; // raises right-side text blocks above their dots (increase to lift higher)
     pts.forEach((d) => {
-      d.ay = y(d.at);
-      d.blk = buildBlock(d, right.width);
-      const desiredTop = Math.max(padTop, d.ay - rightLift);
-      d.top = Math.max(desiredTop, prev + GAP);
-      prev = d.top + d.blk.h;
-      bottom = Math.max(bottom, prev);
+      d.ax = x(d.at);
+      d.blk = buildBlock(d, PT_W);
+      d.want = d.ax - 10;
     });
-
-    prev = padTop - GAP;
     spans.forEach((d) => {
-      d.y0 = y(d.start); d.y1 = y(d.end); d.mid = (d.y0 + d.y1) / 2;
-      d.blk = buildBlock(d, left.width);
-      d.top = Math.max(d.mid - d.blk.h / 2, prev + GAP, padTop);
-      prev = d.top + d.blk.h;
-      bottom = Math.max(bottom, prev);
+      d.x0 = x(d.start); d.x1 = x(d.end); d.mid = (d.x0 + d.x1) / 2;
+      d.blk = buildBlock(d, SPAN_W);
+      d.want = d.mid - SPAN_W / 2;
     });
-    const H = bottom + padBottom;
+    spread(pts, PT_W);
+    spread(spans, SPAN_W);
 
-    // ---- svg + hand-drawn helpers (same guarded pattern as chart K) ----
+    const aboveH = d3.max(spans, (d) => d.blk.h) || 0;
+    const belowH = d3.max(pts, (d) => d.blk.h) || 0;
+    const spineY = padTop + aboveH + ABOVE_GAP;
+    const H = spineY + BELOW_GAP + belowH + padBottom;
+
+    spans.forEach((d) => { d.top = spineY - ABOVE_GAP - d.blk.h; });   // bottom-aligned above the brace
+    pts.forEach((d) => { d.top = spineY + BELOW_GAP; });
+
+    // ---- svg + hand-drawn helpers ----
     const instanceId = typeof inkNextId === "function" ? inkNextId("hdc-chart-l") : "hdc-chart-l";
     const svg = root.append("svg")
       .attr("class", "hdc-main")
@@ -3757,20 +3752,20 @@ function createChartL(data = null) {
     const inkPath = (p, seed) =>
       typeof inkLinePath === "function" ? inkLinePath(p, seed) : d3.line()(p);
 
-    // ---- axis: spine + decade ticks ----
+    // ---- axis: horizontal spine + decade ticks (labels above the spine) ----
     const axis = svg.append("g").attr("class", "cl-axis");
-    const yA = y(T0), yB = y(T1), yM = (yA + yB) / 2;
+    const xA = x(T0), xB = x(T1), xM = (xA + xB) / 2;
     axis.append("path")
-      .attr("d", inkPath([[spineX, yA], [spineX, yM], [spineX, yB]], 7))
+      .attr("d", inkPath([[xA, spineY], [xM, spineY], [xB, spineY]], 7))
       .attr("fill", "none").attr("stroke", inkColor).attr("stroke-width", 2)
       .attr("stroke-linecap", "round").attr("filter", inkFilter);
     const ticks = Array.from(new Set([T0, ...d3.range(Math.ceil(T0 / 10) * 10, T1, 10), T1]));
     ticks.forEach((t) => {
       axis.append("line")
-        .attr("x1", spineX - 5).attr("x2", spineX).attr("y1", y(t)).attr("y2", y(t))
+        .attr("x1", x(t)).attr("x2", x(t)).attr("y1", spineY - 5).attr("y2", spineY)
         .attr("stroke", inkColor).attr("stroke-width", 1);
       axis.append("text")
-        .attr("x", spineX - 10).attr("y", y(t) + 4).attr("text-anchor", "end")
+        .attr("x", x(t)).attr("y", spineY - 10).attr("text-anchor", "middle")
         .attr("font-family", FONT).attr("font-size", 11).attr("fill", inkColor)
         .attr("fill-opacity", 0.7).text(Math.round(t));
     });
@@ -3785,35 +3780,36 @@ function createChartL(data = null) {
     entries.each(function (d) {
       const g = d3.select(this);
       if (d.at != null) {
-        // point: dot on the spine, leader to the text on the right
-        const cy = d.top + 9;
+        // point: dot on the spine, leader curving down to the text below
+        const y0 = spineY + 7, y1 = d.top - 6, ym = (y0 + y1) / 2;
         g.append("path")
-          .attr("d", `M${spineX + 7},${d.ay} C${spineX + 30},${d.ay} ${right.x - 30},${cy} ${right.x - 8},${cy}`)
+          .attr("d", `M${d.ax},${y0} C${d.ax},${ym} ${d.bx + 4},${ym} ${d.bx + 4},${y1}`)
           .attr("fill", "none").attr("stroke", inkColor)
           .attr("stroke-opacity", 0.5).attr("stroke-width", 1);
         g.append("circle").attr("class", "cl-dot")
-          .attr("cx", spineX).attr("cy", d.ay).attr("r", 5)
+          .attr("cx", d.ax).attr("cy", spineY).attr("r", 5)
           .attr("fill", accentColor).attr("stroke", inkColor).attr("stroke-width", 2)
           .attr("filter", inkFilter);
-        drawBlock(g, d, d.blk, right.x, d.top, "start");
+        drawBlock(g, d, d.blk, d.bx, d.top);
       } else {
-        // span: curly brace on the left, small dots on the spine at each end
-        [d.y0, d.y1].forEach((yy) =>
+        // span: small dots at each end, brace above, leader up to the text
+        [d.x0, d.x1].forEach((xx) =>
           g.append("circle").attr("class", "cl-dot")
-            .attr("cx", spineX).attr("cy", yy).attr("r", 3.5)
+            .attr("cx", xx).attr("cy", spineY).attr("r", 3.5)
             .attr("fill", accentColor).attr("stroke", inkColor).attr("stroke-width", 1.5));
         g.append("path")
-          .attr("d", brace(d.y0 + 2, d.y1 - 2, braceEnd, braceTip))
+          .attr("d", hbrace(d.x0 + 2, d.x1 - 2, spineY - braceEndOff, spineY - braceTipOff))
           .attr("fill", "none").attr("stroke", inkColor).attr("stroke-width", 1.8)
           .attr("stroke-linecap", "round").attr("filter", inkFilter);
-        const cy = d.top + d.blk.h / 2;
-        if (Math.abs(cy - d.mid) > 2) {
-          g.append("path")
-            .attr("d", `M${braceTip - 1},${d.mid} C${braceTip - 8},${d.mid} ${left.right + 12},${cy} ${left.right + 6},${cy}`)
-            .attr("fill", "none").attr("stroke", inkColor)
-            .attr("stroke-opacity", 0.5).attr("stroke-width", 1);
-        }
-        drawBlock(g, d, d.blk, left.right, d.top, "end");
+        const y0 = spineY - braceTipOff - 1;
+        const y1 = spineY - ABOVE_GAP + 6;
+        const ym = (y0 + y1) / 2;
+        const tx = d.bx + SPAN_W / 2;
+        g.append("path")
+          .attr("d", `M${d.mid},${y0} C${d.mid},${ym} ${tx},${ym} ${tx},${y1}`)
+          .attr("fill", "none").attr("stroke", inkColor)
+          .attr("stroke-opacity", 0.5).attr("stroke-width", 1);
+        drawBlock(g, d, d.blk, d.bx, d.top);
       }
     });
 
@@ -3829,7 +3825,6 @@ function createChartL(data = null) {
     };
   };
 
-  // window.chartL exists immediately; steps that fire before the first draw are remembered
   let apply = null;
   let pending = "l1";
   window.chartL = {
@@ -3837,7 +3832,6 @@ function createChartL(data = null) {
     states: steps.map((d) => d.state),
   };
 
-  // wait for fonts so text wraps with the real Jost metrics
   const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
   return fontsReady.then(() => {
     apply = render();
@@ -3846,6 +3840,7 @@ function createChartL(data = null) {
     return window.chartL;
   });
 }
+
 
 
 // END CHART L
