@@ -84,14 +84,17 @@ const MARKS = {
   yes: { color: '#509464', width: 2.6, paths: [{ d: 'M9.5 9.5 L13 15 L22.5 3.5', len: 24, delay: 0 }] },
   no:      { color: '#b25a3f', width: 2.6, paths: [{ d: 'M7.5 7.5 L16.5 16.5', len: 13, delay: 0 },
                                                    { d: 'M16.5 7.5 L7.5 16.5', len: 13, delay: 0.25 }] },
-  partial: { color: '#d5861e', width: 2.6, paths: [{ d: 'M8.5 13.5 L22.5 8.5', len: 12, delay: 0 }] }
+  partial: { color: '#d5861e', width: 1.2, fill: true,
+  paths: [{ d: 'M7.6 7.6 L7.6 16.4 L16.4 16.4 Z',   // bar: triangle in the bottom-left half of the box
+            dFlyer: 'M2 2 L2 22 L22 22 Z',           // flyer: same shape, scaled for the flyer's box
+            len: 0, delay: 0 }] }
 };
 
 function buildMarks(box) {
   box.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none"
       stroke-linecap="round" stroke-linejoin="round">` +
     Object.entries(MARKS).map(([k, m]) =>
-      m.paths.map(p => `<path class="m-${k}" d="${p.d}" style="opacity:0"/>`).join('')
+      m.paths.map(p => `<path class="m-${k}" d="${(box.classList.contains('flyer-box') && p.dFlyer) || p.d}" style="opacity:0"/>`).join('')
     ).join('') + `</svg>`;
 }
 
@@ -101,10 +104,18 @@ function drawMark(box, v) {
     box.querySelectorAll('.m-' + k).forEach((p, i) => {
       gsap.killTweensOf(p);
       if (k === v) {
-        const len = m.paths[i].len;
-        gsap.set(p, { stroke: m.color, strokeWidth: m.width, strokeDasharray: len, strokeDashoffset: len, opacity: 1 });
-        gsap.to(p, { strokeDashoffset: 0, duration: 0.35, delay: m.paths[i].delay, ease: 'power2.out' });
-      } else {
+  if (m.fill) {
+    const len = p.getTotalLength();
+    gsap.set(p, { stroke: m.color, strokeWidth: m.width, fill: m.color, fillOpacity: 0,
+                  strokeDasharray: len, strokeDashoffset: len, opacity: 1 });
+    gsap.to(p, { strokeDashoffset: 0, duration: 0.3, ease: 'power2.out' });
+    gsap.to(p, { fillOpacity: 1, duration: 0.25, delay: 0.25, ease: 'power1.in' });
+  } else {
+    const len = m.paths[i].len;
+    gsap.set(p, { stroke: m.color, strokeWidth: m.width, strokeDasharray: len, strokeDashoffset: len, opacity: 1 });
+    gsap.to(p, { strokeDashoffset: 0, duration: 0.35, delay: m.paths[i].delay, ease: 'power2.out' });
+  }
+} else {
         gsap.to(p, { opacity: 0, duration: 0.15 });
       }
     });
@@ -291,6 +302,40 @@ function initFlyerChecks() {
   FLYERS.forEach(setupFlyer);
 }
 
+function addFlyerLegend(root) {
+  const note = document.createElement('p');
+  note.className = 'flyer-legend-note';
+  note.textContent = 'Use this key as you scroll to see whether Greenwich Village still meets each condition';
+
+  const legend = document.createElement('div');
+  legend.className = 'flyer-legend';
+  const entries = [];
+
+  [['yes', 'Yes'], ['no', 'No'], ['partial', 'Mixed']].forEach(([v, text]) => {
+    const item = document.createElement('span');
+    item.className = 'flyer-legend-item';
+    const box = document.createElement('span');
+    box.className = 'flyer-box';
+    box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', FLYER_LABELS[v]);
+    buildMarks(box);
+    item.append(box, text);
+    legend.appendChild(item);
+    entries.push({ box, v });
+  });
+
+  root.append(note, legend);
+
+  requestAnimationFrame(() => {
+    entries.forEach(({ box, v }) => {
+      drawMark(box, v);
+      box.querySelectorAll('path, line, polyline, polygon, circle, ellipse, rect, g').forEach((el) => {
+        el.style.opacity = '1';
+      });
+    });
+  });
+}
+
 function setupFlyer(cfg) {
   const root = document.querySelector(cfg.selector);
   if (!root) { console.warn('flyer-checks: article not found', cfg.selector); return; }
@@ -317,17 +362,17 @@ function setupFlyer(cfg) {
 
     console.log('flyer-checks: boxes added', heads.length, cfg.blank ? '(blank)' : '');
 
+    
+
     // blank flyer: nothing to draw
-    if (cfg.blank) { ScrollTrigger.refresh(); return true; }
+    if (cfg.blank) {
+  addFlyerLegend(root);
+  ScrollTrigger.refresh();
+  return true;
+}
+  
 
     // draw the marks in one after another when the first h3 scrolls into view
-    ScrollTrigger.create({
-      trigger: heads[0],
-      start: 'top 80%',
-      once: true,
-      onEnter: () => boxes.forEach(({ box, v }, i) =>
-        gsap.delayedCall(i * 0.3, () => drawMark(box, v)))
-    });
     ScrollTrigger.refresh();
     return true;
   };
@@ -337,6 +382,9 @@ function setupFlyer(cfg) {
   const mo = new MutationObserver(() => { if (addBoxes()) mo.disconnect(); });
   mo.observe(root, { childList: true, subtree: true });
 }
+
+
+
 
 //end checkboxes on flyers
 
@@ -1393,7 +1441,7 @@ Promise.all([
   });
 
    const barH = 30;   // was 22; more room per row now that bars are spaced further apart
-  const margin = { top: 15, right: 50, bottom: 60, left: 350 };
+  const margin = { top: 15, right: 50, bottom: 60, left: 450 };
 
   createHandDrawnBarChart({
     container: "#chart-b",
@@ -1417,29 +1465,6 @@ Promise.all([
     yFormat: d3.format(",.0f"),
     boldKeys: ["gv"],
   });
-
-const leftAlignNames = () => {
-  const svg = document.querySelector("#chart-b svg");
-  if (!svg) return;
-  const names = new Set(data.map((d) => d.name));          // the neighborhood names, so only those labels move
-  const m = svg.getScreenCTM(), vb = svg.viewBox.baseVal;
-  const left = m.a * vb.x + m.e + 10;                      // screen x of the chart's left edge, plus 10px
-
-  svg.querySelectorAll("text").forEach((t) => {
-    if (!names.has(t.textContent.trim())) return;
-    t.removeAttribute("transform");                        // start from the helper's own position every time
-    t.style.textAnchor = "start";
-    const dx = left - t.getBoundingClientRect().left;      // how far the text must move, in screen px
-    t.setAttribute("transform", `translate(${dx / t.parentNode.getScreenCTM().a},0)`);
-  });
-};
-
-const alignSoon = () => requestAnimationFrame(leftAlignNames);
-alignSoon();
-document.fonts?.ready.then(alignSoon);
-window.addEventListener("resize", alignSoon);
-new MutationObserver(alignSoon).observe(document.querySelector("#chart-b"), { childList: true, subtree: true });
-
 
 const svgB = d3.select("#chart-b svg");
 if (!svgB.attr("data-vb0")) svgB.attr("data-vb0", svgB.attr("viewBox"));

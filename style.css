@@ -96,6 +96,7 @@ section {
   font-size: 1.6rem;
   line-height: 1.25;
   color: #33302a;
+  padding-top:5px;
   margin: 0 0 0.25rem;
 }
 
@@ -1145,9 +1146,9 @@ img {
 .narration-no-image .narrative-steps {
   grid-column: 3 / -3;
 }
-
-.step[data-section="Sources"] p + p { margin-top: 0.75em; max-width: 150ch; }
-.step[data-section="Call to action"] p + p { margin-top: 0.75em; max-width: 70ch; }
+.step p + p { margin-top: 1em; max-width: 70ch; }
+.step[data-section="Sources"] p + p { margin-top: 1em; max-width: 150ch; }
+.step[data-section="Call to action"] p + p { margin-top: 1em; max-width: 70ch; }
 
 
 
@@ -1246,6 +1247,14 @@ img {
 }
 .flyer-box svg { display: block; width: 100%; height: 100%; overflow: visible; }
 
+.flyer-legend {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 2rem;
+  margin: 0 auto; padding-top: 1rem;
+  font-family: 'Jost', sans-serif; font-size: 1.2rem;
+}
+.flyer-legend-item { display: inline-flex; align-items: center; }
+
+.step p.flyer-legend-note { margin: 0 auto; font-family:"newshound-banner", sans-serif; font-size: 1.6rem; font-weight: 400}
 
 #map-c {
   display: flex;

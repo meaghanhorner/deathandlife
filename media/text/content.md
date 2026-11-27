@@ -9,9 +9,13 @@
 
 
 
-135 West 3rd Street looks like any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, there's no reason that it shouldn't be a popular spot. In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 it was closed and boarded up.
+135 West 3rd Street looks like any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, there's no reason that it shouldn't be a popular spot.
+
+In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 it was closed and boarded up.
 <!-- svg: -->
-135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, just 4 percent in 2017 and matching the national rate, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
+135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. 
+
+City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, just 4 percent in 2017 and matching the national rate, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
 <!-- svg: -->
 While media outlets, politicians and economists have debated the exact cause, the reality of the problem is undisputed. 
 <!-- svg: -->
@@ -109,10 +113,6 @@ Though rents are not public record, several have been documented on Vanishing Ne
 - #### Arleen Bowman, a local designer's boutique, closed in 2012 after the rent was raised from $2,500 to $35,000.(NYTimes)
 - #### Cafe Angelique closed in 2014 after the rent was raised from $16,000/month to $42,000/month(source)
 - #### Da'Vinci Shoes closed in 2016, after the rent was raised from $6,000/month to nearly $40,000/month(source)
-
-<!-- svg: -->
-
-Looking at old business records, I found many instances in the 1960s and 1970s when a business moved but stayed in Greenwich Village. Murray's Cheese started out at a different location than where it is now. Matt Umanov Guitars moved when the pizzeria John's of Bleecker Street expanded into his former location. Costos Exotic Garden, which was forced to move in 1969 to accommodate a Nathan's location, reopened a few blocks away. In fact, xx% of businesses that closed in one location reopened in another. Today, when businesses close, they reopen outside Greenwich Village - or don't reopen at all. Only xx% of businesses that closed at one location in 2015 or 2020 are still open in Greenwich Village today.   
 
 <!-- svg: -->
 
