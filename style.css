@@ -1147,6 +1147,7 @@ img {
 }
 
 .step[data-section="Sources"] p + p { margin-top: 0.75em; max-width: 150ch; }
+.step[data-section="Call to action"] p + p { margin-top: 0.75em; max-width: 70ch; }
 
 
 
@@ -1159,14 +1160,15 @@ img {
 
 #map-a,
 #chart-b,
-#map-c{
+#map-c {
   width: 100%;
   max-height: var(--graphic-max-h);
   position: relative;   /* so the legend can be positioned inside it */
 }
 
 #chart-i {
-  min-height: 400px;
+  min-height: 0;
+  flex: 0 0 auto;   /* size to the content, so the source is pushed down instead of overlapped */
 }
 
 #block-map-c {
@@ -1285,9 +1287,8 @@ img {
 }
 
 #chart-e .hdc-legend {
-  position: absolute;
   top: 8%;             
-  left: 14%;
+  left: 16%;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -1346,7 +1347,12 @@ img {
 .chart-h-stats{display:flex;gap:18px;font:14px system-ui,sans-serif;margin-top:10px;flex-wrap:wrap}
 .chart-h-stats b{font-size:22px;display:block}
 
-.chart-j .cj-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+#chart-j { display: flex; flex-direction: column; min-height: 0; }
+#chart-j .cj-buttons { flex: 0 0 auto; }
+#chart-j .cj-plot { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+#chart-j .cj-plot svg { width: 100%; height: auto; max-height: 100%; min-height: 0; }
+
+
 .chart-j .cj-btn {
   font: inherit; padding: 6px 14px; cursor: pointer;
   border: none;  border-radius: 2px;
@@ -1366,20 +1372,32 @@ img {
   font-family: 'Jost', sans-serif;
 }
 
+/* chart-k: give the wrapper a real height so the SVG's max-height has something to resolve against */
+#chart-k .ck-plot {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+#chart-k .ck-plot svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  min-height: 0;
+}
+
+#chart-m { display: flex; flex-direction: column; min-height: 0; }
+#chart-m .cm-plot { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
+#chart-m .cm-plot svg { width: 100%; height: auto; max-height: 100%; min-height: 0; }
+.chart-m .hdc-legend-btn {display: none;}
+
 /* the helper's own legend, hint and empty brush strip aren't wanted here */
 /*.chart-j .hdc-legend,
  .chart-j .hdc-hint,
-.chart-j .hdc-brush { display: none; }*/ dont know if we need this
+.chart-j .hdc-brush { display: none; }*/ 
 
-#chart-k {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-#chart-k svg {
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100%;
-  height: 100%;
+:is(#chart-b, #chart-d, #chart-e, #chart-h1, #chart-j, #chart-k, #chart-j, #chart-l, #chart-m, #chart-rents-over-time)
+  svg :is(text, tspan):not(.keep-size) {
+  font-family: "Jost", sans-serif !important;
+  font-size: calc(0.8rem / var(--k, 1)) !important;   /* --k = chart's current scale, set by JS */
 }

@@ -69,6 +69,9 @@ function initIntroScrub() {
     tl.to(kids[i], { autoAlpha: 0, duration: 0.6 }, i)
       .to(k,       { autoAlpha: 1, duration: 0.6 }, i);
   });
+  // scroll cue: visible over images 1 and 2, fades out as image 2 gives way to image 3
+const cue = stage.querySelector(".scroll-cue");
+if (cue) tl.to(cue, { autoAlpha: 0, duration: 0.6 }, 1);   // position 1 = the image 2 -> 3 crossfade
   tl.to({}, { duration: 0.4 });   // hold on the last image
 }
 
@@ -610,15 +613,29 @@ function initPhotoFadeSteps() {
   });
 }
 
+//fixed charts(type size)
+const FIXED_TYPE_IDS = ["chart-b", "chart-d", "chart-e", "chart-h1", "chart-j", "chart-k", "chart-rents-over-time"];
 
-/* =========================================================
-   SCROLL STOPS
-   1) initCardPauses: curtain / photo_fade cards hold scrolling briefly
-   2) initImageGate:  image section moves exactly one image per gesture
-   Neither one moves the page except the gate's own scrollTo.
-   ========================================================= */
+function initFixedChartType() {
+  FIXED_TYPE_IDS.forEach((id) => {
+    const box = document.getElementById(id);
+    if (!box) return;
 
+    const update = () => {
+      const svg = box.querySelector("svg.hdc-main") || box.querySelector("svg");
+      const vb = svg?.viewBox?.baseVal;
+      if (!svg || !vb || !vb.width) { box.style.setProperty("--k", 1); return; }
+      const w = svg.clientWidth, h = svg.clientHeight;
+      if (!w || !h) return;   // hidden right now; keep the last value
+      box.style.setProperty("--k", Math.min(w / vb.width, h / vb.height));
+    };
 
+    new ResizeObserver(update).observe(box);                  // screen resizes, 660px tests
+    new MutationObserver(update).observe(box, { childList: true });  // charts that redraw after fetch/fonts
+    update();
+  });
+}
+//end fixed charts (type)
 
 
 /* =========================================================
@@ -740,6 +757,7 @@ renderSteps().then(() => {
   initChartE();
   initChartH();
   initChartL();
+  initFixedChartType();
 
   updateCurtainFades();
   window.scrollTo(0,0);
@@ -1395,12 +1413,53 @@ Promise.all([
     categoryAxisLine: false,   
     barPadding: 0.4,          
     strokeDarken: 0.4,         
-    valueAxisLabel: "Average block length (feet)",
-    valueAxisLabelOffset:8,
     valueLabels: (v) => `${Math.round(v)} ft`,
     yFormat: d3.format(",.0f"),
     boldKeys: ["gv"],
   });
+
+const leftAlignNames = () => {
+  const svg = document.querySelector("#chart-b svg");
+  if (!svg) return;
+  const names = new Set(data.map((d) => d.name));          // the neighborhood names, so only those labels move
+  const m = svg.getScreenCTM(), vb = svg.viewBox.baseVal;
+  const left = m.a * vb.x + m.e + 10;                      // screen x of the chart's left edge, plus 10px
+
+  svg.querySelectorAll("text").forEach((t) => {
+    if (!names.has(t.textContent.trim())) return;
+    t.removeAttribute("transform");                        // start from the helper's own position every time
+    t.style.textAnchor = "start";
+    const dx = left - t.getBoundingClientRect().left;      // how far the text must move, in screen px
+    t.setAttribute("transform", `translate(${dx / t.parentNode.getScreenCTM().a},0)`);
+  });
+};
+
+const alignSoon = () => requestAnimationFrame(leftAlignNames);
+alignSoon();
+document.fonts?.ready.then(alignSoon);
+window.addEventListener("resize", alignSoon);
+new MutationObserver(alignSoon).observe(document.querySelector("#chart-b"), { childList: true, subtree: true });
+
+
+const svgB = d3.select("#chart-b svg");
+if (!svgB.attr("data-vb0")) svgB.attr("data-vb0", svgB.attr("viewBox"));
+const [vx, vy, vw, vh] = svgB.attr("data-vb0").split(/\s+/).map(Number);
+
+const padB = 28;   // extra room under the helper's chart; raise if descenders still clip
+svgB.attr("viewBox", `${vx} ${vy} ${vw} ${vh + padB}`);
+
+svgB.selectAll(".cb-axis-title").remove();
+svgB.append("text")
+  .attr("class", "cb-axis-title")
+  .attr("x", vx + margin.left + (vw - margin.left - margin.right) / 2)   // centered under the bars
+  .attr("y", vy + vh + padB - 8)                                          // 8 units above the new bottom edge
+  .attr("text-anchor", "middle")
+  .text("Average block length (feet)");
+
+// the helper redraws on resize (responsive: true), so reapply after each draw
+new MutationObserver(leftAlignLabels)
+  .observe(document.querySelector("#chart-b"), { childList: true, subtree: true });
+
 
 }).catch((err) => console.error("Chart B failed:", err));
 //END CHART B
@@ -1722,7 +1781,7 @@ Promise.all([
   const [minYear, maxYear] = d3.extent(allRows, (d) => d.year);
   const yMax = d3.max(allRows, (d) => d.value) || 1;
 
-  const width = 860;
+  const width = 1200;
   const height = 760;
   const margin = { top: 34, right: 24, bottom: 30, left: 48 };
   const innerWidth = width - margin.left - margin.right;
@@ -2800,12 +2859,16 @@ chartH("#chart-h", "data/hh_size.json"); */
     };
 
     const legendText = {
-      "Grocery, food & liquor": "grocery, specialty food, liquor",
-      "Restaurants, cafes & bars": "restaurants, bars, cafes and nightclubs",
-      "Personal services": "personal services",
-      "Finance & professional": "finance & professional",
-      "Health, education & religion": "health, education & religion",
-      "Arts & entertainment": "arts & entertainment",
+      "Grocery, food & liquor": "Grocery, specialty food, liquor",
+      "Restaurants, cafes & bars": "Restaurants, bars, cafes",
+      "Personal services": "Nail salons, massage parlors",
+      "Finance & professional": "Banks, insurance, legal",
+      "Health, education & religion": "Medical offices, schools, community centers",
+      "Arts & entertainment": "Art galleries, music venues",
+      "Retail": "All non-food retail",
+      "Other": "Known business; doesn't fit any other category",
+      "Unclassified":"Function of business is unknown",
+      "Vacant": "Vacant"
     };
 
     const EPS = 0.0005;                      // below this share, treat as 0%
@@ -2939,24 +3002,39 @@ const K      = avail;                                // px per 100% share
       .style("font-family", FONT)
       .style("font-weight", "bold");
 
-    // ---------- legend ----------
-    const legend = root.append("div").attr("class", "chart-i-legend")
-      .style("display", "flex").style("flex-wrap", "wrap")
-      .style("gap", "6px 28px").style("margin-top", "14px")
-      .style("font-family", FONT)
-      .style("font-size", "13px").style("line-height", "1.3");
+    // ---------- legend: aligned table, split into side-by-side columns ----------
+const LEGEND_COLS = 3;   // 2 = shorter and wider rows, 3 = shorter overall
+const legend = root.append("div").attr("class", "chart-i-legend")
+  .style("display", "flex").style("flex-wrap", "wrap")
+  .style("gap", "0 36px").style("margin-top", "14px")
+  .style("font-family", FONT)
+  .style("font-size", "0.8rem").style("line-height", "1.3");
 
-    const item = legend.selectAll("div.legend-item").data(groups).join("div")
-      .attr("class", "legend-item")
-      .style("display", "flex").style("align-items", "center").style("gap", "8px");
+const per = Math.ceil(groups.length / LEGEND_COLS);
+for (let c = 0; c < LEGEND_COLS; c++) {
+  const chunk = groups.slice(c * per, (c + 1) * per);
+  if (!chunk.length) continue;
 
-    item.append("span")
-      .style("width", "12px").style("height", "12px").style("flex", "none")
-      .style("background", (g) => fillFor(g))
-      .style("border", "1px solid #000");
+  const rows = legend.append("table")
+    .style("border-collapse", "collapse").style("flex", "1 1 300px")
+    .append("tbody").selectAll("tr").data(chunk).join("tr");
 
-    item.append("span").html((g) =>
-      `<strong>${signNames[g] ?? g}</strong> = ${legendText[g] ?? g}`);
+  rows.append("td").style("width", "20px").style("padding", "4px 10px 4px 0")
+    .append("span")
+    .style("display", "block").style("width", "12px").style("height", "12px")
+    .style("background", (g) => fillFor(g)).style("border", "1px solid #000");
+
+  // name; spans both columns when there's no description to show
+  rows.append("td")
+    .attr("colspan", (g) => legendText[g] ? null : 2)
+    .style("padding", "4px 12px 4px 0").style("white-space", "nowrap")
+    .style("font-weight", "600")
+    .text((g) => signNames[g] ?? g);
+
+  rows.filter((g) => legendText[g]).append("td")
+    .style("padding", "4px 0")
+    .text((g) => legendText[g]);
+}
 
     // ---------- update ----------
     function update(year, duration = 0) {
@@ -2992,19 +3070,25 @@ groups.forEach((g) => {
           return (t) => d3.format(".0%")(i(t));
         });
 
-      const fits = (g) => pos.get(g).w >= textW[g] + 2 * SIGN_PAD;
+      // label is fully visible when it fits, disappears if not
+const FADE_PX = 20;
+const signOpacity = (g) => pct(g) < EPS ? 0 :
+  Math.max(0, Math.min(1, (pos.get(g).w - (textW[g] + 2 * SIGN_PAD)) / FADE_PX));
 
-      bld.select("text.sign-label").transition().duration(duration)
-        .attr("x", (g) => pos.get(g).w / 2)
-        .attr("y", (g) => fits(g) ? artTop(g) + SIGN_DY : rowH + UNDER_DY)
-        // white on the dark vacant building; black whenever the label sits below it on the page
-        .style("fill", (g) => (isVacant(g) && fits(g)) ? "#fff" : SIGN_COLOR);
+const fits = (g) => pct(g) >= EPS && pos.get(g).w >= textW[g] + 2 * SIGN_PAD;
 
-      bld.selectAll("text").transition("fade").duration(duration)
-        .style("opacity", function () {
-          const g = d3.select(this.parentNode).datum();
-          return pct(g) < EPS ? 0 : 1;
-        });
+bld.select("text.sign-label").transition().duration(duration)
+  .attr("x", (g) => pos.get(g).w / 2)
+  .attr("y", (g) => artTop(g) + SIGN_DY)          // always on the building, never below
+  .style("fill", (g) => isVacant(g) ? "#fff" : SIGN_COLOR);
+
+// opacity set directly, not inside the transition, so it is only ever 0 or 1
+bld.select("text.sign-label")
+  .interrupt("fade")
+  .style("opacity", (g) => fits(g) ? 1 : 0);
+
+bld.select("text.pct-label").transition("fade").duration(duration)
+  .style("opacity", (g) => pct(g) < EPS ? 0 : 1);
 
       yearLabel.text(year);
     }
@@ -3290,7 +3374,7 @@ function createChartK(data = null) {
 
     const xMin = d3.min(stores, (d) => d.startYear); // 2003
     const xMax = d3.max(stores, (d) => d.year);      // 2016
-    const yMax = 50000;
+    const yMax = 60000;
 
     const x = d3.scaleLinear().domain([xMin, xMax]).range([0, innerW]);
     const y = d3.scaleLinear().domain([0, yMax]).range([innerH, 0]);
@@ -3598,7 +3682,7 @@ function createChartL(data = null) {
   const steps = (data || defaultData).map((d, i) => ({ ...d, state: d.state || `l${i + 1}` }));
 
   // ---- layout constants (SVG coordinate space) ----
-  const W = 1000;
+  const W = 1200;
   const padX = 30;                  // space left/right of the time axis
   const padTop = 14, padBottom = 24, GAP = 12;
   const SPAN_W = 230;               // text width for blocks above the spine

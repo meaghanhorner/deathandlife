@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="64.06" height="280.06" viewBox="0 0 64.06 280.06">
-  <rect x=".5" y=".5" width="63.06" height="279.06" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
-  <rect x="5.15" y="12.26" width="55.18" height="264" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
-  <rect x="8.56" y="18.38" width="48.47" height="123.29" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
-  <rect x="8.56" y="149.21" width="48.94" height="124.24" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
-  <rect x="11.85" y="124.26" width="4.71" height="39.06" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="64.26" height="272.06" viewBox="0 0 64.26 272.06">
+  <rect x=".68" y="14.17" width="63.06" height="257.39" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x="5.32" y="25.02" width="55.18" height="243.5" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x="8.74" y="30.67" width="48.47" height="113.72" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x="8.74" y="151.33" width="48.94" height="114.59" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x="12.03" y="128.33" width="4.71" height="36.03" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x=".5" y="4.41" width="63.24" height="9.77" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
+  <rect x=".53" y=".5" width="63.24" height="4.01" fill="#fff" stroke="#000" stroke-miterlimit="10"/>
 </svg>

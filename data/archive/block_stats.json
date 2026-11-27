@@ -1,0 +1,219 @@
+[
+  {
+    "ntaname": "Stuyvesant Town-Peter Cooper Village",
+    "n_segments": 164,
+    "mean_length_ft": 288.8819,
+    "median_length_ft": 196.6579,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Financial District-Battery Park City",
+    "n_segments": 691,
+    "mean_length_ft": 236.0899,
+    "median_length_ft": 200.652,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Chinatown-Two Bridges",
+    "n_segments": 415,
+    "mean_length_ft": 241.188,
+    "median_length_ft": 203.3642,
+    "is_gv": false
+  },
+  {
+    "ntaname": "East Harlem (North)",
+    "n_segments": 773,
+    "mean_length_ft": 267.6605,
+    "median_length_ft": 204.634,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Lower East Side",
+    "n_segments": 529,
+    "mean_length_ft": 241.1289,
+    "median_length_ft": 230.7176,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Tribeca-Civic Center",
+    "n_segments": 375,
+    "mean_length_ft": 263.4727,
+    "median_length_ft": 241.4854,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Washington Heights (North)",
+    "n_segments": 547,
+    "mean_length_ft": 302.6371,
+    "median_length_ft": 249.728,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Greenwich Village",
+    "n_segments": 496,
+    "mean_length_ft": 289.6994,
+    "median_length_ft": 256.2756,
+    "is_gv": true
+  },
+  {
+    "ntaname": "East Village",
+    "n_segments": 390,
+    "mean_length_ft": 337.3177,
+    "median_length_ft": 257.7812,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Chelsea-Hudson Yards",
+    "n_segments": 525,
+    "mean_length_ft": 343.6793,
+    "median_length_ft": 258.6998,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Gramercy",
+    "n_segments": 142,
+    "mean_length_ft": 327.1305,
+    "median_length_ft": 258.8586,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Murray Hill-Kips Bay",
+    "n_segments": 359,
+    "mean_length_ft": 320.3837,
+    "median_length_ft": 259.0878,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Harlem (North)",
+    "n_segments": 453,
+    "mean_length_ft": 331.5634,
+    "median_length_ft": 260.1953,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Hell's Kitchen",
+    "n_segments": 341,
+    "mean_length_ft": 335.6178,
+    "median_length_ft": 260.8277,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Hamilton Heights-Sugar Hill",
+    "n_segments": 280,
+    "mean_length_ft": 355.5575,
+    "median_length_ft": 262.3031,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Harlem (South)",
+    "n_segments": 261,
+    "mean_length_ft": 332.8127,
+    "median_length_ft": 262.5646,
+    "is_gv": false
+  },
+  {
+    "ntaname": "East Midtown-Turtle Bay",
+    "n_segments": 232,
+    "mean_length_ft": 360.7262,
+    "median_length_ft": 262.7797,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper East Side-Lenox Hill-Roosevelt Island",
+    "n_segments": 306,
+    "mean_length_ft": 340.9104,
+    "median_length_ft": 262.8099,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper East Side-Yorkville",
+    "n_segments": 230,
+    "mean_length_ft": 386.8192,
+    "median_length_ft": 264.6113,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Manhattanville-West Harlem",
+    "n_segments": 197,
+    "mean_length_ft": 328.9778,
+    "median_length_ft": 264.7236,
+    "is_gv": false
+  },
+  {
+    "ntaname": "SoHo-Little Italy-Hudson Square",
+    "n_segments": 328,
+    "mean_length_ft": 298.8877,
+    "median_length_ft": 264.7451,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Washington Heights (South)",
+    "n_segments": 482,
+    "mean_length_ft": 328.1576,
+    "median_length_ft": 265.0659,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper East Side-Carnegie Hill",
+    "n_segments": 370,
+    "mean_length_ft": 336.834,
+    "median_length_ft": 265.2133,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper West Side-Lincoln Square",
+    "n_segments": 246,
+    "mean_length_ft": 371.5847,
+    "median_length_ft": 266.7635,
+    "is_gv": false
+  },
+  {
+    "ntaname": "East Harlem (South)",
+    "n_segments": 290,
+    "mean_length_ft": 354.0408,
+    "median_length_ft": 272.1439,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper West Side-Manhattan Valley",
+    "n_segments": 189,
+    "mean_length_ft": 449.396,
+    "median_length_ft": 273.0105,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Morningside Heights",
+    "n_segments": 218,
+    "mean_length_ft": 397.5219,
+    "median_length_ft": 275.1272,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Midtown-Times Square",
+    "n_segments": 348,
+    "mean_length_ft": 392.6118,
+    "median_length_ft": 275.2801,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Midtown South-Flatiron-Union Square",
+    "n_segments": 193,
+    "mean_length_ft": 404.117,
+    "median_length_ft": 276.7121,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Inwood",
+    "n_segments": 206,
+    "mean_length_ft": 323.1923,
+    "median_length_ft": 281.2199,
+    "is_gv": false
+  },
+  {
+    "ntaname": "Upper West Side (Central)",
+    "n_segments": 364,
+    "mean_length_ft": 412.139,
+    "median_length_ft": 282.335,
+    "is_gv": false
+  }
+]

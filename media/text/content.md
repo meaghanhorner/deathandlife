@@ -9,9 +9,9 @@
 
 
 
-135 West 3rd Street doesn't look any different from any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, two key Greenwich Village entertainment venues, there's no reason that it shouldn't be a popular spot. In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 that 7-11 was closed and boarded up.
+135 West 3rd Street looks like any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, there's no reason that it shouldn't be a popular spot. In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 it was closed and boarded up.
 <!-- svg: -->
-135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, a modest 4 percent in 2017 and comparable to the nationwide 4.08 percent, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
+135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, just 4 percent in 2017 and matching the national rate, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
 <!-- svg: -->
 While media outlets, politicians and economists have debated the exact cause, the reality of the problem is undisputed. 
 <!-- svg: -->
@@ -24,7 +24,7 @@ If storefronts are so important to a neighborhood, why do so many sit vacant in 
 
 ##### Section Context
 ## The Death and Life of Great American Cities
-2026 marks the 65th anniversary of the 1961 publication of Jane Jacobs's *The Death and Life of Great American Cities*. Jacobs,who was raised in Scranton, Pennsylvania, moved to Greenwich Village in 1935 at 19. Through the 1950s she was a writer for Architectural Forum, where she began to question the mainstream consensus on urban planning. When she saw her vibrant, working class neighborhood marked for slum clearance, she turned her eye to the workings of the city. What made a district thrive? She came up with four conditions. 
+2026 marks the 65th anniversary of the 1961 publication of Jane Jacobs's *The Death and Life of Great American Cities*. Jacobs moved to Greenwich Village in 1935 at 19 and began writing for Architectural Forum, where she began to question the mainstream consensus on urban planning. When she saw her vibrant, working class neighborhood marked for slum clearance, she turned her eye to the workings of the city. What made a district thrive? She came up with four conditions. 
 
 ##### Four Conditions	
 
@@ -58,13 +58,13 @@ These must insure the presence of people who go outdoors on different schedules 
 <!-- svg: map-a-zoom-out -->
 Jacobs writes that short blocks give pedestrians frequent opportunities to turn corners, which means more possible routes any person can take to a given destination. A resident who goes to the same place regularly (whether it's their subway stop or favorite grocery store) will often take different routes to get there on different days, if the short blocks allow it, giving them more opportunities to see different parts of the neighborhood. 
 <!-- svg: map-a-zoom-in -->
-Long blocks do the opposite, funneling people onto a few streets and leaving the rest quiet.
+Long blocks do the opposite, funneling people onto a few streets and leaving the rest quiet. Without frequent intersections, streets that aren't part of that funnel become isolated, and small businesses lose the steady stream of passerby they rely on to stay afloat.
 <!-- svg: chart-b -->
 Built before the standard 1811 Manhattan grid of widely spaced avenues (approx. 600-900 feet apart) and closely-spaced streets (approx 200-260 feet apart), blocks in Greenwich Village range between 150 - 500 feet and average 290 feet, among the shortest of all neighborhoods in Manhattan.
+<!-- svg: -->
 In addition to providing more opportunities for pedestrians to turn corners, the short, irregular blocks of Greenwich Village provide 
 >"visual interruptions, cutting off the indefinite distant view and at the same time visually heightening and celebrating intense street use by giving it a hint of enclosure and entity".
-<!-- svg: -->
-Short blocks can also help a pedestrian's feeling of safety. A person walking on a short block who gets a feeling of being unsafe, either because of a person or their physical surroundings, can find somewhere to turn within a couple hundred feet, whereas a person walking on a long avenue might have no choice but to turn in the opposite direction.
+
 <!-- svg: -->
 #### THE VERDICT: YES
 With no major changes to the street grid since the 1960s, we can say yes, Greenwich Village still has short blocks.
@@ -317,13 +317,14 @@ Jacobs argued that this trust accumulates through small, everyday contacts in th
 
 Three bills in Albany take aim at this problem. All three were introduced during the 2025-2026 legislative session, but none made it into law. Let your legislators know why these bills should be reintroduced in the 2027-2028 session, and why you support their passage. Though Greenwich Village has already lost many of its historic businesses, many more are still at risk, and other neighborhoods like Greenpoint and Park Slope face similar fates. 
 
-The New York City Small Business Rent Stabilization Act (A05568/S8319) would create a board to cap commercial rent increases and guarantee lease renewals, preventing the type of 100+% rent increases that closed down shops like (TKTKTKTK) and (TKTKTKTK).  
+The New York City Small Business Rent Stabilization Act (A05568/S8319) would create a board to cap commercial rent increases and guarantee lease renewals, preventing the type of 100+% rent increases that closed down shops like Second Childhood and Da'Vinci Shoes.  
 
 New York State Senate Bill S9823 would authorize the city to tax ground-floor commercial space left vacant for six months or more, while New York State Assembly Bill A5308 would bar property tax exemptions for commercial storefronts that have been vacant for at least two years, disincentivizing landlords from holding out for years for a high-rent tenant.
 
 Find your state senator and assembly member(link)
 Follow progress on the New York City Small Business Rent Stabilization Act and learn more details about how you can take action (https://smallbizunited.com/)
 
+Finally, be the change you wish to see — if you want independent, unique stores to survive, shop there. [The Locavore on Instagram](https://www.instagram.com/thelocavorenyc/) has resources on shopping local in your neighborhood and throughout New York City.
 
 ##### What Has Been Lost
 ## What Has Been Lost
