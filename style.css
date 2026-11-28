@@ -530,7 +530,6 @@ body {
 .writing-left-image-right > .step.section-intro,
 .writing-left-image-right-largeimage > .step.section-intro {
   grid-column: 3 / span 8;   /* ≈ 927px, centered */
-  max-width: none;
   grid-row: 1;
 }
 

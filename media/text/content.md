@@ -11,11 +11,11 @@
 
 135 West 3rd Street looks like any of the other boarded-up buildings in the neighborhood. Next to the Blue Note and across from the Village Underground, there's no reason that it shouldn't be a popular spot.
 
-In the early 1950s it was Mona's, one of many gay and lesbian bars on the street.  In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 it was closed and boarded up.
+In the early 1950s it was Mona's, one of many gay and lesbian bars on the street. In the 1960s and 1970s it was the Village Purple Onion, a restaurant and performance venue where Bob Dylan and Jimi Hendrix played. By 2013 it had become a 7-11, and by 2026 it was closed and boarded up.
 <!-- svg: -->
 135 West 3rd Street is just one of dozens of vacant storefronts in Greenwich Village, many of which have been vacant for more than a year and a half - six consecutive quarters. 
 
-City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, just 4 percent in 2017 and matching the national rate, has been over 11 percent since 2023.(Office of the New York City Comptroller 2026)
+City and state officials have issued reports addressing the problem, including *[Who's Minding the storefronts? An Analysis of Storefront Vacancies in New York City](https://comptroller.nyc.gov/reports/whos-minding-the-storefronts/#letter-from-the-comptroller)* and *[Bleaker on Bleecker](https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf)*. The citywide storefront vacancy rate, just 4 percent in 2017 and matching the national rate, has been over 11 percent since 2023. (Office of the New York City Comptroller 2026)
 <!-- svg: -->
 While media outlets, politicians and economists have debated the exact cause, the reality of the problem is undisputed. 
 <!-- svg: -->
@@ -28,24 +28,23 @@ If storefronts are so important to a neighborhood, why do so many sit vacant in 
 
 ##### Section Context
 ## The Death and Life of Great American Cities
-2026 marks the 65th anniversary of the 1961 publication of Jane Jacobs's *The Death and Life of Great American Cities*. Jacobs moved to Greenwich Village in 1935 at 19 and began writing for Architectural Forum, where she began to question the mainstream consensus on urban planning. When she saw her vibrant, working class neighborhood marked for slum clearance, she turned her eye to the workings of the city. What made a district thrive? She came up with four conditions. 
+2026 marks the 65th anniversary of the publication of Jane Jacobs's *The Death and Life of Great American Cities* (1961; repr., New York: Modern Library, 2011). Jacobs moved to Greenwich Village in 1935 at 19 and began writing for Architectural Forum, where she began to question the mainstream consensus on urban planning. When she saw her vibrant, working class neighborhood marked for slum clearance, she turned her eye to the workings of the city. What made a district thrive? She came up with four conditions. 
 
 ##### Four Conditions	
 
 ## The Four Conditions
 
 ### 1: Short Blocks
-Most blocks must be short That is, streets and opportunities to turn corners must be frequent.
+"Most blocks must be short; That is, streets and opportunities to turn corners must be frequent."
 
 ### 2: A mix of old and new buildings
-The district must mingle buildings that vary in age and condition, including a good proportion of old ones so that they may vary the economic yield they must produce.
+"The district must mingle buildings that vary in age and condition, including a good proportion of old ones so that they vary in the economic yield they must produce."
 
 ### 3: High Density
-There must be a sufficiently dense concentration of people, for whatever purposes they may be there. This includes dense concentration in the case of people who are there because of residence.(196)
+"There must be a sufficiently dense concentration of people, for whatever purposes they may be there. This includes dense concentration in the case of people who are there because of residence."
 
 ### 4:  Mixed Uses
-The district... must serve more than one primary function; preferably more than two
-These must insure the presence of people who go outdoors on different schedules and are in the place for different purposes, but who are able to use many facilities in common.
+"The district. . . must serve more than one primary function; preferably more than two. These must insure the presence of people who go outdoors on different schedules and are in the place for different purposes, but who are able to use many facilities in common." (Jacobs, *Death and Life*, 196-197)
 
 
 
@@ -57,17 +56,19 @@ These must insure the presence of people who go outdoors on different schedules 
 
 @condition short-blocks
 
->"Long blocks, in their nature, thwart the potential advantages that cities offer to incubation, experimentation, and many small or special enterprises, insofar as these depend upon drawing their customers or clients from among much larger cross-sections of passing public."(238)
+>"Long blocks, in their nature, thwart the potential advantages that cities offer to incubation, experimentation, and many small or special enterprises, insofar as these depend upon drawing their customers or clients from among much larger cross-sections of passing public." (Jacobs, *Death and Life*, 238)
 ##### short-blocks
 <!-- svg: map-a-zoom-out -->
 Jacobs writes that short blocks give pedestrians frequent opportunities to turn corners, which means more possible routes any person can take to a given destination. A resident who goes to the same place regularly (whether it's their subway stop or favorite grocery store) will often take different routes to get there on different days, if the short blocks allow it, giving them more opportunities to see different parts of the neighborhood. 
 <!-- svg: map-a-zoom-in -->
-Long blocks do the opposite, funneling people onto a few streets and leaving the rest quiet. Without frequent intersections, streets that aren't part of that funnel become isolated, and small businesses lose the steady stream of passerby they rely on to stay afloat.
+Long blocks do the opposite, funneling people onto a few streets and leaving the rest quiet. Without frequent intersections, streets that aren't part of that funnel become isolated, and small businesses lose the steady stream of passersby they rely on to stay afloat.
 <!-- svg: chart-b -->
 Built before the standard 1811 Manhattan grid of widely spaced avenues (approx. 600-900 feet apart) and closely-spaced streets (approx 200-260 feet apart), blocks in Greenwich Village range between 150 - 500 feet and average 290 feet, among the shortest of all neighborhoods in Manhattan.
 <!-- svg: -->
 In addition to providing more opportunities for pedestrians to turn corners, the short, irregular blocks of Greenwich Village provide 
->"visual interruptions, cutting off the indefinite distant view and at the same time visually heightening and celebrating intense street use by giving it a hint of enclosure and entity".
+>"visual interruptions, cutting off the indefinite distant view and at the same time visually heightening and celebrating intense street use by giving it a hint of enclosure and entity." (Jacobs, *Death and Life*, 495)
+
+That street pattern is still intact today.
 
 <!-- svg: -->
 #### THE VERDICT: YES
@@ -81,7 +82,7 @@ With no major changes to the street grid since the 1960s, we can say yes, Greenw
 
 @condition old-new
 
->"If a city area has only new buildings, the enterprises that can exist there are automatically limited to those that can support the high costs of new construction."(244) 
+>"If a city area has only new buildings, the enterprises that can exist there are automatically limited to those that can support the high costs of new construction." (Jacobs, *Death and Life*, 244) 
 
 ##### old-new 
 <!-- svg: map-c -->
@@ -89,17 +90,17 @@ Following Dutch and English colonization of Lenape land, Greenwich Village grew 
 <!-- svg: chart-d -->
 Roughly 40 percent of the buildings in Greenwich Village were built before 1861. Another 50 percent were built between 1861 and 1929. Only about 10 percent of Greenwich Village's buildings were built after 1929. This lends the neighborhood a wide range of architectural styles.
 When Jacobs writes about a mixture of old and new buildings, though, it isn’t only for the purpose of visual diversity. Primarily, she writes that the buildings should 
->“vary in age and condition, including a good proportion of old ones so that they vary in the economic yield they must produce.” (197)
+>“vary in age and condition, including a good proportion of old ones so that they vary in the economic yield they must produce.” (Jacobs, *Death and Life*, 197)
 <!-- svg: chart-e e1 -->
 Just as there was a large variation in age of buildings, there was also a large variation in asking rents, with per square foot prices ranging from $2.33 per square foot per year to $9.68, according to New York Times Classified ads. Add in the fact that would-be renters could choose a larger or smaller storefront, depending on their needs, and you find that a prospective renter could pay as little as $68 per month in 1961 for a 350 square foot space, or as much as $350 per month for a larger, possibly nicer space. 
 
-By the early 2000s, rents on Bleecker street had increased from $67 per square foot per year (in 2025 dollars) to $114 per square foot per year, a similar rate of increase to Manhattan as a whole.
+By the early 2000s, rents on Bleecker Street had increased from $67 per square foot per year (in 2025 dollars) to $114 per square foot per year, a similar rate of increase to Manhattan as a whole.
 
 <!-- svg: chart-e e1a -->
 In the early 2000s, storefront rents in Manhattan continued to increase at a similar rate as they had in the past, slightly more than the rate of inflation. 
 
 <!-- svg: chart-e e2 -->
-Although it was not possible to find data covering the 2001-2007 period for Greenwich Village, by 2008 storefront rents on Bleecker Street had surged, to $380 per square foot per year (again in 2025 dollars.)
+Although it was not possible to find data covering the 2001-2007 period for Greenwich Village, by 2008 storefront rents on Bleecker Street had surged, to $380 per square foot per year (again in 2025 dollars).
 
 Jacobs expected the mix of old and new buildings to supply a mix of high and low rents. But by 2024, there was very little range in asking rents; they were uniformly high, with the most expensive storefronts only 22% more than the least expensive ones. 
 
@@ -108,7 +109,7 @@ Though rents are not public record, several have been documented on Vanishing Ne
 <!-- svg: chart-k -->
 - #### Second Childhood, a store specializing in antique toys, closed in 2008 after a rent raise from $7,000/month to $15,000/month.(source)
 
-- #### Nusraty Afghan Imports moved from Bleecker Street to Christopher Street in 2008 after the rent was raised from $7,000 to $45,000/month.(NYTimes). The store closed for good in 2020.
+- #### Nusraty Afghan Imports moved from Bleecker Street to Christopher Street in 2008 after the rent was raised from $7,000 to $45,000/month.(NYTimes) The store closed for good in 2020.
 - #### Rocco Ristorante closed in 2012, after the rent was raised from $8,000/month to $18,000/month(source)
 - #### Arleen Bowman, a local designer's boutique, closed in 2012 after the rent was raised from $2,500 to $35,000.(NYTimes)
 - #### Cafe Angelique closed in 2014 after the rent was raised from $16,000/month to $42,000/month(source)
@@ -126,15 +127,15 @@ Though Greenwich Village still has a mix of old and new buildings, the small ran
 
 @condition density
 
->"The district must have a sufficiently dense concentration of people, for whatever purpose they may be there. This includes people there because of residence."
+>"The district must have a sufficiently dense concentration of people, for whatever purpose they may be there. This includes people there because of residence." (Jacobs, *Death and Life*, 197)
 ##### density
 <!-- svg: chart-h1-->
 According to Jacobs, 
->"dense concentrations of people are one of the necessary conditions for flourishing city diversity". 
+>"dense concentrations of people are one of the necessary conditions for flourishing city diversity." (Jacobs, *Death and Life*, 197)
 
 In suburbs, 
 
->"The only goods and cultural activities available will be those that the majority requires"(Professor Henry Denton, as reported in The New York Times, p. 262).
+>"The only goods and cultural activities available will be those that the majority requires"(Professor Henry Denton, as reported in *The New York Times*, quoted in Jacobs, *Death and Life*, 262).
 
 Cities, however, could have enough population density to support even niche interests. For Jacobs, this meant at least 100 dwellings per acre. Jacobs chose dwellings per acre as her metric rather than population because she needed a metric that wouldn't confuse an overcrowded slum with a dense and vibrant neighborhood, both of which could have high populations. 
 
@@ -144,9 +145,9 @@ By that measure, Greenwich Village is doing fine. Most census tracts in the neig
 <!-- svg: -->
 At the same time, however, Greenwich Village's population dropped by 6.6%, at a time when Manhattan as a whole was adding more than half a million residents.
 <!-- svg: -->
-Why would one of New York's most desireable neighborhoods be shrinking?
+Why would one of New York's most desirable neighborhoods be shrinking?
 
-Not for lack of demand. People weren't moving out because they no longer wanted to live there. Instead, household size was shrinking, from 1.67 on average in 1970 to 1.5 today.  Households with at least 3 members went from 13.4% of the population in 1970 to just 11.4% in 2020.
+Not for lack of demand. People weren't moving out because they no longer wanted to live there. Instead, household size was shrinking, from 1.67 on average in 1970 to 1.5 today. Households with at least 3 members went from 13.4% of the population in 1970 to just 11.4% in 2020.
 <!-- svg: chart-h1-->
 Though the shrinking households story doesn't map cleanly onto Jacobs's 100 dwellings per acre number, it points to a similar concern: Fewer residents means fewer people to support the variety of businesses that once lined the street. That problem is compounded by the rising rents we've already seen. A business can't sustain itself when it has both rising expenses and a decreasing number of customers. Add in online shopping, and it becomes very difficult for niche businesses to stay open.
 <!-- svg: -->
@@ -161,30 +162,29 @@ Greenwich Village is still denser than most of Manhattan, but less dense than it
 
 @condition mixed-use
 
->"On successful city streets, people must appear at different times... If consumer enterprises lie idle for much of the day they may disappear. Or, to be more accurate, in most such cases they never appear in the first place. Stores, like parks, need users."(199) 
+>"On successful city streets, people must appear at different times... If consumer enterprises lie idle for much of the day they may disappear. Or, to be more accurate, in most such cases they never appear in the first place. Stores, like parks, need users." (Jacobs, *Death and Life*, 199) 
 ##### mixed-use
 <!-- svg: chart-j -->
 Jacobs's last condition for a vital neighborhood is mixed primary uses. She thought for a neighborhood to work well, it needed to have more than one primary function, and preferably more than two. A mix of uses meant that people would be using the streets at all times of the day, bringing money into the district. 
 
-Jacobs compared Greenwich Village, whose streets were used by residents, workers and visitors alike to a single-use district, the Financial District, which mostly was used for work. 
->"... the district is miserable at providing services and amenities proportional to the need. Its eating places and clothing shops are pitifully inadequate in number and variety for the demands on them. The district used to have one of the best hardware stores in New York, but a few years ago it could no longer make ends meet, and closed."(201)
+She contrasted Greenwich Village with the single-use Financial District, which emptied out after work hours:
+>"... the district is miserable at providing services and amenities proportional to the need. Its eating places and clothing shops are pitifully inadequate in number and variety for the demands on them. The district used to have one of the best hardware stores in New York, but a few years ago it could no longer make ends meet, and closed." (Jacobs, *Death and Life*, 201)
 
-Without all-day use from residents and visitors, interesting shops could not sustain themselves. We can see the same thing happening in Greenwich Village since 1971. Hardware stores, bookstores, and record stores and art galleries have all declined in number since 1971. The shops that remain look more and more like the district Jacobs described, with too little variety to bring people to the neighborhood.
+Without all-day use from residents and visitors, interesting shops could not sustain themselves. The Greenwich Village of the 1960s and 1970s had restaurants and bars, clothing stores and shoe stores, grocery stores and drugstores, laundromats and beauty parlors. It had small stores that catered to niche interests, and art galleries that were destinations for people outside the neighborhood. Those different uses gave the residents reasons to leave their homes and explore the neighborhood, and they gave people living outside the neighborhood reasons to visit. In an era when online shopping has replaced in-person shopping for many people, hardware stores, bookstores and art galleries have all declined in number since 1971, leaving fewer reasons for people to travel to the neighborhood.
 
 <!-- svg: chart-m -->
 When a hardware store or a laundromat closes, people might have to go further to buy a hammer or to wash their clothes. But what happens when a business that served as a community hub closes? 
+
 The number of recorded businesses in Greenwich Village specifically serving the LGBTQ community, 3 in 1971 and 7 in 1975, is most likely an undercount due to prejudices, stigma and laws of the time. Many LGBTQ-oriented businesses in Greenwich Village had ties to the mafia and would not have been documented in official records due to their underground nature. 
+
 But today, though those businesses are free to operate more in the open, few remain in the area I surveyed.
 
 
 <!-- svg: map-g -->
-The Greenwich Village of the 1960s and 1970s was a residential neighborhood, but also a neighborhood people worked in, a neighborhood people shopped in, and a neighborhood people ate and drank in. It had restaurants and bars, clothing stores and shoe stores, grocery stores and drugstores, laundromats and beauty parlors. It had small stores that catered to niche interests, and art galleries that were destinations for people outside the neighborhood. These different uses gave the residents reasons to leave their homes and explore the neighborhood, and they gave people living outside the neighborhood reasons to visit. As a result, the streets were lively and filled with people most of the day. In an era when online shopping has replaced in-person shopping for many people, hardware stores, bookstores 
-<!-- svg: -->
-In 2026, many storefronts sit vacant. Others are occupied by the types of chains that residents of other neighborhoods would have no reason to travel to go to visit. Only a couple art galleries remain. Restaurants and bars still line the streets but few stay open long-term - xx% of restaurants that opened in 2010 were still open 15 years later, a contrast from the xx% of restaurants open in 1975 that were still open in 1990.
+ 
+In 2026, many storefronts sit vacant, while others hold the same chains people can find in their own neighborhoods. Only a couple of art galleries remain, and restaurants and bars now dominate the streets. Though foot traffic is not systematically tracked in Greenwich Village, some longtime merchants have noticed a decrease. When Richard Geist closed Uncle Sam's Army/Navy Store on West 8th Street after decades in business, he blamed dwindling numbers of pedestrians rather than high rents. As chronicled by Jeremiah Moss on Vanishing New York: 
+>"Geist told me the closure is by choice, mostly, and that 8th Street just isn't 8th Street anymore... High rents wiped out the shoe businesses here, leaving a blighted ghost town about 10 years ago... Geist says there's no foot traffic. The street is dead."—[Vanishing New York](https://vanishingnewyork.blogspot.com/2018/12/uncle-sams-armynavy.html). 
 
-
-<!-- svg: -->
-The contrast between the two eras show why Jacobs considered mixed primary uses essential. In the 1960s and 1970s, Greenwich Village's variety of uses drew residents out of their homes, kept workers in the neighborhood, and drew visitors from other neighborhoods. Today, vacant storefronts, chains, and a high rate of restaurant turnover suggest that the Village may no longer support the "unconscious cooperation" Jacobs described. Stores, like parks, need users, and the Village's changing streetscape suggests it may have lost some of the users it once had. 
 
 <!-- svg: -->
 #### THE VERDICT: MIXED
@@ -210,7 +210,7 @@ Mixed - There are still a mix of old and new buildings, but now there is little 
 Mixed - Greenwich Village is still almost as dense as it used to be, but the density is declining.
 
 ### 4:  Mixed Uses
-Mixed - Almost half of businesses in 2026 are either restaurants of some type or clothing retail, leaving little room for other uses.
+Mixed - Almost half of businesses in 2026 are either restaurants or clothing retail, leaving little room for other uses.
 
 ##### Option Value
 
@@ -220,7 +220,7 @@ To answer this question, it helps to know a little about the concept that econom
 
 <!-- svg: -->
 ## What is Option Value? 
-In economics, option value refers to the economic value a property owner generates by retaining the flexibility to make a decision later rather than committing immediately to a long-term asset lock.
+In economics, option value refers to the economic value of keeping your options open—waiting to see if a better deal comes along rather than locking yourself into a long-term commitment right away.
 
 <!-- svg: -->
 Imagine a landlord who suddenly has a vacant storefront for rent. It is the year 2008. They have potential tenants, who are willing to pay $130/square foot per year, comparable with rents in the past. However, this landlord knows that Marc Jacobs recently rented several storefronts just down the street for $600/square foot. By locking in a 10-year lease at $130/square foot, the landlord loses out on the possibility of getting $600/square foot for his storefront, a loss of many thousands of dollars over the next 10 years. You can easily imagine the landlord deciding not to rent the storefront out at $130, or $140, or $150 per square foot, instead choosing to wait for a tenant willing to pay more. 
@@ -229,7 +229,7 @@ Imagine a landlord who suddenly has a vacant storefront for rent. It is the year
 When you imagine 10, 20 or 100 landlords all making the same calculation, suddenly it's easy to see how storefronts could sit empty for years on end.
 
 <!-- svg: -->
-In examining storefront vacancy in New York City, economists Erica Moszkowski and Daniel Stackman cite two sources of uncertainty which generate option value for landlords. The first, time series uncertainty, states that in a market where rents are often cyclical, landlords have an incentive to sign tenants as close to the top of the rent cycle as possible. The second, cross-sectional heterogeneity in tenant willingness to pay, also referred to as "match quality", states that there is substantial variation between what any two given tenants are willing to pay for a given space, creating an incentive for the landlord to wait for a higher-paying tenant rather than lease to a lower-paying one. (Moszkowski & Stackman 2026)
+In examining storefront vacancy in New York City, economists Erica Moszkowski and Daniel Stackman point to two sources of uncertainty that give landlords option value. The first, time series uncertainty, means that because rents move in cycles, landlords have an incentive to wait and sign leases near the top of a cycle rather than locking in low rates at the bottom. The second, cross-sectional differences in tenant willingness to pay, also referred to as "match quality", means that different tenants value the same space very differently, creating an incentive for landlords to wait for a higher-paying tenant rather than lease to a lower-paying one. (Moszkowski & Stackman 2026)
 
 ##### Timeline
 <!-- svg: chart-l l1 -->
@@ -255,30 +255,30 @@ text
 ##### Conclusion
 <!-- svg: -->
 ## Conclusion
-Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years.  Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
+Greenwich Village still has the material conditions that made it successful. What has changed are the economic conditions that made it possible for small, independent and unique businesses to thrive. Old buildings no longer mean cheap rents, and as a result there are fewer businesses today that can pay the asking rates. Greenwich Village ground-floor vacancy has increased from 1.9 percent in 2007 to around 13 percent today, with many spaces sitting empty for months or years. Statistics can give you an idea of the scope of the issue, but can’t tell you the effect on people within the community. Since 2007, Jeremiah Moss's blog "Vanishing New York" has been documenting the closures of the businesses that make New York City unique. 
 <!-- svg: -->
 Commenter Kyle Campion writes, in 2019, on a post about the closing of Trattoria Spaghetto: 
->“Obviously the Village has been dead for some time now, but 6th ave is a parade of tragedies… It’s simply a disgrace.”
+>“Obviously the Village has been dead for some time now, but 6th ave is a parade of tragedies… It’s simply a disgrace.”—[Vanishing New York](https://vanishingnewyork.blogspot.com/2019/04/trattoria-spaghetto.html)
 
 A commenter calling himself “Larry” writes, on the sale of the White Horse tavern to a new owner who kept its name,
 
->“RIP, White Horse. RIP, Greenwich Village.”
+>“RIP, White Horse. RIP, Greenwich Village.”—[Vanishing New York](https://vanishingnewyork.blogspot.com/2019/03/white-horse-tavern-sold.html)
 
 RMAN writes, in response to the closure of Cornelia Street Cafe: 
 
->“The greed of some landlords is astounding and unsettling, there is no remorse in tearing apart the fabric of a unique neighborhood.”
+>“The greed of some landlords is astounding and unsettling, there is no remorse in tearing apart the fabric of a unique neighborhood.”—[Vanishing New York](https://vanishingnewyork.blogspot.com/2018/12/cornelia-street-cafe.html)
 
-Others see more than a neighborhood changing; they see the history of their community at risk of being lost.Timmmyk writes: 
+Others see more than a neighborhood changing; they see the history of their community at risk of being lost. Timmmyk writes: 
 
->“…(I) was utterly flabbergasted at what has happened the very heart of LGBT history. The South side of Christopher between Bleecker and Bedford only has 3 open storefronts… The photos are frightening.”
+>“. . . (I) was utterly flabbergasted at what has happened the very heart of LGBT history. The South side of Christopher between Bleecker and Bedford only has 3 open storefronts. . . The photos are frightening.”—[Vanishing New York](https://vanishingnewyork.blogspot.com/2018/12/cornelia-street-cafe.html)
 <!-- svg: -->
 When I embarked on this project I assumed that the hyper-gentrification and high-rent blight of today’s Greenwich Village was something that Jacobs could never have predicted. Yet, in “The Death and Life of Great American Cities”, she maps out the exact feedback loop currently playing out in the neighborhood. In a chapter called “The Self-Destruction of Diversity,” Jacobs writes, 
->“A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location’s success… ardent competition for space in this locality develops… The winners in the competition for space will represent only a narrow segment of the many uses that together created success… But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process…”
+>“A diversified mixture of uses at some place in the city becomes outstandingly popular and successful as a whole. Because of the location’s success. . . ardent competition for space in this locality develops… The winners in the competition for space will represent only a narrow segment of the many uses that together created success… But the triumph is hollow. A most intricate and successful organism of economic mutual support and social mutual support has been destroyed by this process. . .”(Jacobs, *Death and Life*, 317-318)
 <!-- svg: -->
 When financial speculation and monoculture strip away the fine-grained variety of the street, they destroy the very diversity that made the neighborhood resilient in the first place.
 <!-- svg: -->
 As Jacobs observed, 
->“Cities have the capability of providing something for everybody, only because, and only when, they are created by everybody.”
+>“Cities have the capability of providing something for everybody, only because, and only when, they are created by everybody.” (Jacobs, *Death and Life*, 312)
 
 ##### Putting Everything Together
 ## Putting Everything Together
@@ -288,12 +288,12 @@ So now that we've looked at all 4 conditions, what can we say about the changes 
 Independent bookstores, record stores, musical instrument stores, and specialty food stores have all declined, replaced by the types of businesses that do little to drive cross-neighborhood foot traffic. 
 
 ### Dramatically higher rents
-Sparked by the 2000s retail boom, landlords raised storefront rents past what independent businesses could bear. Because commercial leases are most often 10 years long, many businesses who had last renewed their leases before 20000 faced huge increases when their next renewal rolled around. Though I don't have systematic data on this, Jeremiah Moss's blog "Vanishing New York" chronicles many of the rent raises that lead to closures, and the New York Times interviewed several other business owners, giving us a few more data points. 
+Sparked by the 2000s retail boom, landlords raised storefront rents past what independent businesses could bear. Because commercial leases are most often 10 years long, many businesses who had last renewed their leases before 20000 faced huge increases when their next renewal rolled around. Though I don't have systematic data on this, Jeremiah Moss's blog "Vanishing New York" chronicles many of the rent raises that led to closures, and the New York Times interviewed several other business owners, giving us a few more data points. 
 
 
 
 ### More vacancies
-While I don't have concrete vacancy data from before 2007, historical context shows that commercial vacancy was not a notable issue before then.  Firstly, we have no documentation that vacancy in Greenwich Village was considered a problem before the mid-2000s. Second, the ground-floor commercial vacancy rate in the West Village was around 1.9% in 2007(https://comptroller.nyc.gov/reports/retail-vacancy-in-new-york-city/), less than the citywide average of 4%, and there are no indications that this was a deviation from long-term trends. Third, the data we do have shows storefront vacancy rising from roughly 1.9 percent in 2007 to roughly 13 percent today. 
+While I don't have concrete vacancy data from before 2007, historical context shows that commercial vacancy was not a notable issue before then. Firstly, we have no documentation that vacancy in Greenwich Village was considered a problem before the mid-2000s. Second, the ground-floor commercial vacancy rate in the West Village was around 1.9% in 2007(https://comptroller.nyc.gov/reports/retail-vacancy-in-new-york-city/), less than the citywide average of 4%, and there are no indications that this was a deviation from long-term trends. Third, the data we do have shows storefront vacancy rising from roughly 1.9 percent in 2007 to roughly 13 percent today. 
 
 The rise in vacancies follows the rise in rents. The businesses listed above closed after their rents went up, and the spaces they left have been harder to fill than they used to be, often staying vacant more than 18 months. Taken together, the three changes point the same way. There are fewer types of business, the rents are much higher, and more storefronts are empty. Though the physical conditions of Greenwich Village have not changed, the economic conditions that made it possible for small, independent, and unique businesses to thrive have disappeared.
 
@@ -402,7 +402,7 @@ Google. “Google Street View.” Imagery dates 2009-2026. Accessed August-Novem
 
 Hoylman, Brad. Bleaker on Bleecker: A Snapshot of High-Rent Blight in Greenwich Village and Chelsea. New York State Senate, May 2017. https://www.nysenate.gov/sites/default/files/press-release/attachment/bleaker_on_bleecker_0.pdf.
 
-Jacobs, Jane. *The Death and Life of Great American Cities*. 1961; repr., New York:Modern Library,2011.
+Jacobs, Jane. *The Death and Life of Great American Cities*. 1961; repr., New York: Modern Library,2011.
 
 Moss, Jeremiah. *Jeremiah’s Vanishing New York* (blog). Accessed November 2026. https://vanishingnewyork.blogspot.com/.
 
@@ -432,3 +432,17 @@ Asking rents come from two sources: classified advertisements in the New York Ti
 Let’s get some quotes from historical newspapers. This one is from The Villager, October 2, 1969. “ It seems to be the trend of the times,” (Mrs. Anita Adelman) said. “Everything is getting bigger and more depersonalized. This neighborhood was developed by small people who operated small businesses, and now the warlords, the large chain operations, are coming in and pushing all the little people out.” Phil Arlotta, operator of Costos Exotic Garden, another business that was forced to move, said “A large chain store will only help to further a bad change that has been gradually occurring in this neighborhood.” (Eighth St. Shops Dying One By One by Steven L. Kaplan).
 
 This is from "The Great Inversion" and I think it's fabulous, though he's writing about the financial district: "I live just about geographic dead center of the Financial District," longtime resident Ro Sheffe said toward the end of the boom in 2008, "and the three delis we had in 2000 are all gone. One is a high-end cosmetics store, one is high-end condos, one is Gucci couture. After nine o'clock at night[when the drugstores close], if I want a carton of milk, I have to walk nine blocks. In 2000, I could walk down the street."  
+
+##### about-me
+## About the Author
+Meaghan Horner moved to New York City in 2000, drawn by the walkability and density after an adolescence in the suburbs, and has lived there ever since.
+
+She is an animator, motion designer, and data storyteller.
+
+She studied animation at the School of Visual Arts, where her film *Relinquish* was runner-up for the Dusty Award. Her motion design work includes projects for Audible, Amazon, National Geographic and more, and she has served as Animation Director for Late Night Cartoons, Stephen Colbert's animation production company.
+
+She completes her master's degree in Data Analytics and Visualization at the Maryland Institute College of Art in December 2026.
+
+[data visualization](https://www.meaghanhorner.com/dataviz)
+
+[animation and motion graphics](https://www.meaghanhorner.com/)
